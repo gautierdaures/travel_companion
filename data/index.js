@@ -1,6 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────
 //  COUNTRY DATA — schema reference
 // ─────────────────────────────────────────────────────────────────────────
+//  ⚑ Before writing `places` (or any recommendations), read ../PREFERENCES.md
+//    for the traveler's tastes: architecture, history, food, nature, and
+//    off-the-beaten-path — and NO tourist traps.
+// ─────────────────────────────────────────────────────────────────────────
 //  Each country is one file (e.g. data/japan.js) with a default export:
 //
 //  {
