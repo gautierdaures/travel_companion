@@ -54,7 +54,7 @@ After a minute your app is live at `https://<your-username>.github.io/travel-com
 
 Content lives in `data/`. To add a country:
 
-1. **Copy** an existing file, e.g. `cp data/portugal.js data/thailand.js`, and edit the content.
+1. **Copy** an existing file, e.g. `cp data/vietnam.js data/thailand.js`, and edit the content.
    The full field-by-field schema is documented at the top of [`data/index.js`](data/index.js).
 2. **Register** it in `data/index.js` — add an `import` and drop it in the `COUNTRIES` array.
 3. **Cache** it offline — add the filename to `DATA_FILES` in [`sw.js`](sw.js) and bump `CACHE`.
@@ -75,7 +75,7 @@ serve.py                local preview server
 icons/                  app icons (svg + png)
 data/
   index.js              schema docs + country registry
-  japan.js  portugal.js  peru.js   … one file per country
+  russia.js  china.js  vietnam.js  laos.js  cambodia.js   … one file per country
 ```
 
-Seed countries (Japan, Portugal, Peru) are examples — replace/extend them with the countries on your actual itinerary.
+The countries here (Russia, China, Vietnam, Laos, Cambodia) follow one itinerary — replace/extend them with the countries on your actual trip.
