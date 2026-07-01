@@ -231,8 +231,9 @@ section.block > h2 {
 .pin:active .pin-dot { transform: scale(1.25); }
 .pin-num {
   fill: #0f1720;
-  font: 700 20px -apple-system, BlinkMacSystemFont, sans-serif;
+  font: 700 30px -apple-system, BlinkMacSystemFont, sans-serif;
   text-anchor: middle;
+  dominant-baseline: central;
   pointer-events: none;
 }
 .pin-flash .pin-dot { animation: ping 0.7s ease-out 2; }

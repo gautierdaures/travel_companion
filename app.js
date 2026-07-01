@@ -180,7 +180,11 @@ function placesBlock(c) {
 }
 
 /* ── Offline map (SVG outline + pins) ──────────────────────────────────── */
-const MAP_W = 1000; // target drawing size of the longer axis, in SVG units
+// A FIXED viewBox width keeps the on-screen scale — and therefore the pin
+// size — identical for every country, regardless of its shape.
+const VB_W = 1000;
+const MAX_VB_H = 1150; // cap height so tall, narrow countries (Vietnam) aren't huge
+const PAD = 30;
 
 // Build an equirectangular projector fitted to a country's bounding box.
 function projector(geo) {
@@ -189,13 +193,19 @@ function projector(geo) {
   const kx = Math.cos((midLat * Math.PI) / 180); // squash longitude toward the pole
   const wc = (maxLng - minLng) * kx;
   const hc = maxLat - minLat;
-  const s = MAP_W / Math.max(wc, hc);
-  const pad = 30;
-  const W = wc * s + pad * 2;
-  const H = hc * s + pad * 2;
+
+  // Fit to the fixed width, then clamp the scale if the result is too tall.
+  let s = (VB_W - PAD * 2) / wc;
+  if (hc * s + PAD * 2 > MAX_VB_H) s = (MAX_VB_H - PAD * 2) / hc;
+
+  const contentW = wc * s;
+  const W = VB_W; // constant
+  const H = hc * s + PAD * 2;
+  const offX = (W - contentW) / 2; // center horizontally
+
   const toXY = (lng, lat) => {
     if (lng < minLng) lng += 360; // antimeridian safety (Russia)
-    return [pad + (lng - minLng) * kx * s, pad + (maxLat - lat) * s];
+    return [offX + (lng - minLng) * kx * s, PAD + (maxLat - lat) * s];
   };
   return { toXY, W, H };
 }
@@ -257,13 +267,13 @@ function mapBlock(c) {
     const [x, y] = toXY(lng, lat);
     nodes.push({ i, x, y, cat: CATS[p.category] || { color: "var(--text-dim)" } });
   });
-  declutter(nodes, 42);
+  declutter(nodes, 64);
   const pins = nodes
     .map(
       (n) => `<g class="pin" data-i="${n.i}" transform="translate(${n.x.toFixed(1)},${n.y.toFixed(1)})">
-          <circle class="pin-hit" r="28"></circle>
-          <circle class="pin-dot" r="17" style="fill:${n.cat.color}"></circle>
-          <text class="pin-num" y="5.5">${n.i + 1}</text>
+          <circle class="pin-hit" r="46"></circle>
+          <circle class="pin-dot" r="28" style="fill:${n.cat.color}"></circle>
+          <text class="pin-num">${n.i + 1}</text>
         </g>`
     )
     .join("");
