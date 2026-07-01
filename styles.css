@@ -203,6 +203,73 @@ section.block > h2 {
 
 .footer { text-align: center; color: var(--text-dim); font-size: 12px; padding: 30px 0 0; }
 
+/* ── Map ───────────────────────────────────────────────────────────────── */
+.map-panel { padding: 10px 10px 6px; }
+.map-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #0b1220;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.map-land {
+  fill: #22344a;
+  stroke: #46689a;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.pin { cursor: pointer; }
+.pin-hit { fill: transparent; }
+.pin-dot {
+  stroke: #0b1220;
+  stroke-width: 3;
+  transition: transform 0.12s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.pin:active .pin-dot { transform: scale(1.25); }
+.pin-num {
+  fill: #0f1720;
+  font: 700 30px -apple-system, BlinkMacSystemFont, sans-serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+.pin-flash .pin-dot { animation: ping 0.7s ease-out 2; }
+@keyframes ping {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.6); }
+  100% { transform: scale(1); }
+}
+.map-hint { color: var(--text-dim); font-size: 12px; text-align: center; margin: 8px 0 4px; }
+
+/* Numbered badge on each place, linking it to its map pin */
+.place .num {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.place .num:active { border-color: var(--accent); color: var(--text); }
+.place.flash {
+  animation: cardflash 1.4s ease-out;
+  border-radius: 10px;
+}
+@keyframes cardflash {
+  0%   { background: rgba(242, 166, 90, 0.22); }
+  100% { background: transparent; }
+}
+
 @media (min-width: 560px) {
   .grid { grid-template-columns: repeat(3, 1fr); }
 }

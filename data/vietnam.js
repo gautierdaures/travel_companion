@@ -52,12 +52,12 @@ export default {
   ],
 
   places: [
-    { name: "Hạ Long Bay", category: "nature", region: "Quảng Ninh (north)", description: "Thousands of limestone islands rising from emerald water; sleep aboard a junk and slip into quieter Bái Tử Long to dodge crowds." },
-    { name: "Hội An Old Town", category: "history", region: "central coast", description: "A lantern-lit former trading port of tailor shops and yellow merchant houses, car-free and glowing after dark." },
-    { name: "Hà Giang Loop", category: "offbeat", region: "far north", description: "A three-day motorbike ride through the country's most dramatic mountains, terraced valleys, and ethnic-minority markets." },
-    { name: "Imperial Citadel of Huế", category: "history", region: "central Vietnam", description: "The moated palace complex of the Nguyễn emperors on the Perfume River — partly ruined, deeply atmospheric." },
-    { name: "Phong Nha caves", category: "nature", region: "Quảng Bình", description: "Home to Sơn Đoòng, the world's largest cave; even the accessible caverns here are cathedral-scaled." },
-    { name: "Mekong Delta", category: "nature", region: "the south", description: "A watery maze of floating markets, fruit orchards, and stilt houses — explore by boat from Cần Thơ at dawn." },
-    { name: "Sa Pa rice terraces", category: "nature", region: "Lào Cai", description: "Staircase valleys of green-and-gold paddies farmed by Hmong and Dao communities; trek village-to-village." },
+    { name: "Hạ Long Bay", category: "nature", coords: [20.9101, 107.1839], region: "Quảng Ninh (north)", description: "Thousands of limestone islands rising from emerald water; sleep aboard a junk and slip into quieter Bái Tử Long to dodge crowds." },
+    { name: "Hội An Old Town", category: "history", coords: [15.8801, 108.338], region: "central coast", description: "A lantern-lit former trading port of tailor shops and yellow merchant houses, car-free and glowing after dark." },
+    { name: "Hà Giang Loop", category: "offbeat", coords: [22.8268, 104.9784], region: "far north", description: "A three-day motorbike ride through the country's most dramatic mountains, terraced valleys, and ethnic-minority markets." },
+    { name: "Imperial Citadel of Huế", category: "history", coords: [16.4698, 107.5796], region: "central Vietnam", description: "The moated palace complex of the Nguyễn emperors on the Perfume River — partly ruined, deeply atmospheric." },
+    { name: "Phong Nha caves", category: "nature", coords: [17.59, 106.283], region: "Quảng Bình", description: "Home to Sơn Đoòng, the world's largest cave; even the accessible caverns here are cathedral-scaled." },
+    { name: "Mekong Delta", category: "nature", coords: [10.0452, 105.7469], region: "the south", description: "A watery maze of floating markets, fruit orchards, and stilt houses — explore by boat from Cần Thơ at dawn." },
+    { name: "Sa Pa rice terraces", category: "nature", coords: [22.3364, 103.8438], region: "Lào Cai", description: "Staircase valleys of green-and-gold paddies farmed by Hmong and Dao communities; trek village-to-village." },
   ],
 };
