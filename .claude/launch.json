@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "trip-companion",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/Users/gautierdaures/Documents/projects/travel_companion/serve.py"],
+      "port": 4321
+    }
+  ]
+}
