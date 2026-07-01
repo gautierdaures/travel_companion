@@ -1,0 +1,63 @@
+// Country ID card — schema reference lives in data/index.js
+export default {
+  code: "ru",
+  name: "Russia",
+  flag: "🇷🇺",
+  region: "Eurasia",
+  tagline: "Onion domes, birch forests, and a continent's worth of railway.",
+
+  languages: {
+    name: "Russian",
+    note: "Written in Cyrillic — learn the alphabet first and reading signs gets far easier. Stress is unpredictable and changes meaning, so listen before you speak. A few words of Russian are warmly received.",
+    phrases: [
+      { en: "Hello", local: "Здравствуйте", pron: "ZDRAST-vuy-tye" },
+      { en: "Hi (informal)", local: "Привет", pron: "pri-VYET" },
+      { en: "Thank you", local: "Спасибо", pron: "spa-SEE-ba" },
+      { en: "Please / You're welcome", local: "Пожалуйста", pron: "pa-ZHAL-sta" },
+      { en: "Excuse me / Sorry", local: "Извините", pron: "iz-vi-NEE-tye" },
+      { en: "Yes / No", local: "Да / Нет", pron: "da / nyet" },
+      { en: "How much is it?", local: "Сколько стоит?", pron: "SKOL-ka STO-it?" },
+      { en: "Where is…?", local: "Где…?", pron: "gdye…?" },
+      { en: "Delicious!", local: "Вкусно!", pron: "VKOOS-na!" },
+      { en: "Cheers!", local: "За здоровье!", pron: "za zda-RO-vye!" },
+      { en: "Goodbye", local: "До свидания", pron: "da svi-DA-ni-ya" },
+    ],
+  },
+
+  history: {
+    summary:
+      "Russia grew from the medieval trading city of Kievan Rus' into the largest country on Earth, spanning eleven time zones from the Baltic to the Pacific. Centuries of tsarist rule — from Ivan the Terrible through Peter the Great, who dragged the country westward and built St. Petersburg from a swamp — ended in the 1917 revolution and seven decades of Soviet communism. The USSR industrialized brutally, bore the heaviest losses of WWII, and raced the United States to space before collapsing in 1991. What remains is a culture of staggering literary, musical, and scientific achievement layered over a hard imperial history.",
+    timeline: [
+      { era: "882–1240 (Kievan Rus')", text: "A river-trade federation adopts Orthodox Christianity from Byzantium." },
+      { era: "1547–1584 (Ivan IV)", text: "The first tsar centralizes power and begins the eastward push into Siberia." },
+      { era: "1703 (St. Petersburg founded)", text: "Peter the Great builds a 'window to Europe' on the Baltic marshes." },
+      { era: "1917 (Revolution)", text: "The tsar falls; Bolsheviks establish the world's first communist state." },
+      { era: "1991 (Soviet collapse)", text: "The USSR dissolves into fifteen independent republics." },
+    ],
+  },
+
+  books: [
+    { title: "War and Peace", author: "Leo Tolstoy", year: "1869", note: "Napoleon's invasion through the eyes of five aristocratic families — the great Russian epic." },
+    { title: "Crime and Punishment", author: "Fyodor Dostoevsky", year: "1866", note: "A feverish St. Petersburg of poverty, guilt, and redemption." },
+    { title: "A Journey Into Russia", author: "Jens Mühling", year: "2012", note: "A German journalist wanders far from Moscow to meet ordinary Russians." },
+    { title: "The Master and Margarita", author: "Mikhail Bulgakov", year: "1967", note: "The devil visits Soviet Moscow — surreal, funny, and quietly subversive." },
+  ],
+
+  meals: [
+    { name: "Borscht", description: "Beetroot soup, ruby-red and served with a spoonful of smetana (sour cream); hot in winter, sometimes cold in summer.", tip: "Order it with a slab of dark rye bread and raw garlic on the side." },
+    { name: "Pelmeni", description: "Small dumplings of minced meat, boiled and topped with butter, vinegar, or sour cream — Siberian comfort food." },
+    { name: "Blini", description: "Thin crêpes rolled around anything from sour cream and caviar to jam; a whole festival (Maslenitsa) is built around them." },
+    { name: "Beef Stroganoff", description: "Sautéed beef in a mustard-and-sour-cream sauce, born in 19th-century St. Petersburg kitchens." },
+    { name: "Shchi", description: "Cabbage soup that has fed Russia for a thousand years — 'shchi and kasha are our food,' the saying goes." },
+  ],
+
+  places: [
+    { name: "Red Square & St. Basil's", category: "architecture", region: "Moscow", description: "The swirling candy-colored domes of St. Basil's over the vast square at the heart of the capital — go at night when it's floodlit." },
+    { name: "Hermitage Museum", category: "architecture", region: "St. Petersburg", description: "Catherine the Great's Winter Palace, now one of the world's greatest art museums; give it a full day and still miss most of it." },
+    { name: "Lake Baikal", category: "nature", region: "Siberia", description: "The world's deepest and oldest lake — in winter it freezes into transparent turquoise ice you can walk on." },
+    { name: "Trans-Siberian Railway", category: "offbeat", region: "Moscow to Vladivostok", description: "Six days and 9,000 km across the continent; the dining car and platform babushkas selling smoked fish are the real journey." },
+    { name: "Kamchatka", category: "nature", region: "Russian Far East", description: "A remote peninsula of live volcanoes, geysers, and brown bears — reachable only by air, and worth every ruble." },
+    { name: "Kizhi Pogost", category: "history", region: "Lake Onega, Karelia", description: "A wooden church of 22 domes built without a single nail, on an island in the northern lakes." },
+    { name: "Suzdal", category: "history", region: "Golden Ring", description: "A tiny town of white monasteries and wooden houses that feels like pre-revolutionary Russia frozen in place." },
+  ],
+};

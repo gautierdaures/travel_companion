@@ -35,11 +35,13 @@
 //    3. Add its filename to DATA_FILES in ../sw.js so it caches offline.
 // ─────────────────────────────────────────────────────────────────────────
 
-import japan from "./japan.js";
-import portugal from "./portugal.js";
-import peru from "./peru.js";
+import russia from "./russia.js";
+import china from "./china.js";
+import vietnam from "./vietnam.js";
+import laos from "./laos.js";
+import cambodia from "./cambodia.js";
 
-export const COUNTRIES = [japan, portugal, peru].sort((a, b) =>
+export const COUNTRIES = [russia, china, vietnam, laos, cambodia].sort((a, b) =>
   a.name.localeCompare(b.name)
 );
 
