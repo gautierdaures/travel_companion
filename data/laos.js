@@ -52,12 +52,12 @@ export default {
   ],
 
   places: [
-    { name: "Luang Prabang", category: "history", region: "north-central Laos", description: "A UNESCO town of gilded wats and French villas where saffron-robed monks collect alms at dawn — the soul of Laos." },
-    { name: "Kuang Si Falls", category: "nature", region: "near Luang Prabang", description: "Tiers of turquoise pools cascading through the forest; swim in the lower ones and visit the bear rescue on the way in." },
-    { name: "Kong Lor Cave", category: "offbeat", region: "Khammouane", description: "A 7 km river cave you travel through by longtail boat, headlamp piercing the dark of a limestone mountain." },
-    { name: "Plain of Jars", category: "history", region: "Xieng Khouang", description: "Fields scattered with thousands of ancient stone jars of unknown purpose, amid a landscape still scarred by wartime bombing." },
-    { name: "4,000 Islands (Si Phan Don)", category: "nature", region: "far south", description: "Where the Mekong braids into countless islets — hammocks, Irrawaddy dolphins, and river life at its slowest." },
-    { name: "Nam Ha Protected Area", category: "nature", region: "Luang Namtha", description: "Trek and homestay through dense forest and hill-tribe villages in the far northern highlands." },
-    { name: "Vat Phou", category: "history", region: "Champasak", description: "A ruined Khmer temple predating Angkor, climbing a hillside above the Mekong plain." },
+    { name: "Luang Prabang", category: "history", coords: [19.8867, 102.135], region: "north-central Laos", description: "A UNESCO town of gilded wats and French villas where saffron-robed monks collect alms at dawn — the soul of Laos." },
+    { name: "Kuang Si Falls", category: "nature", coords: [19.749, 101.991], region: "near Luang Prabang", description: "Tiers of turquoise pools cascading through the forest; swim in the lower ones and visit the bear rescue on the way in." },
+    { name: "Kong Lor Cave", category: "offbeat", coords: [18.29, 104.82], region: "Khammouane", description: "A 7 km river cave you travel through by longtail boat, headlamp piercing the dark of a limestone mountain." },
+    { name: "Plain of Jars", category: "history", coords: [19.42, 103.15], region: "Xieng Khouang", description: "Fields scattered with thousands of ancient stone jars of unknown purpose, amid a landscape still scarred by wartime bombing." },
+    { name: "4,000 Islands (Si Phan Don)", category: "nature", coords: [14.0, 105.93], region: "far south", description: "Where the Mekong braids into countless islets — hammocks, Irrawaddy dolphins, and river life at its slowest." },
+    { name: "Nam Ha Protected Area", category: "nature", coords: [20.95, 101.4], region: "Luang Namtha", description: "Trek and homestay through dense forest and hill-tribe villages in the far northern highlands." },
+    { name: "Vat Phou", category: "history", coords: [14.848, 105.822], region: "Champasak", description: "A ruined Khmer temple predating Angkor, climbing a hillside above the Mekong plain." },
   ],
 };

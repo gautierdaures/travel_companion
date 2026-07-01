@@ -52,12 +52,12 @@ export default {
   ],
 
   places: [
-    { name: "Red Square & St. Basil's", category: "architecture", region: "Moscow", description: "The swirling candy-colored domes of St. Basil's over the vast square at the heart of the capital — go at night when it's floodlit." },
-    { name: "Hermitage Museum", category: "architecture", region: "St. Petersburg", description: "Catherine the Great's Winter Palace, now one of the world's greatest art museums; give it a full day and still miss most of it." },
-    { name: "Lake Baikal", category: "nature", region: "Siberia", description: "The world's deepest and oldest lake — in winter it freezes into transparent turquoise ice you can walk on." },
-    { name: "Trans-Siberian Railway", category: "offbeat", region: "Moscow to Vladivostok", description: "Six days and 9,000 km across the continent; the dining car and platform babushkas selling smoked fish are the real journey." },
-    { name: "Kamchatka", category: "nature", region: "Russian Far East", description: "A remote peninsula of live volcanoes, geysers, and brown bears — reachable only by air, and worth every ruble." },
-    { name: "Kizhi Pogost", category: "history", region: "Lake Onega, Karelia", description: "A wooden church of 22 domes built without a single nail, on an island in the northern lakes." },
-    { name: "Suzdal", category: "history", region: "Golden Ring", description: "A tiny town of white monasteries and wooden houses that feels like pre-revolutionary Russia frozen in place." },
+    { name: "Red Square & St. Basil's", category: "architecture", coords: [55.7525, 37.6231], region: "Moscow", description: "The swirling candy-colored domes of St. Basil's over the vast square at the heart of the capital — go at night when it's floodlit." },
+    { name: "Hermitage Museum", category: "architecture", coords: [59.9398, 30.3146], region: "St. Petersburg", description: "Catherine the Great's Winter Palace, now one of the world's greatest art museums; give it a full day and still miss most of it." },
+    { name: "Lake Baikal", category: "nature", coords: [53.5587, 108.165], region: "Siberia", description: "The world's deepest and oldest lake — in winter it freezes into transparent turquoise ice you can walk on." },
+    { name: "Trans-Siberian Railway", category: "offbeat", coords: [56.009, 92.8526], region: "Moscow to Vladivostok", description: "Six days and 9,000 km across the continent; the dining car and platform babushkas selling smoked fish are the real journey." },
+    { name: "Kamchatka", category: "nature", coords: [53.25, 158.83], region: "Russian Far East", description: "A remote peninsula of live volcanoes, geysers, and brown bears — reachable only by air, and worth every ruble." },
+    { name: "Kizhi Pogost", category: "history", coords: [62.0678, 35.2242], region: "Lake Onega, Karelia", description: "A wooden church of 22 domes built without a single nail, on an island in the northern lakes." },
+    { name: "Suzdal", category: "history", coords: [56.4194, 40.4533], region: "Golden Ring", description: "A tiny town of white monasteries and wooden houses that feels like pre-revolutionary Russia frozen in place." },
   ],
 };

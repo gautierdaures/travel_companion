@@ -52,12 +52,12 @@ export default {
   ],
 
   places: [
-    { name: "Angkor Wat", category: "history", region: "Siem Reap", description: "The vast 12th-century temple-mountain, still the world's largest religious monument — arrive before dawn for the reflection at sunrise." },
-    { name: "Ta Prohm", category: "history", region: "Angkor Archaeological Park", description: "The 'jungle temple' left half-swallowed by strangler-fig roots, atmospheric and otherworldly." },
-    { name: "Bayon", category: "architecture", region: "Angkor Thom", description: "A temple of over 200 giant serene stone faces gazing in every direction from its towers." },
-    { name: "Tuol Sleng & Killing Fields", category: "history", region: "Phnom Penh", description: "A former school turned prison and the memorial fields nearby — sobering but vital to understanding modern Cambodia." },
-    { name: "Koh Rong Samloem", category: "nature", region: "Gulf of Thailand", description: "A quiet island of white sand and bioluminescent plankton after dark — the mellow antidote to the temples." },
-    { name: "Battambang", category: "offbeat", region: "northwest Cambodia", description: "A riverside town of French shophouses, the improvised bamboo train, and some of the country's best countryside cycling." },
-    { name: "Kampot & Kep", category: "food", region: "south coast", description: "Pepper plantations and sleepy colonial towns; eat crab tossed with the region's famous green peppercorns by the sea." },
+    { name: "Angkor Wat", category: "history", coords: [13.4125, 103.867], region: "Siem Reap", description: "The vast 12th-century temple-mountain, still the world's largest religious monument — arrive before dawn for the reflection at sunrise." },
+    { name: "Ta Prohm", category: "history", coords: [13.4348, 103.889], region: "Angkor Archaeological Park", description: "The 'jungle temple' left half-swallowed by strangler-fig roots, atmospheric and otherworldly." },
+    { name: "Bayon", category: "architecture", coords: [13.4413, 103.859], region: "Angkor Thom", description: "A temple of over 200 giant serene stone faces gazing in every direction from its towers." },
+    { name: "Tuol Sleng & Killing Fields", category: "history", coords: [11.549, 104.917], region: "Phnom Penh", description: "A former school turned prison and the memorial fields nearby — sobering but vital to understanding modern Cambodia." },
+    { name: "Koh Rong Samloem", category: "nature", coords: [10.606, 103.302], region: "Gulf of Thailand", description: "A quiet island of white sand and bioluminescent plankton after dark — the mellow antidote to the temples." },
+    { name: "Battambang", category: "offbeat", coords: [13.0957, 103.2022], region: "northwest Cambodia", description: "A riverside town of French shophouses, the improvised bamboo train, and some of the country's best countryside cycling." },
+    { name: "Kampot & Kep", category: "food", coords: [10.55, 104.25], region: "south coast", description: "Pepper plantations and sleepy colonial towns; eat crab tossed with the region's famous green peppercorns by the sea." },
   ],
 };

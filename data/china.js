@@ -52,12 +52,12 @@ export default {
   ],
 
   places: [
-    { name: "The Great Wall (Jinshanling)", category: "history", region: "near Beijing", description: "Skip the crowded stretches for this partly wild, partly restored section — hike between watchtowers with the wall to yourself." },
-    { name: "Forbidden City", category: "architecture", region: "Beijing", description: "The vast imperial palace of the Ming and Qing emperors — 900 buildings behind vermilion walls at the city's heart." },
-    { name: "Terracotta Army", category: "history", region: "Xi'an", description: "Thousands of life-size clay soldiers buried to guard the first emperor, each face individually modeled." },
-    { name: "Zhangjiajie", category: "nature", region: "Hunan", description: "Thousands of sheer sandstone pillars rising from the mist — the landscape that inspired the floating mountains of 'Avatar'." },
-    { name: "Li River (Guilin to Yangshuo)", category: "nature", region: "Guangxi", description: "Drift past the karst peaks and water buffalo painted on every scroll of classical China — best by bamboo raft." },
-    { name: "Bund & French Concession", category: "architecture", region: "Shanghai", description: "Colonial-era waterfront facing a futurist skyline, and leafy plane-tree streets behind — old and new Shanghai in one walk." },
-    { name: "Jiuzhaigou", category: "offbeat", region: "Sichuan", description: "A high valley of impossibly turquoise lakes and waterfalls fed by snowmelt, ringed by Tibetan villages." },
+    { name: "The Great Wall (Jinshanling)", category: "history", coords: [40.677, 117.244], region: "near Beijing", description: "Skip the crowded stretches for this partly wild, partly restored section — hike between watchtowers with the wall to yourself." },
+    { name: "Forbidden City", category: "architecture", coords: [39.9163, 116.3972], region: "Beijing", description: "The vast imperial palace of the Ming and Qing emperors — 900 buildings behind vermilion walls at the city's heart." },
+    { name: "Terracotta Army", category: "history", coords: [34.3841, 109.2785], region: "Xi'an", description: "Thousands of life-size clay soldiers buried to guard the first emperor, each face individually modeled." },
+    { name: "Zhangjiajie", category: "nature", coords: [29.317, 110.479], region: "Hunan", description: "Thousands of sheer sandstone pillars rising from the mist — the landscape that inspired the floating mountains of 'Avatar'." },
+    { name: "Li River (Guilin to Yangshuo)", category: "nature", coords: [24.9, 110.49], region: "Guangxi", description: "Drift past the karst peaks and water buffalo painted on every scroll of classical China — best by bamboo raft." },
+    { name: "Bund & French Concession", category: "architecture", coords: [31.2304, 121.4737], region: "Shanghai", description: "Colonial-era waterfront facing a futurist skyline, and leafy plane-tree streets behind — old and new Shanghai in one walk." },
+    { name: "Jiuzhaigou", category: "offbeat", coords: [33.2603, 103.918], region: "Sichuan", description: "A high valley of impossibly turquoise lakes and waterfalls fed by snowmelt, ringed by Tibetan villages." },
   ],
 };
