@@ -29,8 +29,23 @@
 //
 //    meals: [ { name, description, tip? }, ... ],
 //
-//    places: [ { name, category, region, description }, ... ]
+//    climate: {
+//      unit: "°C",                        // temperature unit shown on the chart
+//      note: "regional caveat / seasons", // country too big for one number? say so
+//      best: [4, 5, 9, 10],               // month numbers (1–12) that are ideal
+//      months: [ { min, max, mean }, ... ] // 12 entries Jan→Dec, avg daily °C
+//    },
+//
+//    events: [ { name, when, months, kind, description }, ... ]
+//      when   = human label, e.g. "Late Jan – mid Feb"
+//      months = month numbers it falls in, e.g. [1, 2]
+//      kind ∈ "go"    — worth timing your trip for
+//           | "avoid" — crowds / closures / heat; steer around it
+//           | "note"  — good to know, plan accordingly
+//
+//    places: [ { name, category, region, description, coords? }, ... ]
 //      category ∈ "architecture" | "history" | "nature" | "food" | "offbeat"
+//      coords   = [lat, lng] — optional, drops a numbered pin on the map
 //  }
 //
 //  TO ADD A COUNTRY:

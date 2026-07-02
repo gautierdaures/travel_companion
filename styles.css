@@ -15,6 +15,9 @@
   --cat-nature: #5ac88a;
   --cat-food: #ff8a8a;
   --cat-offbeat: #5ac8d8;
+  --ev-go: #5ac88a;
+  --ev-avoid: #ff7a7a;
+  --ev-note: #f2a65a;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -202,6 +205,90 @@ section.block > h2 {
 .place .d { font-size: 14px; margin-top: 5px; }
 
 .footer { text-align: center; color: var(--text-dim); font-size: 12px; padding: 30px 0 0; }
+
+/* ── Weather chart ─────────────────────────────────────────────────────── */
+.climate-panel { padding: 14px; }
+.best-line {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.best-line strong { color: var(--accent); }
+.climate-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #0b1220;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.grid-line { stroke: var(--border); stroke-width: 1; }
+.grid-line.zero { stroke: #547089; stroke-width: 1.5; stroke-dasharray: 4 4; }
+.grid-label {
+  fill: var(--text-dim);
+  font: 500 13px -apple-system, BlinkMacSystemFont, sans-serif;
+  text-anchor: end;
+}
+.best-band { fill: rgba(242, 166, 90, 0.13); }
+.temp-bar { opacity: 0.92; }
+.mean-line {
+  fill: none;
+  stroke: #f4f7fb;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+.mean-dot { fill: #f4f7fb; }
+.month-label {
+  fill: var(--text-dim);
+  font: 600 15px -apple-system, BlinkMacSystemFont, sans-serif;
+  text-anchor: middle;
+}
+.month-label.best { fill: var(--accent); }
+.climate-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+.climate-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.climate-legend .unit { margin-left: auto; font-weight: 600; }
+.climate-legend i { display: inline-block; }
+.sw-bar {
+  width: 12px; height: 12px; border-radius: 3px;
+  background: linear-gradient(#ff7a7a, #6aa8e0);
+}
+.sw-line { width: 16px; height: 0; border-top: 2px solid #f4f7fb; }
+.sw-best { width: 12px; height: 12px; border-radius: 3px; background: rgba(242, 166, 90, 0.35); }
+.climate-note { margin-top: 12px; }
+
+/* ── Events ────────────────────────────────────────────────────────────── */
+.event {
+  padding: 13px 0 13px 12px;
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--ev);
+  margin-left: -12px;
+  padding-left: 12px;
+}
+.event:last-child { border-bottom: none; }
+.event .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.event .t { font-weight: 620; font-size: 16px; }
+.ev-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #0f1720;
+  white-space: nowrap;
+}
+.event .when { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+.event .d { font-size: 14px; margin-top: 5px; }
 
 /* ── Map ───────────────────────────────────────────────────────────────── */
 .map-panel { padding: 10px 10px 6px; }
