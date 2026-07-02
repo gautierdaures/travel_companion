@@ -51,6 +51,33 @@ export default {
     { name: "Cà phê sữa đá", description: "Strong drip coffee over sweetened condensed milk and ice — a colonial legacy turned national obsession." },
   ],
 
+  climate: {
+    unit: "°C",
+    note: "Figures are for Hanoi / the north, which has a cool winter. The centre (Huế, Đà Nẵng) floods Sep–Nov, and the south (Saigon, Mekong) is hot year-round with a wet season May–Oct.",
+    best: [3, 4, 10, 11],
+    months: [
+      { min: 14, max: 20, mean: 17 },
+      { min: 15, max: 21, mean: 18 },
+      { min: 18, max: 23, mean: 21 },
+      { min: 21, max: 28, mean: 24 },
+      { min: 24, max: 32, mean: 28 },
+      { min: 26, max: 33, mean: 30 },
+      { min: 26, max: 33, mean: 30 },
+      { min: 26, max: 32, mean: 29 },
+      { min: 24, max: 31, mean: 27 },
+      { min: 22, max: 29, mean: 25 },
+      { min: 18, max: 26, mean: 22 },
+      { min: 15, max: 22, mean: 18 },
+    ],
+  },
+
+  events: [
+    { name: "Tết (Lunar New Year)", when: "Late Jan – mid Feb", months: [1, 2], kind: "avoid", description: "The most important holiday of the year — the whole country travels home and effectively shuts for a week: transport is jammed and many restaurants, shops, and sights close." },
+    { name: "Hội An Lantern Festival", when: "Every full moon", months: [], kind: "go", description: "On the 14th night of each lunar month the old town cuts its electric lights and floats candlelit lanterns down the river — the loveliest evening in Vietnam." },
+    { name: "Mid-Autumn Festival", when: "September", months: [9], kind: "go", description: "Lion dances, mooncakes, and children's lantern parades fill the streets after dark — especially charming in Hội An and Hanoi's Old Quarter." },
+    { name: "Reunification Day & Labour Day", when: "Apr 30 – May 1", months: [4, 5], kind: "note", description: "Back-to-back public holidays send locals to the coast; beach towns and flights fill up and prices climb — book ahead or steer clear." },
+  ],
+
   places: [
     { name: "Hạ Long Bay", category: "nature", coords: [20.9101, 107.1839], region: "Quảng Ninh (north)", description: "Thousands of limestone islands rising from emerald water; sleep aboard a junk and slip into quieter Bái Tử Long to dodge crowds." },
     { name: "Hội An Old Town", category: "history", coords: [15.8801, 108.338], region: "central coast", description: "A lantern-lit former trading port of tailor shops and yellow merchant houses, car-free and glowing after dark." },

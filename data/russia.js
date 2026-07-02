@@ -51,6 +51,33 @@ export default {
     { name: "Shchi", description: "Cabbage soup that has fed Russia for a thousand years — 'shchi and kasha are our food,' the saying goes." },
   ],
 
+  climate: {
+    unit: "°C",
+    note: "Figures are for Moscow / European Russia. Siberia runs far colder in winter, while the Black Sea coast around Sochi is mild year-round.",
+    best: [5, 6, 7, 8, 9],
+    months: [
+      { min: -9, max: -4, mean: -6 },
+      { min: -10, max: -4, mean: -7 },
+      { min: -4, max: 2, mean: -1 },
+      { min: 2, max: 11, mean: 6 },
+      { min: 8, max: 19, mean: 13 },
+      { min: 12, max: 22, mean: 17 },
+      { min: 14, max: 24, mean: 19 },
+      { min: 12, max: 22, mean: 17 },
+      { min: 7, max: 15, mean: 11 },
+      { min: 2, max: 8, mean: 5 },
+      { min: -3, max: 1, mean: -1 },
+      { min: -8, max: -3, mean: -5 },
+    ],
+  },
+
+  events: [
+    { name: "Maslenitsa (Butter Week)", when: "Late Feb – early Mar", months: [2, 3], kind: "go", description: "A week of blini, sledding, and bonfires to see off winter before Lent — folk festivals in every city and open-air museum." },
+    { name: "White Nights", when: "Jun – early Jul", months: [6, 7], kind: "go", description: "In St. Petersburg the sun barely sets; the city stays out all night for ballet, concerts, and the Scarlet Sails fireworks." },
+    { name: "Victory Day", when: "May 9", months: [5], kind: "note", description: "Huge military parades and crowds; central Moscow around Red Square is closed off and hotels fill — plan around the lockdown." },
+    { name: "New Year & Orthodox Christmas", when: "Dec 31 – Jan 8", months: [12, 1], kind: "note", description: "The biggest holiday of the year: beautiful lights and markets, but offices, banks, and many services shut for the first week-plus of January." },
+  ],
+
   places: [
     { name: "Red Square & St. Basil's", category: "architecture", coords: [55.7525, 37.6231], region: "Moscow", description: "The swirling candy-colored domes of St. Basil's over the vast square at the heart of the capital — go at night when it's floodlit." },
     { name: "Hermitage Museum", category: "architecture", coords: [59.9398, 30.3146], region: "St. Petersburg", description: "Catherine the Great's Winter Palace, now one of the world's greatest art museums; give it a full day and still miss most of it." },

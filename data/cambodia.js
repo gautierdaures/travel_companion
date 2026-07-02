@@ -51,6 +51,33 @@ export default {
     { name: "Bai sach chrouk", description: "Grilled marinated pork over broken rice with pickles and a fried egg — the classic Cambodian breakfast." },
   ],
 
+  climate: {
+    unit: "°C",
+    note: "Figures are for Phnom Penh / Siem Reap. Tropical and warm all year: a dry season (Nov–Apr) and a wet monsoon (May–Oct). April is the fierce peak of the heat.",
+    best: [11, 12, 1, 2],
+    months: [
+      { min: 22, max: 31, mean: 26 },
+      { min: 23, max: 33, mean: 28 },
+      { min: 24, max: 34, mean: 29 },
+      { min: 25, max: 35, mean: 30 },
+      { min: 25, max: 34, mean: 29 },
+      { min: 25, max: 33, mean: 29 },
+      { min: 25, max: 32, mean: 28 },
+      { min: 25, max: 32, mean: 28 },
+      { min: 24, max: 31, mean: 27 },
+      { min: 24, max: 31, mean: 27 },
+      { min: 23, max: 30, mean: 26 },
+      { min: 22, max: 30, mean: 26 },
+    ],
+  },
+
+  events: [
+    { name: "Khmer New Year (Choul Chnam Thmey)", when: "Mid-April", months: [4], kind: "note", description: "The joyful three-day New Year, but also the hottest time of year — Angkor fills with domestic visitors and many city businesses pause as families head home." },
+    { name: "Angkor Sankranta", when: "Mid-April", months: [4], kind: "go", description: "New Year games, dancing, and traditional festivities staged among the temples of Angkor themselves — a rare chance to see them come alive." },
+    { name: "Pchum Ben (Ancestors' Day)", when: "Sep – Oct", months: [9, 10], kind: "note", description: "A solemn 15-day festival honouring ancestors; Cambodians throng the pagodas and, on the public-holiday days, offices and many shops close." },
+    { name: "Water Festival (Bon Om Touk)", when: "November (full moon)", months: [11], kind: "go", description: "Cambodia's biggest celebration: millions pack Phnom Penh's riverfront for longboat races marking the reversal of the Tonlé Sap's flow." },
+  ],
+
   places: [
     { name: "Angkor Wat", category: "history", coords: [13.4125, 103.867], region: "Siem Reap", description: "The vast 12th-century temple-mountain, still the world's largest religious monument — arrive before dawn for the reflection at sunrise." },
     { name: "Ta Prohm", category: "history", coords: [13.4348, 103.889], region: "Angkor Archaeological Park", description: "The 'jungle temple' left half-swallowed by strangler-fig roots, atmospheric and otherworldly." },

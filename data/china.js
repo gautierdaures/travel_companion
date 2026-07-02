@@ -51,6 +51,33 @@ export default {
     { name: "Hand-pulled noodles (lamian)", description: "Dough stretched to strands before your eyes, from the Muslim northwest — often in a clear beef broth." },
   ],
 
+  climate: {
+    unit: "°C",
+    note: "Figures are for Beijing / the north. The south (Guangzhou, Hong Kong) is subtropical and humid, and the far west and Tibet are high and dry — check your specific region.",
+    best: [4, 5, 9, 10],
+    months: [
+      { min: -8, max: 2, mean: -3 },
+      { min: -6, max: 5, mean: 0 },
+      { min: 0, max: 12, mean: 6 },
+      { min: 8, max: 20, mean: 14 },
+      { min: 14, max: 26, mean: 20 },
+      { min: 19, max: 30, mean: 25 },
+      { min: 22, max: 31, mean: 27 },
+      { min: 21, max: 30, mean: 26 },
+      { min: 15, max: 26, mean: 20 },
+      { min: 8, max: 19, mean: 14 },
+      { min: 0, max: 10, mean: 5 },
+      { min: -6, max: 4, mean: -1 },
+    ],
+  },
+
+  events: [
+    { name: "Spring Festival (Chinese New Year)", when: "Late Jan – mid Feb", months: [1, 2], kind: "avoid", description: "Spectacular, but the world's largest human migration: hundreds of millions travel home, trains and flights book out weeks ahead, and many shops and sights close for days." },
+    { name: "Lantern Festival", when: "15th day after New Year (Feb)", months: [2], kind: "go", description: "Closes the New Year period with glowing lantern displays, riddles, and tangyuan dumplings — lovely once the travel crush has eased." },
+    { name: "Mid-Autumn Festival", when: "Sep – early Oct", months: [9, 10], kind: "go", description: "Families gather under the full moon to share mooncakes and light lanterns; parks and lakesides come alive at dusk." },
+    { name: "National Day / Golden Week", when: "Oct 1 – 7", months: [10], kind: "avoid", description: "A week-long national holiday when domestic tourists mob every major site; expect packed trains and hours-long queues at the Great Wall and Forbidden City." },
+  ],
+
   places: [
     { name: "The Great Wall (Jinshanling)", category: "history", coords: [40.677, 117.244], region: "near Beijing", description: "Skip the crowded stretches for this partly wild, partly restored section — hike between watchtowers with the wall to yourself." },
     { name: "Forbidden City", category: "architecture", coords: [39.9163, 116.3972], region: "Beijing", description: "The vast imperial palace of the Ming and Qing emperors — 900 buildings behind vermilion walls at the city's heart." },

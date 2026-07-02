@@ -51,6 +51,33 @@ export default {
     { name: "Or lam", description: "A Luang Prabang stew of buffalo meat, herbs, and eggplant, mildly bitter and peppery from mak khaen." },
   ],
 
+  climate: {
+    unit: "°C",
+    note: "Figures are for Vientiane / the Mekong lowlands. Three seasons: cool-dry (Nov–Feb), hot (Mar–May), and wet (Jun–Oct). Northern mountains like Luang Prabang are noticeably cooler at night.",
+    best: [11, 12, 1, 2],
+    months: [
+      { min: 17, max: 28, mean: 22 },
+      { min: 19, max: 30, mean: 24 },
+      { min: 22, max: 33, mean: 27 },
+      { min: 24, max: 34, mean: 29 },
+      { min: 25, max: 33, mean: 29 },
+      { min: 25, max: 32, mean: 28 },
+      { min: 25, max: 31, mean: 28 },
+      { min: 24, max: 31, mean: 27 },
+      { min: 24, max: 31, mean: 27 },
+      { min: 23, max: 31, mean: 27 },
+      { min: 20, max: 29, mean: 24 },
+      { min: 17, max: 28, mean: 22 },
+    ],
+  },
+
+  events: [
+    { name: "Pi Mai (Lao New Year)", when: "Mid-April", months: [4], kind: "go", description: "A three-day nationwide water fight and temple festival — joyous and drenching, but it's also the hottest, dustiest time of year and many businesses close." },
+    { name: "Boun Bang Fai (Rocket Festival)", when: "May", months: [5], kind: "go", description: "Villages launch home-made bamboo rockets skyward to prod the heavens for rain — raucous, boozy, and wonderfully local." },
+    { name: "Boat Racing Festival", when: "Sep – Oct", months: [9, 10], kind: "go", description: "Longboat crews race on the Mekong to mark the end of Buddhist Lent; riverbanks in Luang Prabang and Vientiane turn into a party." },
+    { name: "That Luang Festival", when: "November (full moon)", months: [11], kind: "go", description: "Laos's biggest religious festival, centred on Vientiane's golden stupa — candlelit processions, alms, and a huge fair." },
+  ],
+
   places: [
     { name: "Luang Prabang", category: "history", coords: [19.8867, 102.135], region: "north-central Laos", description: "A UNESCO town of gilded wats and French villas where saffron-robed monks collect alms at dawn — the soul of Laos." },
     { name: "Kuang Si Falls", category: "nature", coords: [19.749, 101.991], region: "near Luang Prabang", description: "Tiers of turquoise pools cascading through the forest; swim in the lower ones and visit the bear rescue on the way in." },
