@@ -37,15 +37,17 @@
 //      best:  [4, 5, 9, 10],              // ideal months (1–12) → green bars
 //      avoid: [1, 2, 12],                 // months to steer around → red bars
 //                                         //   (any month not listed = orange / acceptable)
-//      months: [ { mean }, ... ]          // 12 entries Jan→Dec, avg daily °C (mean shown)
+//      months: [ { mean, rain }, ... ]    // 12 entries Jan→Dec: avg daily °C
+//                                         //   + avg monthly rainfall (mm)
 //    },
 //      // Big country with several climates? Drop best/avoid/months and give
 //      // `regions` instead — one titled chart each, on a shared axis:
-//      // regions: [ { name, coords, key, note?, best, avoid, months: [{mean},…] }, … ]
+//      // regions: [ { name, coords, key, note?, best, avoid, months: [{mean,rain},…] }, … ]
 //
 //      // `months` numbers come from real climate normals — refresh them with
 //      //   `node scripts/fetch-climate.mjs` (Open-Meteo, uses coords + key).
-//      //   best/avoid stay hand-set: "best time to visit" isn't just temperature.
+//      //   best/avoid stay hand-set; the chart shows temperature (bars) and
+//      //   rainfall (blue) so the colour of each month makes sense at a glance.
 //
 //    events: [ { name, when, months, kind, description }, ... ]
 //      when   = human label, e.g. "Late Jan – mid Feb"

@@ -59,9 +59,10 @@ export default {
     best: [11, 12, 1, 2],
     avoid: [4, 8, 9, 10],
     months: [
-      { mean: 27 }, { mean: 28 }, { mean: 30 }, { mean: 30 },
-      { mean: 29 }, { mean: 28 }, { mean: 28 }, { mean: 28 },
-      { mean: 27 }, { mean: 27 }, { mean: 27 }, { mean: 26 },
+      { mean: 27, rain: 10 }, { mean: 28, rain: 10 }, { mean: 30, rain: 35 },
+      { mean: 30, rain: 75 }, { mean: 29, rain: 120 }, { mean: 28, rain: 160 },
+      { mean: 28, rain: 155 }, { mean: 28, rain: 170 }, { mean: 27, rain: 250 },
+      { mean: 27, rain: 255 }, { mean: 27, rain: 130 }, { mean: 26, rain: 20 },
     ],
   },
 

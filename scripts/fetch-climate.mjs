@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 // ─────────────────────────────────────────────────────────────────────────
-//  fetch-climate.mjs — refresh monthly mean temperatures from real data
+//  fetch-climate.mjs — refresh monthly climate normals from real data
 // ─────────────────────────────────────────────────────────────────────────
 //  Pulls 1991–2020 climate normals from the Open-Meteo archive (ERA5
 //  reanalysis — free, no API key) for each climate region defined in data/,
-//  and writes the monthly means back into the country data files.
+//  and writes the monthly numbers back into the country data files:
+//    · mean = average daily temperature (°C)
+//    · rain = average monthly precipitation total (mm)
 //
-//  Only the temperature numbers (`months`) are touched. The editorial
-//  fields — `best`, `avoid`, `note`, region names — are left alone: the
-//  "best time to visit" call weighs heat, rain, crowds and cost, not just
-//  temperature, so it stays a human judgement.
+//  Only these numbers (`months`) are touched. The editorial fields —
+//  `best`, `avoid`, `note`, region names — are left alone: the "best time
+//  to visit" call weighs heat, rain, crowds and cost, so it stays a human
+//  judgement (the rain figures just make that call legible on the chart).
 //
 //  USAGE (run where the internet is reachable — not the CI sandbox):
 //    node scripts/fetch-climate.mjs            # fetch + write the data files
@@ -75,45 +77,53 @@ async function fetchJSON(url) {
   }
 }
 
-// Fetch daily means over the normal period and average them per calendar month.
-async function fetchMonthlyMeans([lat, lng]) {
-  const url = `${ARCHIVE}?latitude=${lat}&longitude=${lng}` +
-    `&start_date=${START}&end_date=${END}&daily=temperature_2m_mean&timezone=UTC`;
+// Fetch daily temperature + precipitation over the normal period and reduce to
+// per-calendar-month figures: mean daily temp, and mean monthly rainfall total.
+async function fetchMonthly([lat, lng]) {
+  const url = `${ARCHIVE}?latitude=${lat}&longitude=${lng}&start_date=${START}&end_date=${END}` +
+    `&daily=temperature_2m_mean,precipitation_sum&timezone=UTC`;
   const daily = (await fetchJSON(url)).daily;
   if (!daily?.time?.length) throw new Error(`no daily data returned for ${lat},${lng}`);
 
-  const sum = Array(12).fill(0), n = Array(12).fill(0);
+  const tSum = Array(12).fill(0), tN = Array(12).fill(0);
+  const pSum = Array(12).fill(0), pYears = Array.from({ length: 12 }, () => new Set());
   daily.time.forEach((iso, i) => {
-    const t = daily.temperature_2m_mean[i];
-    if (t == null) return;
     const m = Number(iso.slice(5, 7)) - 1; // "YYYY-MM-DD" → 0..11
-    sum[m] += t; n[m] += 1;
+    const t = daily.temperature_2m_mean[i];
+    if (t != null) { tSum[m] += t; tN[m] += 1; }
+    const p = daily.precipitation_sum[i];
+    if (p != null) { pSum[m] += p; pYears[m].add(iso.slice(0, 4)); }
   });
-  return sum.map((s, m) => {
-    if (!n[m]) throw new Error(`no samples for month ${m + 1} at ${lat},${lng}`);
-    return Math.round(s / n[m]);
+  return tSum.map((s, m) => {
+    if (!tN[m]) throw new Error(`no temperature samples for month ${m + 1} at ${lat},${lng}`);
+    const years = pYears[m].size || 1; // mean monthly total = all rain in month ÷ #years
+    return { mean: Math.round(s / tN[m]), rain: Math.round(pSum[m] / years) };
   });
 }
 
-// Render a `months` array matching the surrounding indentation, 4 per line.
+// Render a `months` array matching the surrounding indentation, 3 per line.
 // Includes the leading indent so it replaces the matched span exactly.
-function formatMonths(means, indent) {
-  const cells = means.map((v) => `{ mean: ${v} }`);
+function formatMonths(months, indent) {
+  const cells = months.map((x) => `{ mean: ${x.mean}, rain: ${x.rain} }`);
   const rows = [];
-  for (let i = 0; i < cells.length; i += 4) rows.push(indent + "  " + cells.slice(i, i + 4).join(", ") + ",");
+  for (let i = 0; i < cells.length; i += 3) rows.push(indent + "  " + cells.slice(i, i + 3).join(", ") + ",");
   return `${indent}months: [\n${rows.join("\n")}\n${indent}]`;
 }
 
-// Read the current 12 means for a region straight from the file text.
-function readMeans(src, key) {
-  const block = matchMonths(src, key);
-  const means = [...block.arrayText.matchAll(/mean:\s*(-?\d+(?:\.\d+)?)/g)].map((m) => Number(m[1]));
-  if (means.length !== 12) throw new Error(`expected 12 means for "${key}", found ${means.length}`);
-  return means;
+// Read the current 12 { mean, rain } entries for a region from the file text.
+function readMonths(src, key) {
+  const { arrayText } = matchMonths(src, key);
+  const months = [...arrayText.matchAll(/\{([^}]*)\}/g)].map((m) => {
+    const mean = Number(/mean:\s*(-?\d+(?:\.\d+)?)/.exec(m[1])?.[1]);
+    const rr = /rain:\s*(-?\d+(?:\.\d+)?)/.exec(m[1]);
+    return { mean, rain: rr ? Number(rr[1]) : 0 };
+  });
+  if (months.length !== 12) throw new Error(`expected 12 months for "${key}", found ${months.length}`);
+  return months;
 }
 
-// Locate the `months: [ … ]` array that belongs to a given region key.
-// Entries look like `{ mean: N }` — no nested brackets — so `[^\]]*` is safe.
+// Locate the `months: [ … ]` array that belongs to a given region key. Entries
+// look like `{ mean: N, rain: N }` — no nested brackets — so `[^\]]*` is safe.
 function matchMonths(src, key) {
   const keyIdx = src.indexOf(`key: "${key}"`);
   if (keyIdx === -1) throw new Error(`key "${key}" not found in data file`);
@@ -123,9 +133,9 @@ function matchMonths(src, key) {
   return { at: keyIdx + m.index, len: m[0].length, indent: m[1], arrayText: m[0] };
 }
 
-function replaceMonths(src, key, means) {
+function replaceMonths(src, key, months) {
   const { at, len, indent } = matchMonths(src, key);
-  return src.slice(0, at) + formatMonths(means, indent) + src.slice(at + len);
+  return src.slice(0, at) + formatMonths(months, indent) + src.slice(at + len);
 }
 
 async function main() {
@@ -146,9 +156,9 @@ async function main() {
       const path = join(DATA_DIR, file);
       const src = await readFile(path, "utf8");
       let next = src;
-      for (const t of ts) next = replaceMonths(next, t.key, readMeans(src, t.key));
+      for (const t of ts) next = replaceMonths(next, t.key, readMonths(src, t.key));
       let again = next;
-      for (const t of ts) again = replaceMonths(again, t.key, readMeans(next, t.key));
+      for (const t of ts) again = replaceMonths(again, t.key, readMonths(next, t.key));
       if (next !== src) throw new Error(`${file}: rewrite is not stable for current values`);
       if (again !== next) throw new Error(`${file}: rewrite is not idempotent`);
       console.log(`✓ ${file} — ${ts.length} region(s) roundtrip cleanly`);
@@ -158,12 +168,15 @@ async function main() {
   }
 
   console.log(`Fetching ${START}…${END} normals for ${all.length} regions from Open-Meteo…\n`);
-  const means = new Map();
+  const data = new Map();
   for (let i = 0; i < all.length; i++) {
     const t = all[i];
     if (i > 0) await sleep(1500); // stay under the free-tier burst limit
-    means.set(t.key, await fetchMonthlyMeans(t.coords));
-    console.log(`  ${t.label.padEnd(38)} [${means.get(t.key).join(", ")}]`);
+    const months = await fetchMonthly(t.coords);
+    data.set(t.key, months);
+    console.log(`  ${t.label}`);
+    console.log(`    temp [${months.map((x) => x.mean).join(", ")}]`);
+    console.log(`    rain [${months.map((x) => x.rain).join(", ")}]`);
   }
 
   if (mode === "dry") { console.log("\n--dry-run: no files written."); return; }
@@ -171,7 +184,7 @@ async function main() {
   for (const [file, ts] of byFile) {
     const path = join(DATA_DIR, file);
     let src = await readFile(path, "utf8");
-    for (const t of ts) src = replaceMonths(src, t.key, means.get(t.key));
+    for (const t of ts) src = replaceMonths(src, t.key, data.get(t.key));
     await writeFile(path, src);
     console.log(`\nwrote ${file}`);
   }

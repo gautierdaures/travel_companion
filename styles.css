@@ -230,6 +230,14 @@ section.block > h2 {
   text-anchor: end;
 }
 .temp-bar { opacity: 0.95; }
+/* Rainfall sits behind the temperature bars on its own mm scale. */
+.rain-bar { fill: rgba(96, 165, 235, 0.30); }
+.rain-label {
+  fill: #6aa8e0;
+  font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif;
+  text-anchor: start;
+}
+.rain-label.mm { font-size: 11px; opacity: 0.85; }
 .temp-value {
   fill: var(--text-dim);
   font: 600 12px -apple-system, BlinkMacSystemFont, sans-serif;
@@ -251,6 +259,7 @@ section.block > h2 {
 .climate-legend .unit { margin-left: auto; font-weight: 600; }
 .climate-legend i { display: inline-block; }
 .climate-legend .sw { width: 12px; height: 12px; border-radius: 3px; }
+.climate-legend .rain-sw { background: rgba(96, 165, 235, 0.55); }
 /* Colour key sits once at the top of the section, above the region charts. */
 .climate-legend.legend-key { margin-bottom: 14px; }
 

@@ -231,19 +231,25 @@ function bestMonthsLabel(best = []) {
 }
 
 // One region's chart: title (if named), best-months line, SVG, and note.
-// The lo/hi scale is passed in so sibling regions share a comparable axis.
-function regionChart(r, unit, lo, hi) {
+// Temperature bars (coloured by rating) with a rainfall overlay behind them.
+// lo/hi (°C) and rainMax (mm) are passed in so sibling regions share scales.
+function regionChart(r, unit, lo, hi, rainMax) {
   const M = r.months;
   const ratings = M.map((_, i) => monthRating(r, i + 1));
 
-  const W = 680, H = 300, padL = 34, padR = 12, padT = 22, padB = 40;
+  const W = 680, H = 300, padL = 34, padR = 34, padT = 22, padB = 40;
   const plotW = W - padL - padR, plotH = H - padT - padB;
-  const slot = plotW / 12, barW = slot * 0.56;
+  const slot = plotW / 12, barW = slot * 0.5, rainW = slot * 0.78;
   const y = (t) => padT + (plotH * (hi - t)) / (hi - lo);
   const cx = (i) => padL + slot * (i + 0.5);
-  const y0 = y(0); // zero baseline
+  const y0 = y(0); // temperature zero baseline
 
-  // Horizontal gridlines + axis labels every 10° (5° for a tight range).
+  // Rainfall rides its own scale, anchored at the plot floor and capped a
+  // little short of the top so it stays visually behind the temperature.
+  const floor = padT + plotH, rainH = plotH * 0.85;
+  const yRain = (mm) => floor - (rainMax ? (mm / rainMax) * rainH : 0);
+
+  // Horizontal gridlines + °C axis labels every 10° (5° for a tight range).
   const step = hi - lo > 25 ? 10 : 5;
   let grid = "";
   for (let t = lo; t <= hi; t += step) {
@@ -253,7 +259,20 @@ function regionChart(r, unit, lo, hi) {
       <text class="grid-label" x="${padL - 6}" y="${(yt + 4).toFixed(1)}">${t}</text>`;
   }
 
-  // One bar per month: height = mean temperature, colour = how good it is to visit.
+  // Rainfall bars (behind), plus a light mm axis on the right.
+  let rain = "", rainAxis = "";
+  if (rainMax > 0) {
+    rain = M.map((m, i) => {
+      const yr = yRain(m.rain || 0);
+      return `<rect class="rain-bar" x="${(cx(i) - rainW / 2).toFixed(1)}" y="${yr.toFixed(1)}"
+        width="${rainW.toFixed(1)}" height="${Math.max(0, floor - yr).toFixed(1)}"></rect>`;
+    }).join("");
+    rainAxis = [0, rainMax].map((v) =>
+      `<text class="rain-label" x="${(W - padR + 6).toFixed(1)}" y="${(yRain(v) + 4).toFixed(1)}">${v}</text>`
+    ).join("") + `<text class="rain-label mm" x="${(W - padR + 6).toFixed(1)}" y="${(yRain(rainMax) - 8).toFixed(1)}">mm</text>`;
+  }
+
+  // Temperature bars: height = mean temp, colour = how good it is to visit.
   const bars = M.map((m, i) => {
     const yv = y(m.mean);
     const top = Math.min(yv, y0), h = Math.max(2, Math.abs(yv - y0));
@@ -275,7 +294,7 @@ function regionChart(r, unit, lo, hi) {
   ).join("");
 
   const bestLabel = bestMonthsLabel(r.best);
-  const title = r.name ? `Mean monthly temperatures in ${esc(r.name)}` : "Mean monthly temperatures";
+  const where = r.name ? ` in ${esc(r.name)}` : "";
 
   return `
     <div class="climate-region">
@@ -283,11 +302,13 @@ function regionChart(r, unit, lo, hi) {
       ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
       <svg class="climate-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
            xmlns="http://www.w3.org/2000/svg" role="img"
-           aria-label="${title} in ${esc(unit)}, coloured by how good each month is to visit">
+           aria-label="Mean monthly temperature (${esc(unit)}) and rainfall (mm)${where}, with each month coloured by how good it is to visit">
         ${grid}
+        ${rain}
         ${bars}
         ${values}
         ${labels}
+        ${rainAxis}
       </svg>
       ${r.note ? `<p class="note region-note">${esc(r.note)}</p>` : ""}
     </div>`;
@@ -311,7 +332,11 @@ function climateBlock(c) {
   const lo = Math.floor((Math.min(0, ...allMeans) - 2) / 5) * 5;
   const hi = Math.ceil((Math.max(0, ...allMeans) + 2) / 5) * 5;
 
-  const charts = valid.map((r) => regionChart(r, unit, lo, hi)).join("");
+  // Likewise a shared rainfall scale, rounded up to a tidy 50 mm.
+  const rainPeak = Math.max(0, ...valid.flatMap((r) => r.months.map((m) => m.rain || 0)));
+  const rainMax = rainPeak > 0 ? Math.ceil(rainPeak / 50) * 50 : 0;
+
+  const charts = valid.map((r) => regionChart(r, unit, lo, hi, rainMax)).join("");
 
   return `
     <section class="block" id="sec-climate">
@@ -321,7 +346,8 @@ function climateBlock(c) {
           <span><i class="sw" style="background:${RATINGS.best.color}"></i> ${RATINGS.best.label}</span>
           <span><i class="sw" style="background:${RATINGS.ok.color}"></i> ${RATINGS.ok.label}</span>
           <span><i class="sw" style="background:${RATINGS.avoid.color}"></i> ${RATINGS.avoid.label}</span>
-          <span class="unit">mean ${esc(unit)}</span>
+          ${rainMax > 0 ? `<span><i class="sw rain-sw"></i> Rainfall</span>` : ""}
+          <span class="unit">bars °C · rain mm</span>
         </div>
         ${charts}
         ${cl.note ? `<p class="note climate-note">${esc(cl.note)}</p>` : ""}
