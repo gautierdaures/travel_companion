@@ -57,7 +57,7 @@ export default {
     coords: [11.56, 104.92], // Phnom Penh — representative point for the fetch script
     key: "kh",
     best: [11, 12, 1, 2],
-    avoid: [4, 8, 9, 10],
+    avoid: [4, 5, 6, 7, 8, 9, 10],
     months: [
       { mean: 27, rain: 10 }, { mean: 28, rain: 10 }, { mean: 30, rain: 35 },
       { mean: 30, rain: 75 }, { mean: 29, rain: 120 }, { mean: 28, rain: 160 },

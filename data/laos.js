@@ -57,7 +57,7 @@ export default {
     coords: [17.97, 102.63], // Vientiane — representative point for the fetch script
     key: "la",
     best: [11, 12, 1, 2],
-    avoid: [4, 7, 8, 9],
+    avoid: [4, 5, 6, 7, 8, 9, 10],
     months: [
       { mean: 22, rain: 8 }, { mean: 24, rain: 15 }, { mean: 27, rain: 35 },
       { mean: 29, rain: 90 }, { mean: 28, rain: 230 }, { mean: 27, rain: 280 },

@@ -75,7 +75,7 @@ export default {
         key: "cn-south",
         note: "Subtropical and humid. Summers are hot, wet and prone to typhoons; winters stay mild.",
         best: [10, 11, 12],
-        avoid: [6, 7, 8],
+        avoid: [4, 5, 6, 7, 8, 9],
         months: [
           { mean: 14, rain: 40 }, { mean: 16, rain: 60 }, { mean: 19, rain: 85 },
           { mean: 23, rain: 180 }, { mean: 26, rain: 285 }, { mean: 27, rain: 275 },

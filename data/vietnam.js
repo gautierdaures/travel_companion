@@ -57,7 +57,7 @@ export default {
     coords: [21.03, 105.85], // Hanoi — representative point for the fetch script
     key: "vn",
     best: [3, 4, 10, 11],
-    avoid: [6, 7],
+    avoid: [5, 6, 7, 8, 9],
     months: [
       { mean: 16, rain: 20 }, { mean: 18, rain: 30 }, { mean: 21, rain: 40 },
       { mean: 25, rain: 90 }, { mean: 27, rain: 190 }, { mean: 29, rain: 240 },
