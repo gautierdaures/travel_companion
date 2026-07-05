@@ -59,9 +59,9 @@ export default {
     best: [11, 12, 1, 2],
     avoid: [4, 8, 9, 10],
     months: [
-      { mean: 26 }, { mean: 28 }, { mean: 29 }, { mean: 30 },
-      { mean: 29 }, { mean: 29 }, { mean: 28 }, { mean: 28 },
-      { mean: 27 }, { mean: 27 }, { mean: 26 }, { mean: 26 },
+      { mean: 27 }, { mean: 28 }, { mean: 30 }, { mean: 30 },
+      { mean: 29 }, { mean: 28 }, { mean: 28 }, { mean: 28 },
+      { mean: 27 }, { mean: 27 }, { mean: 27 }, { mean: 26 },
     ],
   },
 

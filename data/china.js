@@ -63,9 +63,9 @@ export default {
         best: [4, 5, 9, 10],
         avoid: [1, 2, 12],
         months: [
-          { mean: -3 }, { mean: 0 }, { mean: 6 }, { mean: 14 },
-          { mean: 20 }, { mean: 25 }, { mean: 27 }, { mean: 26 },
-          { mean: 20 }, { mean: 14 }, { mean: 5 }, { mean: -1 },
+          { mean: -4 }, { mean: 0 }, { mean: 6 }, { mean: 14 },
+          { mean: 21 }, { mean: 26 }, { mean: 27 }, { mean: 25 },
+          { mean: 21 }, { mean: 13 }, { mean: 4 }, { mean: -2 },
         ],
       },
       {
@@ -76,9 +76,9 @@ export default {
         best: [10, 11, 12],
         avoid: [6, 7, 8],
         months: [
-          { mean: 15 }, { mean: 16 }, { mean: 19 }, { mean: 23 },
-          { mean: 27 }, { mean: 29 }, { mean: 30 }, { mean: 29 },
-          { mean: 28 }, { mean: 25 }, { mean: 21 }, { mean: 17 },
+          { mean: 14 }, { mean: 16 }, { mean: 19 }, { mean: 23 },
+          { mean: 26 }, { mean: 27 }, { mean: 28 }, { mean: 28 },
+          { mean: 27 }, { mean: 24 }, { mean: 20 }, { mean: 15 },
         ],
       },
       {
@@ -89,9 +89,9 @@ export default {
         best: [5, 6, 9, 10],
         avoid: [12, 1, 2],
         months: [
-          { mean: -2 }, { mean: 1 }, { mean: 5 }, { mean: 9 },
-          { mean: 12 }, { mean: 16 }, { mean: 15 }, { mean: 14 },
-          { mean: 12 }, { mean: 8 }, { mean: 2 }, { mean: -2 },
+          { mean: -5 }, { mean: -1 }, { mean: 2 }, { mean: 6 },
+          { mean: 11 }, { mean: 15 }, { mean: 15 }, { mean: 14 },
+          { mean: 12 }, { mean: 7 }, { mean: -1 }, { mean: -3 },
         ],
       },
     ],

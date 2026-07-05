@@ -60,8 +60,8 @@ export default {
     avoid: [4, 7, 8, 9],
     months: [
       { mean: 22 }, { mean: 24 }, { mean: 27 }, { mean: 29 },
-      { mean: 29 }, { mean: 28 }, { mean: 28 }, { mean: 27 },
-      { mean: 27 }, { mean: 27 }, { mean: 24 }, { mean: 22 },
+      { mean: 28 }, { mean: 27 }, { mean: 27 }, { mean: 26 },
+      { mean: 26 }, { mean: 26 }, { mean: 24 }, { mean: 22 },
     ],
   },
 

@@ -55,13 +55,31 @@ function targets() {
   return out;
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Open-Meteo's free tier rate-limits bursts, so back off and retry on 429/5xx,
+// honouring a Retry-After header when the server sends one.
+async function fetchJSON(url) {
+  const maxTries = 5;
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(url);
+    if (res.ok) return res.json();
+    const retryable = res.status === 429 || res.status >= 500;
+    if (!retryable || attempt === maxTries) {
+      throw new Error(`Open-Meteo ${res.status} ${res.statusText}`);
+    }
+    const hinted = Number(res.headers.get("retry-after"));
+    const wait = Number.isFinite(hinted) && hinted > 0 ? hinted * 1000 : 2000 * 2 ** (attempt - 1);
+    console.log(`    ${res.status}; retrying in ${Math.round(wait / 1000)}s (attempt ${attempt}/${maxTries - 1})…`);
+    await sleep(wait);
+  }
+}
+
 // Fetch daily means over the normal period and average them per calendar month.
 async function fetchMonthlyMeans([lat, lng]) {
   const url = `${ARCHIVE}?latitude=${lat}&longitude=${lng}` +
     `&start_date=${START}&end_date=${END}&daily=temperature_2m_mean&timezone=UTC`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Open-Meteo ${res.status} ${res.statusText} for ${lat},${lng}`);
-  const { daily } = await res.json();
+  const daily = (await fetchJSON(url)).daily;
   if (!daily?.time?.length) throw new Error(`no daily data returned for ${lat},${lng}`);
 
   const sum = Array(12).fill(0), n = Array(12).fill(0);
@@ -141,7 +159,9 @@ async function main() {
 
   console.log(`Fetching ${START}…${END} normals for ${all.length} regions from Open-Meteo…\n`);
   const means = new Map();
-  for (const t of all) {
+  for (let i = 0; i < all.length; i++) {
+    const t = all[i];
+    if (i > 0) await sleep(1500); // stay under the free-tier burst limit
     means.set(t.key, await fetchMonthlyMeans(t.coords));
     console.log(`  ${t.label.padEnd(38)} [${means.get(t.key).join(", ")}]`);
   }
