@@ -16,8 +16,14 @@
 //  USAGE (run where the internet is reachable — not the CI sandbox):
 //    node scripts/fetch-climate.mjs            # fetch + write the data files
 //    node scripts/fetch-climate.mjs --dry-run  # fetch + print, write nothing
+//    node scripts/fetch-climate.mjs --refresh  # ignore the cache, refetch all
 //    node scripts/fetch-climate.mjs --check    # no network: verify the
 //                                              #   read/rewrite roundtrip
+//
+//  The free API rate-limits these heavy multi-decade requests, so each
+//  successful region is cached in data/.climate-cache.json (git-ignored).
+//  If a run gets throttled part-way, just run it again — cached regions are
+//  skipped, so a couple of runs will complete the set.
 //
 //  Each region carries `coords: [lat, lng]` and a stable `key` in its data
 //  file; those drive the fetch and locate the `months` array to replace.
@@ -59,20 +65,21 @@ function targets() {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// Open-Meteo's free tier rate-limits bursts, so back off and retry on 429/5xx,
-// honouring a Retry-After header when the server sends one.
+// Open-Meteo's free tier rate-limits these heavy multi-decade requests, so back
+// off and retry on 429/5xx, honouring a Retry-After header when one is sent.
+// Waits climb toward a minute so a sustained per-minute limit has time to reset.
 async function fetchJSON(url) {
-  const maxTries = 5;
-  for (let attempt = 1; ; attempt++) {
+  const waits = [5, 10, 20, 40, 60, 60]; // seconds
+  for (let attempt = 0; ; attempt++) {
     const res = await fetch(url);
     if (res.ok) return res.json();
     const retryable = res.status === 429 || res.status >= 500;
-    if (!retryable || attempt === maxTries) {
+    if (!retryable || attempt >= waits.length) {
       throw new Error(`Open-Meteo ${res.status} ${res.statusText}`);
     }
     const hinted = Number(res.headers.get("retry-after"));
-    const wait = Number.isFinite(hinted) && hinted > 0 ? hinted * 1000 : 2000 * 2 ** (attempt - 1);
-    console.log(`    ${res.status}; retrying in ${Math.round(wait / 1000)}s (attempt ${attempt}/${maxTries - 1})…`);
+    const wait = (Number.isFinite(hinted) && hinted > 0 ? hinted : waits[attempt]) * 1000;
+    console.log(`    ${res.status}; retrying in ${Math.round(wait / 1000)}s (attempt ${attempt + 1}/${waits.length})…`);
     await sleep(wait);
   }
 }
@@ -167,26 +174,53 @@ async function main() {
     return;
   }
 
-  console.log(`Fetching ${START}…${END} normals for ${all.length} regions from Open-Meteo…\n`);
+  // Cache successful fetches so a throttled run can be resumed by re-running.
+  const CACHE = join(DATA_DIR, ".climate-cache.json");
+  const refresh = process.argv.includes("--refresh");
+  let cache = {};
+  if (!refresh) { try { cache = JSON.parse(await readFile(CACHE, "utf8")); } catch {} }
+
+  console.log(`Fetching ${START}…${END} normals for ${all.length} regions from Open-Meteo…`);
+  console.log(`(each success is cached in data/.climate-cache.json — re-run to resume)\n`);
   const data = new Map();
-  for (let i = 0; i < all.length; i++) {
-    const t = all[i];
-    if (i > 0) await sleep(1500); // stay under the free-tier burst limit
-    const months = await fetchMonthly(t.coords);
-    data.set(t.key, months);
-    console.log(`  ${t.label}`);
-    console.log(`    temp [${months.map((x) => x.mean).join(", ")}]`);
-    console.log(`    rain [${months.map((x) => x.rain).join(", ")}]`);
+  const missing = [];
+  let fetched = 0;
+  for (const t of all) {
+    if (cache[t.key]) { data.set(t.key, cache[t.key]); console.log(`  ${t.label} — cached`); continue; }
+    try {
+      if (fetched > 0) await sleep(3000); // ease off the burst limit
+      const months = await fetchMonthly(t.coords);
+      fetched++;
+      data.set(t.key, months);
+      cache[t.key] = months;
+      await writeFile(CACHE, JSON.stringify(cache));
+      console.log(`  ${t.label}`);
+      console.log(`    temp [${months.map((x) => x.mean).join(", ")}]`);
+      console.log(`    rain [${months.map((x) => x.rain).join(", ")}]`);
+    } catch (e) {
+      missing.push(t.label);
+      console.log(`  ${t.label} — ${e.message} (will fetch on next run)`);
+    }
   }
 
-  if (mode === "dry") { console.log("\n--dry-run: no files written."); return; }
+  if (mode === "dry") {
+    console.log("\n--dry-run: no data files written.");
+  } else {
+    for (const [file, ts] of byFile) {
+      const toWrite = ts.filter((t) => data.has(t.key));
+      if (!toWrite.length) continue;
+      const path = join(DATA_DIR, file);
+      let src = await readFile(path, "utf8");
+      for (const t of toWrite) src = replaceMonths(src, t.key, data.get(t.key));
+      await writeFile(path, src);
+      console.log(`\nwrote ${file} (${toWrite.length} region${toWrite.length > 1 ? "s" : ""})`);
+    }
+  }
 
-  for (const [file, ts] of byFile) {
-    const path = join(DATA_DIR, file);
-    let src = await readFile(path, "utf8");
-    for (const t of ts) src = replaceMonths(src, t.key, data.get(t.key));
-    await writeFile(path, src);
-    console.log(`\nwrote ${file}`);
+  if (missing.length) {
+    console.log(`\n${missing.length} region(s) still rate-limited: ${missing.join(", ")}`);
+    console.log("Re-run the script to fetch the rest — cached regions are skipped.");
+    process.exit(mode === "dry" ? 0 : 1);
   }
   console.log("\nDone. Review the diff, re-check the best/avoid ratings, and commit.");
 }
