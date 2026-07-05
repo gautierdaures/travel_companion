@@ -53,22 +53,41 @@ export default {
 
   climate: {
     unit: "°C",
-    note: "Figures are for Beijing / the north. The south (Guangzhou, Hong Kong) is subtropical and humid, and the far west and Tibet are high and dry — check your specific region.",
-    best: [4, 5, 9, 10],
-    avoid: [1, 2, 12],
-    months: [
-      { min: -8, max: 2, mean: -3 },
-      { min: -6, max: 5, mean: 0 },
-      { min: 0, max: 12, mean: 6 },
-      { min: 8, max: 20, mean: 14 },
-      { min: 14, max: 26, mean: 20 },
-      { min: 19, max: 30, mean: 25 },
-      { min: 22, max: 31, mean: 27 },
-      { min: 21, max: 30, mean: 26 },
-      { min: 15, max: 26, mean: 20 },
-      { min: 8, max: 19, mean: 14 },
-      { min: 0, max: 10, mean: 5 },
-      { min: -6, max: 4, mean: -1 },
+    note: "China spans several climate zones — choose the chart nearest your route.",
+    regions: [
+      {
+        name: "Beijing & the north",
+        note: "Continental: freezing, dry winters and hot summers. Spring and autumn are short and pleasant.",
+        best: [4, 5, 9, 10],
+        avoid: [1, 2, 12],
+        months: [
+          { mean: -3 }, { mean: 0 }, { mean: 6 }, { mean: 14 },
+          { mean: 20 }, { mean: 25 }, { mean: 27 }, { mean: 26 },
+          { mean: 20 }, { mean: 14 }, { mean: 5 }, { mean: -1 },
+        ],
+      },
+      {
+        name: "The south · Guangzhou & Hong Kong",
+        note: "Subtropical and humid. Summers are hot, wet and prone to typhoons; winters stay mild.",
+        best: [10, 11, 12],
+        avoid: [6, 7, 8],
+        months: [
+          { mean: 15 }, { mean: 16 }, { mean: 19 }, { mean: 23 },
+          { mean: 27 }, { mean: 29 }, { mean: 30 }, { mean: 29 },
+          { mean: 28 }, { mean: 25 }, { mean: 21 }, { mean: 17 },
+        ],
+      },
+      {
+        name: "Tibet & the far west · Lhasa",
+        note: "High and dry: brilliant sunny days but cold nights and thin air. Deep winter is harsh.",
+        best: [5, 6, 9, 10],
+        avoid: [12, 1, 2],
+        months: [
+          { mean: -2 }, { mean: 1 }, { mean: 5 }, { mean: 9 },
+          { mean: 12 }, { mean: 16 }, { mean: 15 }, { mean: 14 },
+          { mean: 12 }, { mean: 8 }, { mean: 2 }, { mean: -2 },
+        ],
+      },
     ],
   },
 

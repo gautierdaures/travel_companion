@@ -31,12 +31,15 @@
 //
 //    climate: {
 //      unit: "°C",                        // temperature unit shown on the chart
-//      note: "regional caveat / seasons", // country too big for one number? say so
+//      note: "regional caveat / seasons", // optional line under the chart(s)
 //      best:  [4, 5, 9, 10],              // ideal months (1–12) → green bars
 //      avoid: [1, 2, 12],                 // months to steer around → red bars
 //                                         //   (any month not listed = orange / acceptable)
 //      months: [ { mean }, ... ]          // 12 entries Jan→Dec, avg daily °C (mean shown)
 //    },
+//      // Big country with several climates? Drop best/avoid/months and give
+//      // `regions` instead — one titled chart each, on a shared axis:
+//      // regions: [ { name, note?, best, avoid, months: [{mean},…] }, … ]
 //
 //    events: [ { name, when, months, kind, description }, ... ]
 //      when   = human label, e.g. "Late Jan – mid Feb"

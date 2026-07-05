@@ -230,18 +230,11 @@ function bestMonthsLabel(best = []) {
     .join(" · ");
 }
 
-function climateBlock(c) {
-  const cl = c.climate;
-  if (!cl || !cl.months || cl.months.length !== 12) return "";
-  const unit = cl.unit || "°C";
-  const M = cl.months;
-  const means = M.map((m) => m.mean);
-  const ratings = M.map((_, i) => monthRating(cl, i + 1));
-
-  // Temperature scale from the means only, padded to tidy multiples of 5.
-  // Always keep the zero line in view so bars read against a common baseline.
-  const lo = Math.floor((Math.min(0, ...means) - 2) / 5) * 5;
-  const hi = Math.ceil((Math.max(0, ...means) + 2) / 5) * 5;
+// One region's chart: title (if named), best-months line, SVG, and note.
+// The lo/hi scale is passed in so sibling regions share a comparable axis.
+function regionChart(r, unit, lo, hi) {
+  const M = r.months;
+  const ratings = M.map((_, i) => monthRating(r, i + 1));
 
   const W = 680, H = 300, padL = 34, padR = 12, padT = 22, padB = 40;
   const plotW = W - padL - padR, plotH = H - padT - padB;
@@ -281,27 +274,56 @@ function climateBlock(c) {
     `<text class="month-label" x="${cx(i).toFixed(1)}" y="${H - 14}" style="fill:${RATINGS[ratings[i]].color}">${MONTHS[i][0]}</text>`
   ).join("");
 
-  const bestLabel = bestMonthsLabel(cl.best);
+  const bestLabel = bestMonthsLabel(r.best);
+  const title = r.name ? `Mean monthly temperatures in ${esc(r.name)}` : "Mean monthly temperatures";
+
+  return `
+    <div class="climate-region">
+      ${r.name ? `<h3 class="region-name">📍 ${esc(r.name)}</h3>` : ""}
+      ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
+      <svg class="climate-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+           xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="${title} in ${esc(unit)}, coloured by how good each month is to visit">
+        ${grid}
+        ${bars}
+        ${values}
+        ${labels}
+      </svg>
+      ${r.note ? `<p class="note region-note">${esc(r.note)}</p>` : ""}
+    </div>`;
+}
+
+function climateBlock(c) {
+  const cl = c.climate;
+  if (!cl) return "";
+  const unit = cl.unit || "°C";
+
+  // A country is either one implicit region (best/avoid/months on the climate
+  // object) or several named ones under `regions` — e.g. China, Russia.
+  const regions = (cl.regions && cl.regions.length)
+    ? cl.regions
+    : [{ name: null, best: cl.best, avoid: cl.avoid, months: cl.months }];
+  const valid = regions.filter((r) => r.months && r.months.length === 12);
+  if (!valid.length) return "";
+
+  // Share one temperature scale across every region so charts read side by side.
+  const allMeans = valid.flatMap((r) => r.months.map((m) => m.mean));
+  const lo = Math.floor((Math.min(0, ...allMeans) - 2) / 5) * 5;
+  const hi = Math.ceil((Math.max(0, ...allMeans) + 2) / 5) * 5;
+
+  const charts = valid.map((r) => regionChart(r, unit, lo, hi)).join("");
 
   return `
     <section class="block" id="sec-climate">
       <h2>When to go · weather</h2>
-      <div class="panel climate-panel">
-        ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
-        <svg class="climate-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
-             xmlns="http://www.w3.org/2000/svg" role="img"
-             aria-label="Mean monthly temperatures in ${esc(unit)}, coloured by how good each month is to visit">
-          ${grid}
-          ${bars}
-          ${values}
-          ${labels}
-        </svg>
-        <div class="climate-legend">
+      <div class="panel climate-panel${valid.length > 1 ? " multi" : ""}">
+        <div class="climate-legend legend-key">
           <span><i class="sw" style="background:${RATINGS.best.color}"></i> ${RATINGS.best.label}</span>
           <span><i class="sw" style="background:${RATINGS.ok.color}"></i> ${RATINGS.ok.label}</span>
           <span><i class="sw" style="background:${RATINGS.avoid.color}"></i> ${RATINGS.avoid.label}</span>
           <span class="unit">mean ${esc(unit)}</span>
         </div>
+        ${charts}
         ${cl.note ? `<p class="note climate-note">${esc(cl.note)}</p>` : ""}
       </div>
     </section>`;

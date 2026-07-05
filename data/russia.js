@@ -53,22 +53,41 @@ export default {
 
   climate: {
     unit: "°C",
-    note: "Figures are for Moscow / European Russia. Siberia runs far colder in winter, while the Black Sea coast around Sochi is mild year-round.",
-    best: [5, 6, 7, 8, 9],
-    avoid: [12, 1, 2],
-    months: [
-      { min: -9, max: -4, mean: -6 },
-      { min: -10, max: -4, mean: -7 },
-      { min: -4, max: 2, mean: -1 },
-      { min: 2, max: 11, mean: 6 },
-      { min: 8, max: 19, mean: 13 },
-      { min: 12, max: 22, mean: 17 },
-      { min: 14, max: 24, mean: 19 },
-      { min: 12, max: 22, mean: 17 },
-      { min: 7, max: 15, mean: 11 },
-      { min: 2, max: 8, mean: 5 },
-      { min: -3, max: 1, mean: -1 },
-      { min: -8, max: -3, mean: -5 },
+    note: "Russia is vast — winters vary enormously from the mild Black Sea coast to Siberia.",
+    regions: [
+      {
+        name: "Moscow & European Russia",
+        note: "Cold, snowy winters and warm, lively summers. The white-nights weeks of June are the highlight.",
+        best: [5, 6, 7, 8, 9],
+        avoid: [12, 1, 2],
+        months: [
+          { mean: -6 }, { mean: -7 }, { mean: -1 }, { mean: 6 },
+          { mean: 13 }, { mean: 17 }, { mean: 19 }, { mean: 17 },
+          { mean: 11 }, { mean: 5 }, { mean: -1 }, { mean: -5 },
+        ],
+      },
+      {
+        name: "Siberia · Novosibirsk & Irkutsk",
+        note: "Brutally cold for half the year; a short, warm summer is the only comfortable window.",
+        best: [6, 7, 8],
+        avoid: [11, 12, 1, 2, 3],
+        months: [
+          { mean: -16 }, { mean: -14 }, { mean: -7 }, { mean: 3 },
+          { mean: 11 }, { mean: 17 }, { mean: 19 }, { mean: 16 },
+          { mean: 10 }, { mean: 2 }, { mean: -7 }, { mean: -14 },
+        ],
+      },
+      {
+        name: "Black Sea coast · Sochi",
+        note: "Humid subtropical and mild all year; summer is peak beach season, winters rarely freeze.",
+        best: [6, 7, 8, 9],
+        avoid: [],
+        months: [
+          { mean: 6 }, { mean: 6 }, { mean: 8 }, { mean: 12 },
+          { mean: 16 }, { mean: 20 }, { mean: 23 }, { mean: 24 },
+          { mean: 20 }, { mean: 16 }, { mean: 12 }, { mean: 8 },
+        ],
+      },
     ],
   },
 
