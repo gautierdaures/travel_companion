@@ -53,21 +53,50 @@ export default {
 
   climate: {
     unit: "°C",
-    note: "Figures are for Beijing / the north. The south (Guangzhou, Hong Kong) is subtropical and humid, and the far west and Tibet are high and dry — check your specific region.",
-    best: [4, 5, 9, 10],
-    months: [
-      { min: -8, max: 2, mean: -3 },
-      { min: -6, max: 5, mean: 0 },
-      { min: 0, max: 12, mean: 6 },
-      { min: 8, max: 20, mean: 14 },
-      { min: 14, max: 26, mean: 20 },
-      { min: 19, max: 30, mean: 25 },
-      { min: 22, max: 31, mean: 27 },
-      { min: 21, max: 30, mean: 26 },
-      { min: 15, max: 26, mean: 20 },
-      { min: 8, max: 19, mean: 14 },
-      { min: 0, max: 10, mean: 5 },
-      { min: -6, max: 4, mean: -1 },
+    note: "China spans several climate zones — choose the chart nearest your route.",
+    regions: [
+      {
+        name: "Beijing & the north",
+        coords: [39.90, 116.41], // Beijing
+        key: "cn-north",
+        note: "Continental: freezing, dry winters and hot summers. Spring and autumn are short and pleasant.",
+        best: [4, 5, 9, 10],
+        avoid: [1, 2, 12],
+        months: [
+          { mean: -4, rain: 3 }, { mean: 0, rain: 5 }, { mean: 6, rain: 9 },
+          { mean: 14, rain: 19 }, { mean: 21, rain: 35 }, { mean: 26, rain: 76 },
+          { mean: 27, rain: 166 }, { mean: 25, rain: 125 }, { mean: 21, rain: 56 },
+          { mean: 13, rain: 33 }, { mean: 4, rain: 15 }, { mean: -2, rain: 3 },
+        ],
+      },
+      {
+        name: "The south · Guangzhou & Hong Kong",
+        coords: [23.13, 113.26], // Guangzhou
+        key: "cn-south",
+        note: "Subtropical and humid. Summers are hot, wet and prone to typhoons; winters stay mild.",
+        best: [10, 11, 12],
+        avoid: [4, 5, 6, 7, 8, 9],
+        months: [
+          { mean: 14, rain: 48 }, { mean: 16, rain: 64 }, { mean: 19, rain: 140 },
+          { mean: 23, rain: 230 }, { mean: 26, rain: 332 }, { mean: 27, rain: 388 },
+          { mean: 28, rain: 260 }, { mean: 28, rain: 295 }, { mean: 27, rain: 178 },
+          { mean: 24, rain: 61 }, { mean: 20, rain: 39 }, { mean: 15, rain: 40 },
+        ],
+      },
+      {
+        name: "Tibet & the far west · Lhasa",
+        coords: [29.65, 91.14], // Lhasa
+        key: "cn-tibet",
+        note: "High and dry: brilliant sunny days but cold nights and thin air. Deep winter is harsh.",
+        best: [5, 6, 9, 10],
+        avoid: [12, 1, 2],
+        months: [
+          { mean: -5, rain: 4 }, { mean: -1, rain: 4 }, { mean: 2, rain: 11 },
+          { mean: 6, rain: 22 }, { mean: 11, rain: 41 }, { mean: 15, rain: 68 },
+          { mean: 15, rain: 124 }, { mean: 14, rain: 117 }, { mean: 12, rain: 56 },
+          { mean: 7, rain: 25 }, { mean: -1, rain: 6 }, { mean: -3, rain: 3 },
+        ],
+      },
     ],
   },
 

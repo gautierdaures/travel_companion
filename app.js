@@ -191,13 +191,19 @@ function placesBlock(c) {
 }
 
 /* ── Weather (monthly temperature chart) ───────────────────────────────── */
-// Colour a bar by its mean temperature — cold blue → hot red.
-function tempColor(t) {
-  if (t <= 0) return "#6aa8e0";
-  if (t <= 10) return "#56c4c4";
-  if (t <= 20) return "#7ac77a";
-  if (t <= 27) return "#f2a65a";
-  return "#ff7a7a";
+// A month is rated by how good it is to visit, not by how hot it is:
+//   best → green, acceptable → orange, avoid → red.
+const RATINGS = {
+  best:   { color: "#3fbf6a", tint: "rgba(63,191,106,0.15)",  label: "Best" },
+  ok:     { color: "#f2a53c", tint: "rgba(242,165,60,0.15)",  label: "Acceptable" },
+  avoid:  { color: "#ec5a5a", tint: "rgba(236,90,90,0.15)",   label: "Avoid" },
+};
+
+// Look up a month's rating (1–12). Anything not flagged best/avoid is acceptable.
+function monthRating(cl, month) {
+  if ((cl.best || []).includes(month)) return "best";
+  if ((cl.avoid || []).includes(month)) return "avoid";
+  return "ok";
 }
 
 // Turn [11,12,1,2] into "Nov–Feb"; handles wrap-around and gaps.
@@ -224,80 +230,66 @@ function bestMonthsLabel(best = []) {
     .join(" · ");
 }
 
-function climateBlock(c) {
-  const cl = c.climate;
-  if (!cl || !cl.months || cl.months.length !== 12) return "";
-  const unit = cl.unit || "°C";
-  const best = new Set(cl.best || []);
-  const M = cl.months;
+// One region as a 12-month strip: each month is a tile tinted by its rating,
+// showing the mean temperature and (when present) rainfall as a value with a
+// droplet that fades on dry months. rainMax is shared so droplets compare.
+function regionChart(r, rainMax) {
+  const M = r.months;
 
-  // Temperature scale, padded out to tidy multiples of 5.
-  const lo = Math.floor((Math.min(...M.map((m) => m.min)) - 2) / 5) * 5;
-  const hi = Math.ceil((Math.max(...M.map((m) => m.max)) + 2) / 5) * 5;
-
-  const W = 680, H = 300, padL = 34, padR = 12, padT = 14, padB = 40;
-  const plotW = W - padL - padR, plotH = H - padT - padB;
-  const slot = plotW / 12, barW = slot * 0.5;
-  const y = (t) => padT + (plotH * (hi - t)) / (hi - lo);
-  const cx = (i) => padL + slot * (i + 0.5);
-
-  // Horizontal gridlines + axis labels every 10° (5° for a tight range).
-  const step = hi - lo > 25 ? 10 : 5;
-  let grid = "";
-  for (let t = lo; t <= hi; t += step) {
-    const yt = y(t);
-    const zero = t === 0;
-    grid += `<line class="grid-line${zero ? " zero" : ""}" x1="${padL}" y1="${yt.toFixed(1)}" x2="${W - padR}" y2="${yt.toFixed(1)}"></line>
-      <text class="grid-label" x="${padL - 6}" y="${(yt + 4).toFixed(1)}">${t}</text>`;
-  }
-
-  // Faint highlight band behind the best months.
-  let bands = "";
-  M.forEach((_, i) => {
-    if (best.has(i + 1))
-      bands += `<rect class="best-band" x="${(cx(i) - slot / 2).toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${plotH}"></rect>`;
-  });
-
-  // Min→max bars, coloured by the monthly mean.
-  const bars = M.map((m, i) => {
-    const top = y(m.max), bot = y(m.min);
-    return `<rect class="temp-bar" x="${(cx(i) - barW / 2).toFixed(1)}" y="${top.toFixed(1)}"
-      width="${barW.toFixed(1)}" height="${Math.max(2, bot - top).toFixed(1)}" rx="5"
-      style="fill:${tempColor(m.mean)}"></rect>`;
+  const cells = M.map((m, i) => {
+    const rt = RATINGS[monthRating(r, i + 1)];
+    const hasRain = m.rain != null && rainMax > 0;
+    const op = hasRain ? (0.3 + 0.7 * Math.min(1, m.rain / rainMax)).toFixed(2) : 1;
+    return `
+      <div class="month-cell" style="--r:${rt.color};background:${rt.tint}">
+        <div class="mc-name">${MONTHS[i]}</div>
+        <div class="mc-temp"><span class="mc-avg">avg</span>${Math.round(m.mean)}°</div>
+        ${m.rain != null ? `<div class="mc-rain"><span class="mc-drop" style="opacity:${op}">💧</span>${m.rain}</div>` : ""}
+      </div>`;
   }).join("");
 
-  // Mean line + dots on top of the bars.
-  const meanPts = M.map((m, i) => `${cx(i).toFixed(1)},${y(m.mean).toFixed(1)}`).join(" ");
-  const meanDots = M.map((m, i) => `<circle class="mean-dot" cx="${cx(i).toFixed(1)}" cy="${y(m.mean).toFixed(1)}" r="3"></circle>`).join("");
+  const bestLabel = bestMonthsLabel(r.best);
 
-  // Month labels along the bottom (best months in accent).
-  const labels = M.map((_, i) =>
-    `<text class="month-label${best.has(i + 1) ? " best" : ""}" x="${cx(i).toFixed(1)}" y="${H - 14}">${MONTHS[i][0]}</text>`
-  ).join("");
+  return `
+    <div class="climate-region">
+      ${r.name ? `<h3 class="region-name">📍 ${esc(r.name)}</h3>` : ""}
+      ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
+      <div class="month-grid">${cells}</div>
+      ${r.note ? `<p class="note region-note">${esc(r.note)}</p>` : ""}
+    </div>`;
+}
 
-  const bestLabel = bestMonthsLabel(cl.best);
+function climateBlock(c) {
+  const cl = c.climate;
+  if (!cl) return "";
+  const unit = cl.unit || "°C";
+
+  // A country is either one implicit region (best/avoid/months on the climate
+  // object) or several named ones under `regions` — e.g. China, Russia.
+  const regions = (cl.regions && cl.regions.length)
+    ? cl.regions
+    : [{ name: null, best: cl.best, avoid: cl.avoid, months: cl.months }];
+  const valid = regions.filter((r) => r.months && r.months.length === 12);
+  if (!valid.length) return "";
+
+  // A rainfall scale shared across regions so the droplet strength compares.
+  const rainPeak = Math.max(0, ...valid.flatMap((r) => r.months.map((m) => m.rain || 0)));
+  const rainMax = rainPeak > 0 ? Math.ceil(rainPeak / 50) * 50 : 0;
+
+  const charts = valid.map((r) => regionChart(r, rainMax)).join("");
 
   return `
     <section class="block" id="sec-climate">
       <h2>When to go · weather</h2>
-      <div class="panel climate-panel">
-        ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
-        <svg class="climate-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
-             xmlns="http://www.w3.org/2000/svg" role="img"
-             aria-label="Average monthly temperatures in ${esc(unit)}">
-          ${grid}
-          ${bands}
-          ${bars}
-          <polyline class="mean-line" points="${meanPts}"></polyline>
-          ${meanDots}
-          ${labels}
-        </svg>
-        <div class="climate-legend">
-          <span><i class="sw-bar"></i> daily low → high</span>
-          <span><i class="sw-line"></i> average</span>
-          <span><i class="sw-best"></i> best months</span>
-          <span class="unit">${esc(unit)}</span>
+      <div class="panel climate-panel${valid.length > 1 ? " multi" : ""}">
+        <div class="climate-legend legend-key">
+          <span><i class="sw" style="background:${RATINGS.best.color}"></i> ${RATINGS.best.label}</span>
+          <span><i class="sw" style="background:${RATINGS.ok.color}"></i> ${RATINGS.ok.label}</span>
+          <span><i class="sw" style="background:${RATINGS.avoid.color}"></i> ${RATINGS.avoid.label}</span>
+          ${rainMax > 0 ? `<span><span class="rain-key">💧</span> Rainfall (mm)</span>` : ""}
+          <span class="unit">avg temp ${esc(unit)} · rain mm</span>
         </div>
+        ${charts}
         ${cl.note ? `<p class="note climate-note">${esc(cl.note)}</p>` : ""}
       </div>
     </section>`;

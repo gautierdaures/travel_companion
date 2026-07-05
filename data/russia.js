@@ -53,21 +53,50 @@ export default {
 
   climate: {
     unit: "°C",
-    note: "Figures are for Moscow / European Russia. Siberia runs far colder in winter, while the Black Sea coast around Sochi is mild year-round.",
-    best: [5, 6, 7, 8, 9],
-    months: [
-      { min: -9, max: -4, mean: -6 },
-      { min: -10, max: -4, mean: -7 },
-      { min: -4, max: 2, mean: -1 },
-      { min: 2, max: 11, mean: 6 },
-      { min: 8, max: 19, mean: 13 },
-      { min: 12, max: 22, mean: 17 },
-      { min: 14, max: 24, mean: 19 },
-      { min: 12, max: 22, mean: 17 },
-      { min: 7, max: 15, mean: 11 },
-      { min: 2, max: 8, mean: 5 },
-      { min: -3, max: 1, mean: -1 },
-      { min: -8, max: -3, mean: -5 },
+    note: "Russia is vast — winters vary enormously from the mild Black Sea coast to Siberia.",
+    regions: [
+      {
+        name: "Moscow & European Russia",
+        coords: [55.75, 37.62], // Moscow
+        key: "ru-moscow",
+        note: "Cold, snowy winters and warm, lively summers. The white-nights weeks of June are the highlight.",
+        best: [5, 6, 7, 8, 9],
+        avoid: [12, 1, 2],
+        months: [
+          { mean: -7, rain: 36 }, { mean: -7, rain: 32 }, { mean: -3, rain: 33 },
+          { mean: 5, rain: 36 }, { mean: 13, rain: 58 }, { mean: 17, rain: 71 },
+          { mean: 19, rain: 76 }, { mean: 18, rain: 66 }, { mean: 12, rain: 57 },
+          { mean: 6, rain: 58 }, { mean: -1, rain: 44 }, { mean: -5, rain: 38 },
+        ],
+      },
+      {
+        name: "Siberia · Novosibirsk & Irkutsk",
+        coords: [55.03, 82.92], // Novosibirsk
+        key: "ru-siberia",
+        note: "Brutally cold for half the year; a short, warm summer is the only comfortable window.",
+        best: [6, 7, 8],
+        avoid: [11, 12, 1, 2, 3],
+        months: [
+          { mean: -17, rain: 27 }, { mean: -14, rain: 20 }, { mean: -7, rain: 26 },
+          { mean: 3, rain: 31 }, { mean: 11, rain: 42 }, { mean: 17, rain: 55 },
+          { mean: 19, rain: 70 }, { mean: 17, rain: 55 }, { mean: 10, rain: 49 },
+          { mean: 3, rain: 49 }, { mean: -7, rain: 46 }, { mean: -14, rain: 41 },
+        ],
+      },
+      {
+        name: "Black Sea coast · Sochi",
+        coords: [43.60, 39.73], // Sochi
+        key: "ru-sochi",
+        note: "Humid subtropical and mild all year; summer is peak beach season, winters rarely freeze.",
+        best: [6, 7, 8, 9],
+        avoid: [],
+        months: [
+          { mean: 5, rain: 148 }, { mean: 5, rain: 111 }, { mean: 7, rain: 114 },
+          { mean: 12, rain: 89 }, { mean: 17, rain: 89 }, { mean: 21, rain: 81 },
+          { mean: 23, rain: 84 }, { mean: 24, rain: 70 }, { mean: 20, rain: 111 },
+          { mean: 16, rain: 138 }, { mean: 11, rain: 132 }, { mean: 7, rain: 148 },
+        ],
+      },
     ],
   },
 

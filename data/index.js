@@ -31,10 +31,23 @@
 //
 //    climate: {
 //      unit: "°C",                        // temperature unit shown on the chart
-//      note: "regional caveat / seasons", // country too big for one number? say so
-//      best: [4, 5, 9, 10],               // month numbers (1–12) that are ideal
-//      months: [ { min, max, mean }, ... ] // 12 entries Jan→Dec, avg daily °C
+//      note: "regional caveat / seasons", // optional line under the chart(s)
+//      coords: [lat, lng],                // representative city (for the fetch script)
+//      key: "jp",                         // stable id (for the fetch script)
+//      best:  [4, 5, 9, 10],              // ideal months (1–12) → green bars
+//      avoid: [1, 2, 12],                 // months to steer around → red bars
+//                                         //   (any month not listed = orange / acceptable)
+//      months: [ { mean, rain }, ... ]    // 12 entries Jan→Dec: avg daily °C
+//                                         //   + avg monthly rainfall (mm)
 //    },
+//      // Big country with several climates? Drop best/avoid/months and give
+//      // `regions` instead — one titled chart each, on a shared axis:
+//      // regions: [ { name, coords, key, note?, best, avoid, months: [{mean,rain},…] }, … ]
+//
+//      // `months` numbers come from real climate normals — refresh them with
+//      //   `node scripts/fetch-climate.mjs` (Open-Meteo, uses coords + key).
+//      //   best/avoid stay hand-set; the chart shows temperature (bars) and
+//      //   rainfall (blue) so the colour of each month makes sense at a glance.
 //
 //    events: [ { name, when, months, kind, description }, ... ]
 //      when   = human label, e.g. "Late Jan – mid Feb"

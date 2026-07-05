@@ -214,57 +214,83 @@ section.block > h2 {
   margin-bottom: 10px;
 }
 .best-line strong { color: var(--accent); }
-.climate-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-  background: #0b1220;
-  border-radius: 12px;
+
+/* A year as a 12-month strip: each month a tile tinted by its rating,
+   showing mean temperature and rainfall — no bars, no axes. */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 5px;
+}
+.month-cell {
   border: 1px solid var(--border);
+  border-top: 3px solid var(--r);
+  border-radius: 9px;
+  padding: 7px 2px 8px;
+  text-align: center;
 }
-.grid-line { stroke: var(--border); stroke-width: 1; }
-.grid-line.zero { stroke: #547089; stroke-width: 1.5; stroke-dasharray: 4 4; }
-.grid-label {
-  fill: var(--text-dim);
-  font: 500 13px -apple-system, BlinkMacSystemFont, sans-serif;
-  text-anchor: end;
+.mc-name { font-size: 12px; font-weight: 700; color: var(--r); }
+.mc-temp {
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 4px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
-.best-band { fill: rgba(242, 166, 90, 0.13); }
-.temp-bar { opacity: 0.92; }
-.mean-line {
-  fill: none;
-  stroke: #f4f7fb;
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  opacity: 0.85;
+.mc-avg {
+  display: block;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
 }
-.mean-dot { fill: #f4f7fb; }
-.month-label {
-  fill: var(--text-dim);
-  font: 600 15px -apple-system, BlinkMacSystemFont, sans-serif;
-  text-anchor: middle;
+.mc-rain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6aa8e0;
+  font-variant-numeric: tabular-nums;
 }
-.month-label.best { fill: var(--accent); }
+.mc-drop { font-size: 10px; }
+@media (max-width: 600px) {
+  .month-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .mc-temp { font-size: 16px; }
+}
 .climate-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 16px;
   align-items: center;
-  margin-top: 12px;
   font-size: 12.5px;
   color: var(--text-dim);
 }
 .climate-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .climate-legend .unit { margin-left: auto; font-weight: 600; }
 .climate-legend i { display: inline-block; }
-.sw-bar {
-  width: 12px; height: 12px; border-radius: 3px;
-  background: linear-gradient(#ff7a7a, #6aa8e0);
+.climate-legend .sw { width: 12px; height: 12px; border-radius: 3px; }
+.climate-legend .rain-key { font-size: 13px; line-height: 1; }
+/* Colour key sits once at the top of the section, above the region charts. */
+.climate-legend.legend-key { margin-bottom: 14px; }
+
+/* Each region: a titled chart. Multi-region countries get dividers between. */
+.region-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--text);
 }
-.sw-line { width: 16px; height: 0; border-top: 2px solid #f4f7fb; }
-.sw-best { width: 12px; height: 12px; border-radius: 3px; background: rgba(242, 166, 90, 0.35); }
-.climate-note { margin-top: 12px; }
+.region-note { margin-top: 8px; }
+.climate-panel.multi .climate-region + .climate-region {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.climate-note { margin-top: 14px; }
 
 /* ── Events ────────────────────────────────────────────────────────────── */
 .event {

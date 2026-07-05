@@ -54,20 +54,15 @@ export default {
   climate: {
     unit: "°C",
     note: "Figures are for Vientiane / the Mekong lowlands. Three seasons: cool-dry (Nov–Feb), hot (Mar–May), and wet (Jun–Oct). Northern mountains like Luang Prabang are noticeably cooler at night.",
+    coords: [17.97, 102.63], // Vientiane — representative point for the fetch script
+    key: "la",
     best: [11, 12, 1, 2],
+    avoid: [4, 5, 6, 7, 8, 9, 10],
     months: [
-      { min: 17, max: 28, mean: 22 },
-      { min: 19, max: 30, mean: 24 },
-      { min: 22, max: 33, mean: 27 },
-      { min: 24, max: 34, mean: 29 },
-      { min: 25, max: 33, mean: 29 },
-      { min: 25, max: 32, mean: 28 },
-      { min: 25, max: 31, mean: 28 },
-      { min: 24, max: 31, mean: 27 },
-      { min: 24, max: 31, mean: 27 },
-      { min: 23, max: 31, mean: 27 },
-      { min: 20, max: 29, mean: 24 },
-      { min: 17, max: 28, mean: 22 },
+      { mean: 22, rain: 10 }, { mean: 24, rain: 14 }, { mean: 27, rain: 34 },
+      { mean: 29, rain: 68 }, { mean: 28, rain: 242 }, { mean: 27, rain: 310 },
+      { mean: 27, rain: 377 }, { mean: 26, rain: 415 }, { mean: 26, rain: 303 },
+      { mean: 26, rain: 93 }, { mean: 24, rain: 19 }, { mean: 22, rain: 8 },
     ],
   },
 

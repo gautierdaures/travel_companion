@@ -54,20 +54,15 @@ export default {
   climate: {
     unit: "°C",
     note: "Figures are for Hanoi / the north, which has a cool winter. The centre (Huế, Đà Nẵng) floods Sep–Nov, and the south (Saigon, Mekong) is hot year-round with a wet season May–Oct.",
+    coords: [21.03, 105.85], // Hanoi — representative point for the fetch script
+    key: "vn",
     best: [3, 4, 10, 11],
+    avoid: [5, 6, 7, 8, 9],
     months: [
-      { min: 14, max: 20, mean: 17 },
-      { min: 15, max: 21, mean: 18 },
-      { min: 18, max: 23, mean: 21 },
-      { min: 21, max: 28, mean: 24 },
-      { min: 24, max: 32, mean: 28 },
-      { min: 26, max: 33, mean: 30 },
-      { min: 26, max: 33, mean: 30 },
-      { min: 26, max: 32, mean: 29 },
-      { min: 24, max: 31, mean: 27 },
-      { min: 22, max: 29, mean: 25 },
-      { min: 18, max: 26, mean: 22 },
-      { min: 15, max: 22, mean: 18 },
+      { mean: 16, rain: 41 }, { mean: 18, rain: 28 }, { mean: 21, rain: 58 },
+      { mean: 25, rain: 102 }, { mean: 27, rain: 230 }, { mean: 29, rain: 228 },
+      { mean: 29, rain: 267 }, { mean: 28, rain: 320 }, { mean: 27, rain: 242 },
+      { mean: 24, rain: 121 }, { mean: 21, rain: 57 }, { mean: 17, rain: 35 },
     ],
   },
 
