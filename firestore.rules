@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// Firestore security rules for the shared expense dashboard.
+//
+// This is where "only us" is actually enforced — on Google's servers, not in
+// the browser. Even though anyone can load the app and see the Firebase config,
+// only a signed-in Google account whose (verified) email is listed below can
+// read or write a single document.
+//
+// Deploy these in the Firebase console: Build → Firestore Database → Rules →
+// paste → Publish. Keep this list in sync with ALLOWED_EMAILS in
+// firebase-config.js.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isApproved() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+             'gautier.daures@gmail.com',
+             'WIFE_EMAIL_HERE@example.com'   // ← replace with your wife's Google email
+           ];
+    }
+
+    match /expenses/{expenseId} {
+      allow read, write: if isApproved();
+    }
+
+    // Everything else is denied by default.
+  }
+}

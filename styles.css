@@ -386,3 +386,131 @@ section.block > h2 {
 @media (min-width: 560px) {
   .grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ── Home top row (title + expenses link) ──────────────────────────────── */
+.home-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.exp-link {
+  flex: 0 0 auto;
+  padding: 8px 13px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.exp-link:active { border-color: var(--accent); }
+
+/* ── Expenses screen ───────────────────────────────────────────────────── */
+.exp-hero { padding: 8px 4px 14px; }
+.exp-hero h1 { font-size: 28px; letter-spacing: -0.5px; }
+.exp-emoji { font-size: 40px; line-height: 1; }
+.exp-sub { color: var(--text-dim); font-size: 14px; margin: 4px 0 0; }
+.exp-hero-live { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+
+.exp-notice p, .exp-empty { color: var(--text-dim); font-size: 15px; margin: 0 0 10px; }
+.exp-notice p:last-child { margin-bottom: 0; }
+.exp-empty { margin: 0; }
+.exp-warn { color: var(--cat-food); font-size: 15px; margin: 0 0 12px; }
+.exp-fine { color: var(--text-dim); font-size: 13px; margin: 8px 0 0; }
+code {
+  background: var(--bg-elev-2);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+/* Sign-in */
+.exp-signin { text-align: center; }
+.btn-google {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 12px 22px;
+  font-size: 16px; font-weight: 600;
+  color: var(--text);
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.btn-google:active { border-color: var(--accent); }
+.btn-google .g {
+  display: inline-grid; place-items: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; color: #4285f4; font-weight: 800; font-size: 14px;
+}
+.btn-ghost {
+  padding: 10px 18px;
+  font-size: 15px; color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px; cursor: pointer;
+}
+.btn-ghost.small { padding: 7px 13px; font-size: 13px; }
+
+/* Summary cards */
+.exp-total { display: flex; align-items: baseline; gap: 10px; }
+.exp-total-num { font-size: 30px; font-weight: 700; letter-spacing: -0.5px; }
+.exp-total-lbl { color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+.exp-people { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.exp-person {
+  display: flex; flex-direction: column;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 8px 12px; min-width: 96px;
+}
+.exp-person .who { color: var(--text-dim); font-size: 12px; }
+.exp-person .amt { font-size: 16px; font-weight: 600; }
+
+.exp-bars { margin-top: 14px; display: grid; gap: 8px; }
+.exp-bar-row { display: grid; grid-template-columns: 96px 1fr auto; align-items: center; gap: 8px; }
+.exp-bar-lbl { font-size: 13px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exp-bar-track { height: 8px; background: var(--bg-elev-2); border-radius: 999px; overflow: hidden; }
+.exp-bar-fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.exp-bar-amt { font-size: 13px; font-variant-numeric: tabular-nums; }
+
+/* Add form */
+.exp-form h2, .exp-list h2 {
+  font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--accent); margin-bottom: 12px;
+}
+.exp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.exp-field { display: flex; flex-direction: column; gap: 4px; }
+.exp-field > span { font-size: 12px; color: var(--text-dim); }
+.exp-field.note { grid-column: 1 / -1; }
+.exp-field input, .exp-field select {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+}
+.exp-field input:focus, .exp-field select:focus { border-color: var(--accent); }
+.btn-add {
+  width: 100%; margin-top: 14px;
+  padding: 13px;
+  font-size: 16px; font-weight: 650;
+  color: #10202b;
+  background: var(--accent);
+  border: none; border-radius: 12px; cursor: pointer;
+}
+.btn-add:disabled { opacity: 0.5; }
+
+/* Expense list */
+.exp-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
+.exp-list h2 + .exp-row { border-top: none; }
+.exp-cat { font-size: 20px; flex: 0 0 auto; width: 26px; text-align: center; }
+.exp-row-main { flex: 1 1 auto; min-width: 0; }
+.exp-row-top { display: flex; justify-content: space-between; gap: 10px; }
+.exp-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exp-amt { font-weight: 600; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+.exp-row-sub { color: var(--text-dim); font-size: 13px; }
+.exp-del {
+  flex: 0 0 auto;
+  background: transparent; border: none;
+  color: var(--text-dim); font-size: 15px;
+  padding: 6px 4px; cursor: pointer;
+}
+.exp-del:active { color: var(--cat-food); }
