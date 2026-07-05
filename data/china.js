@@ -57,6 +57,8 @@ export default {
     regions: [
       {
         name: "Beijing & the north",
+        coords: [39.90, 116.41], // Beijing
+        key: "cn-north",
         note: "Continental: freezing, dry winters and hot summers. Spring and autumn are short and pleasant.",
         best: [4, 5, 9, 10],
         avoid: [1, 2, 12],
@@ -68,6 +70,8 @@ export default {
       },
       {
         name: "The south · Guangzhou & Hong Kong",
+        coords: [23.13, 113.26], // Guangzhou
+        key: "cn-south",
         note: "Subtropical and humid. Summers are hot, wet and prone to typhoons; winters stay mild.",
         best: [10, 11, 12],
         avoid: [6, 7, 8],
@@ -79,6 +83,8 @@ export default {
       },
       {
         name: "Tibet & the far west · Lhasa",
+        coords: [29.65, 91.14], // Lhasa
+        key: "cn-tibet",
         note: "High and dry: brilliant sunny days but cold nights and thin air. Deep winter is harsh.",
         best: [5, 6, 9, 10],
         avoid: [12, 1, 2],

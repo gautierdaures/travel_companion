@@ -57,6 +57,8 @@ export default {
     regions: [
       {
         name: "Moscow & European Russia",
+        coords: [55.75, 37.62], // Moscow
+        key: "ru-moscow",
         note: "Cold, snowy winters and warm, lively summers. The white-nights weeks of June are the highlight.",
         best: [5, 6, 7, 8, 9],
         avoid: [12, 1, 2],
@@ -68,6 +70,8 @@ export default {
       },
       {
         name: "Siberia · Novosibirsk & Irkutsk",
+        coords: [55.03, 82.92], // Novosibirsk
+        key: "ru-siberia",
         note: "Brutally cold for half the year; a short, warm summer is the only comfortable window.",
         best: [6, 7, 8],
         avoid: [11, 12, 1, 2, 3],
@@ -79,6 +83,8 @@ export default {
       },
       {
         name: "Black Sea coast · Sochi",
+        coords: [43.60, 39.73], // Sochi
+        key: "ru-sochi",
         note: "Humid subtropical and mild all year; summer is peak beach season, winters rarely freeze.",
         best: [6, 7, 8, 9],
         avoid: [],

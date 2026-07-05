@@ -32,6 +32,8 @@
 //    climate: {
 //      unit: "°C",                        // temperature unit shown on the chart
 //      note: "regional caveat / seasons", // optional line under the chart(s)
+//      coords: [lat, lng],                // representative city (for the fetch script)
+//      key: "jp",                         // stable id (for the fetch script)
 //      best:  [4, 5, 9, 10],              // ideal months (1–12) → green bars
 //      avoid: [1, 2, 12],                 // months to steer around → red bars
 //                                         //   (any month not listed = orange / acceptable)
@@ -39,7 +41,11 @@
 //    },
 //      // Big country with several climates? Drop best/avoid/months and give
 //      // `regions` instead — one titled chart each, on a shared axis:
-//      // regions: [ { name, note?, best, avoid, months: [{mean},…] }, … ]
+//      // regions: [ { name, coords, key, note?, best, avoid, months: [{mean},…] }, … ]
+//
+//      // `months` numbers come from real climate normals — refresh them with
+//      //   `node scripts/fetch-climate.mjs` (Open-Meteo, uses coords + key).
+//      //   best/avoid stay hand-set: "best time to visit" isn't just temperature.
 //
 //    events: [ { name, when, months, kind, description }, ... ]
 //      when   = human label, e.g. "Late Jan – mid Feb"
