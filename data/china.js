@@ -55,6 +55,7 @@ export default {
     unit: "°C",
     note: "Figures are for Beijing / the north. The south (Guangzhou, Hong Kong) is subtropical and humid, and the far west and Tibet are high and dry — check your specific region.",
     best: [4, 5, 9, 10],
+    avoid: [1, 2, 12],
     months: [
       { min: -8, max: 2, mean: -3 },
       { min: -6, max: 5, mean: 0 },

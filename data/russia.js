@@ -55,6 +55,7 @@ export default {
     unit: "°C",
     note: "Figures are for Moscow / European Russia. Siberia runs far colder in winter, while the Black Sea coast around Sochi is mild year-round.",
     best: [5, 6, 7, 8, 9],
+    avoid: [12, 1, 2],
     months: [
       { min: -9, max: -4, mean: -6 },
       { min: -10, max: -4, mean: -7 },

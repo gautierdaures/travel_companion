@@ -191,13 +191,19 @@ function placesBlock(c) {
 }
 
 /* ── Weather (monthly temperature chart) ───────────────────────────────── */
-// Colour a bar by its mean temperature — cold blue → hot red.
-function tempColor(t) {
-  if (t <= 0) return "#6aa8e0";
-  if (t <= 10) return "#56c4c4";
-  if (t <= 20) return "#7ac77a";
-  if (t <= 27) return "#f2a65a";
-  return "#ff7a7a";
+// A month is rated by how good it is to visit, not by how hot it is:
+//   best → green, acceptable → orange, avoid → red.
+const RATINGS = {
+  best:   { color: "#3fbf6a", label: "Best" },
+  ok:     { color: "#f2a53c", label: "Acceptable" },
+  avoid:  { color: "#ec5a5a", label: "Avoid" },
+};
+
+// Look up a month's rating (1–12). Anything not flagged best/avoid is acceptable.
+function monthRating(cl, month) {
+  if ((cl.best || []).includes(month)) return "best";
+  if ((cl.avoid || []).includes(month)) return "avoid";
+  return "ok";
 }
 
 // Turn [11,12,1,2] into "Nov–Feb"; handles wrap-around and gaps.
@@ -228,18 +234,21 @@ function climateBlock(c) {
   const cl = c.climate;
   if (!cl || !cl.months || cl.months.length !== 12) return "";
   const unit = cl.unit || "°C";
-  const best = new Set(cl.best || []);
   const M = cl.months;
+  const means = M.map((m) => m.mean);
+  const ratings = M.map((_, i) => monthRating(cl, i + 1));
 
-  // Temperature scale, padded out to tidy multiples of 5.
-  const lo = Math.floor((Math.min(...M.map((m) => m.min)) - 2) / 5) * 5;
-  const hi = Math.ceil((Math.max(...M.map((m) => m.max)) + 2) / 5) * 5;
+  // Temperature scale from the means only, padded to tidy multiples of 5.
+  // Always keep the zero line in view so bars read against a common baseline.
+  const lo = Math.floor((Math.min(0, ...means) - 2) / 5) * 5;
+  const hi = Math.ceil((Math.max(0, ...means) + 2) / 5) * 5;
 
-  const W = 680, H = 300, padL = 34, padR = 12, padT = 14, padB = 40;
+  const W = 680, H = 300, padL = 34, padR = 12, padT = 22, padB = 40;
   const plotW = W - padL - padR, plotH = H - padT - padB;
-  const slot = plotW / 12, barW = slot * 0.5;
+  const slot = plotW / 12, barW = slot * 0.56;
   const y = (t) => padT + (plotH * (hi - t)) / (hi - lo);
   const cx = (i) => padL + slot * (i + 0.5);
+  const y0 = y(0); // zero baseline
 
   // Horizontal gridlines + axis labels every 10° (5° for a tight range).
   const step = hi - lo > 25 ? 10 : 5;
@@ -251,28 +260,25 @@ function climateBlock(c) {
       <text class="grid-label" x="${padL - 6}" y="${(yt + 4).toFixed(1)}">${t}</text>`;
   }
 
-  // Faint highlight band behind the best months.
-  let bands = "";
-  M.forEach((_, i) => {
-    if (best.has(i + 1))
-      bands += `<rect class="best-band" x="${(cx(i) - slot / 2).toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${plotH}"></rect>`;
-  });
-
-  // Min→max bars, coloured by the monthly mean.
+  // One bar per month: height = mean temperature, colour = how good it is to visit.
   const bars = M.map((m, i) => {
-    const top = y(m.max), bot = y(m.min);
+    const yv = y(m.mean);
+    const top = Math.min(yv, y0), h = Math.max(2, Math.abs(yv - y0));
+    const color = RATINGS[ratings[i]].color;
     return `<rect class="temp-bar" x="${(cx(i) - barW / 2).toFixed(1)}" y="${top.toFixed(1)}"
-      width="${barW.toFixed(1)}" height="${Math.max(2, bot - top).toFixed(1)}" rx="5"
-      style="fill:${tempColor(m.mean)}"></rect>`;
+      width="${barW.toFixed(1)}" height="${h.toFixed(1)}" rx="4" style="fill:${color}"></rect>`;
   }).join("");
 
-  // Mean line + dots on top of the bars.
-  const meanPts = M.map((m, i) => `${cx(i).toFixed(1)},${y(m.mean).toFixed(1)}`).join(" ");
-  const meanDots = M.map((m, i) => `<circle class="mean-dot" cx="${cx(i).toFixed(1)}" cy="${y(m.mean).toFixed(1)}" r="3"></circle>`).join("");
+  // Mean value printed just outside each bar (above if positive, below if not).
+  const values = M.map((m, i) => {
+    const yv = y(m.mean);
+    const yt = m.mean >= 0 ? yv - 6 : yv + 15;
+    return `<text class="temp-value" x="${cx(i).toFixed(1)}" y="${yt.toFixed(1)}">${Math.round(m.mean)}</text>`;
+  }).join("");
 
-  // Month labels along the bottom (best months in accent).
+  // Month labels along the bottom, tinted to match each month's rating.
   const labels = M.map((_, i) =>
-    `<text class="month-label${best.has(i + 1) ? " best" : ""}" x="${cx(i).toFixed(1)}" y="${H - 14}">${MONTHS[i][0]}</text>`
+    `<text class="month-label" x="${cx(i).toFixed(1)}" y="${H - 14}" style="fill:${RATINGS[ratings[i]].color}">${MONTHS[i][0]}</text>`
   ).join("");
 
   const bestLabel = bestMonthsLabel(cl.best);
@@ -284,19 +290,17 @@ function climateBlock(c) {
         ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
         <svg class="climate-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
              xmlns="http://www.w3.org/2000/svg" role="img"
-             aria-label="Average monthly temperatures in ${esc(unit)}">
+             aria-label="Mean monthly temperatures in ${esc(unit)}, coloured by how good each month is to visit">
           ${grid}
-          ${bands}
           ${bars}
-          <polyline class="mean-line" points="${meanPts}"></polyline>
-          ${meanDots}
+          ${values}
           ${labels}
         </svg>
         <div class="climate-legend">
-          <span><i class="sw-bar"></i> daily low → high</span>
-          <span><i class="sw-line"></i> average</span>
-          <span><i class="sw-best"></i> best months</span>
-          <span class="unit">${esc(unit)}</span>
+          <span><i class="sw" style="background:${RATINGS.best.color}"></i> ${RATINGS.best.label}</span>
+          <span><i class="sw" style="background:${RATINGS.ok.color}"></i> ${RATINGS.ok.label}</span>
+          <span><i class="sw" style="background:${RATINGS.avoid.color}"></i> ${RATINGS.avoid.label}</span>
+          <span class="unit">mean ${esc(unit)}</span>
         </div>
         ${cl.note ? `<p class="note climate-note">${esc(cl.note)}</p>` : ""}
       </div>

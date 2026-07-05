@@ -55,6 +55,7 @@ export default {
     unit: "°C",
     note: "Figures are for Vientiane / the Mekong lowlands. Three seasons: cool-dry (Nov–Feb), hot (Mar–May), and wet (Jun–Oct). Northern mountains like Luang Prabang are noticeably cooler at night.",
     best: [11, 12, 1, 2],
+    avoid: [4, 7, 8, 9],
     months: [
       { min: 17, max: 28, mean: 22 },
       { min: 19, max: 30, mean: 24 },

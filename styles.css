@@ -229,23 +229,16 @@ section.block > h2 {
   font: 500 13px -apple-system, BlinkMacSystemFont, sans-serif;
   text-anchor: end;
 }
-.best-band { fill: rgba(242, 166, 90, 0.13); }
-.temp-bar { opacity: 0.92; }
-.mean-line {
-  fill: none;
-  stroke: #f4f7fb;
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  opacity: 0.85;
-}
-.mean-dot { fill: #f4f7fb; }
-.month-label {
+.temp-bar { opacity: 0.95; }
+.temp-value {
   fill: var(--text-dim);
-  font: 600 15px -apple-system, BlinkMacSystemFont, sans-serif;
+  font: 600 12px -apple-system, BlinkMacSystemFont, sans-serif;
   text-anchor: middle;
 }
-.month-label.best { fill: var(--accent); }
+.month-label {
+  font: 700 15px -apple-system, BlinkMacSystemFont, sans-serif;
+  text-anchor: middle;
+}
 .climate-legend {
   display: flex;
   flex-wrap: wrap;
@@ -258,12 +251,7 @@ section.block > h2 {
 .climate-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .climate-legend .unit { margin-left: auto; font-weight: 600; }
 .climate-legend i { display: inline-block; }
-.sw-bar {
-  width: 12px; height: 12px; border-radius: 3px;
-  background: linear-gradient(#ff7a7a, #6aa8e0);
-}
-.sw-line { width: 16px; height: 0; border-top: 2px solid #f4f7fb; }
-.sw-best { width: 12px; height: 12px; border-radius: 3px; background: rgba(242, 166, 90, 0.35); }
+.climate-legend .sw { width: 12px; height: 12px; border-radius: 3px; }
 .climate-note { margin-top: 12px; }
 
 /* ── Events ────────────────────────────────────────────────────────────── */

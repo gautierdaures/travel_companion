@@ -55,6 +55,7 @@ export default {
     unit: "°C",
     note: "Figures are for Phnom Penh / Siem Reap. Tropical and warm all year: a dry season (Nov–Apr) and a wet monsoon (May–Oct). April is the fierce peak of the heat.",
     best: [11, 12, 1, 2],
+    avoid: [4, 8, 9, 10],
     months: [
       { min: 22, max: 31, mean: 26 },
       { min: 23, max: 33, mean: 28 },

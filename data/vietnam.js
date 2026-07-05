@@ -55,6 +55,7 @@ export default {
     unit: "°C",
     note: "Figures are for Hanoi / the north, which has a cool winter. The centre (Huế, Đà Nẵng) floods Sep–Nov, and the south (Saigon, Mekong) is hot year-round with a wet season May–Oct.",
     best: [3, 4, 10, 11],
+    avoid: [6, 7],
     months: [
       { min: 14, max: 20, mean: 17 },
       { min: 15, max: 21, mean: 18 },
