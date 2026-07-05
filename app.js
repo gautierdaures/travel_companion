@@ -243,7 +243,7 @@ function regionChart(r, rainMax) {
     return `
       <div class="month-cell" style="--r:${rt.color};background:${rt.tint}">
         <div class="mc-name">${MONTHS[i]}</div>
-        <div class="mc-temp">${Math.round(m.mean)}°</div>
+        <div class="mc-temp"><span class="mc-avg">avg</span>${Math.round(m.mean)}°</div>
         ${m.rain != null ? `<div class="mc-rain"><span class="mc-drop" style="opacity:${op}">💧</span>${m.rain}</div>` : ""}
       </div>`;
   }).join("");
@@ -287,7 +287,7 @@ function climateBlock(c) {
           <span><i class="sw" style="background:${RATINGS.ok.color}"></i> ${RATINGS.ok.label}</span>
           <span><i class="sw" style="background:${RATINGS.avoid.color}"></i> ${RATINGS.avoid.label}</span>
           ${rainMax > 0 ? `<span><span class="rain-key">💧</span> Rainfall (mm)</span>` : ""}
-          <span class="unit">temp ${esc(unit)} · rain mm</span>
+          <span class="unit">avg temp ${esc(unit)} · rain mm</span>
         </div>
         ${charts}
         ${cl.note ? `<p class="note climate-note">${esc(cl.note)}</p>` : ""}
