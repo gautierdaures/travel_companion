@@ -214,38 +214,44 @@ section.block > h2 {
   margin-bottom: 10px;
 }
 .best-line strong { color: var(--accent); }
-.climate-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-  background: #0b1220;
-  border-radius: 12px;
+
+/* A year as a 12-month strip: each month a tile tinted by its rating,
+   showing mean temperature and rainfall — no bars, no axes. */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 5px;
+}
+.month-cell {
   border: 1px solid var(--border);
+  border-top: 3px solid var(--r);
+  border-radius: 9px;
+  padding: 7px 2px 8px;
+  text-align: center;
 }
-.grid-line { stroke: var(--border); stroke-width: 1; }
-.grid-line.zero { stroke: #547089; stroke-width: 1.5; stroke-dasharray: 4 4; }
-.grid-label {
-  fill: var(--text-dim);
-  font: 500 13px -apple-system, BlinkMacSystemFont, sans-serif;
-  text-anchor: end;
-}
-.temp-bar { opacity: 0.95; }
-/* Rainfall shown under the plot as a droplet (fades when dry) + the mm value. */
-.rain-drop { font-size: 13px; text-anchor: middle; }
-.rain-val {
-  fill: #6aa8e0;
-  font: 600 11.5px -apple-system, BlinkMacSystemFont, sans-serif;
-  text-anchor: middle;
+.mc-name { font-size: 12px; font-weight: 700; color: var(--r); }
+.mc-temp {
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 4px;
+  color: var(--text);
   font-variant-numeric: tabular-nums;
 }
-.temp-value {
-  fill: var(--text-dim);
-  font: 600 12px -apple-system, BlinkMacSystemFont, sans-serif;
-  text-anchor: middle;
+.mc-rain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6aa8e0;
+  font-variant-numeric: tabular-nums;
 }
-.month-label {
-  font: 700 15px -apple-system, BlinkMacSystemFont, sans-serif;
-  text-anchor: middle;
+.mc-drop { font-size: 10px; }
+@media (max-width: 600px) {
+  .month-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .mc-temp { font-size: 16px; }
 }
 .climate-legend {
   display: flex;

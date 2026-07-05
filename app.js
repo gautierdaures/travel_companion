@@ -194,9 +194,9 @@ function placesBlock(c) {
 // A month is rated by how good it is to visit, not by how hot it is:
 //   best → green, acceptable → orange, avoid → red.
 const RATINGS = {
-  best:   { color: "#3fbf6a", label: "Best" },
-  ok:     { color: "#f2a53c", label: "Acceptable" },
-  avoid:  { color: "#ec5a5a", label: "Avoid" },
+  best:   { color: "#3fbf6a", tint: "rgba(63,191,106,0.15)",  label: "Best" },
+  ok:     { color: "#f2a53c", tint: "rgba(242,165,60,0.15)",  label: "Acceptable" },
+  avoid:  { color: "#ec5a5a", tint: "rgba(236,90,90,0.15)",   label: "Avoid" },
 };
 
 // Look up a month's rating (1–12). Anything not flagged best/avoid is acceptable.
@@ -230,84 +230,31 @@ function bestMonthsLabel(best = []) {
     .join(" · ");
 }
 
-// One region's chart: title (if named), best-months line, SVG, and note.
-// Temperature bars (coloured by rating), with monthly rainfall shown below as
-// a value + a droplet whose strength scales with how wet the month is.
-// lo/hi (°C) and rainMax (mm) are passed in so sibling regions share scales.
-function regionChart(r, unit, lo, hi, rainMax) {
+// One region as a 12-month strip: each month is a tile tinted by its rating,
+// showing the mean temperature and (when present) rainfall as a value with a
+// droplet that fades on dry months. rainMax is shared so droplets compare.
+function regionChart(r, rainMax) {
   const M = r.months;
-  const ratings = M.map((_, i) => monthRating(r, i + 1));
-  const hasRain = rainMax > 0;
 
-  const W = 680, padL = 34, padR = 12, padT = 22;
-  const plotH = 236, padB = hasRain ? 60 : 40;
-  const H = padT + plotH + padB;
-  const plotW = W - padL - padR;
-  const slot = plotW / 12, barW = slot * 0.5;
-  const y = (t) => padT + (plotH * (hi - t)) / (hi - lo);
-  const cx = (i) => padL + slot * (i + 0.5);
-  const y0 = y(0);              // temperature zero baseline
-  const floor = padT + plotH;   // plot bottom
-
-  // Horizontal gridlines + °C axis labels every 10° (5° for a tight range).
-  const step = hi - lo > 25 ? 10 : 5;
-  let grid = "";
-  for (let t = lo; t <= hi; t += step) {
-    const yt = y(t);
-    const zero = t === 0;
-    grid += `<line class="grid-line${zero ? " zero" : ""}" x1="${padL}" y1="${yt.toFixed(1)}" x2="${W - padR}" y2="${yt.toFixed(1)}"></line>
-      <text class="grid-label" x="${padL - 6}" y="${(yt + 4).toFixed(1)}">${t}</text>`;
-  }
-
-  // Temperature bars: height = mean temp, colour = how good it is to visit.
-  const bars = M.map((m, i) => {
-    const yv = y(m.mean);
-    const top = Math.min(yv, y0), h = Math.max(2, Math.abs(yv - y0));
-    const color = RATINGS[ratings[i]].color;
-    return `<rect class="temp-bar" x="${(cx(i) - barW / 2).toFixed(1)}" y="${top.toFixed(1)}"
-      width="${barW.toFixed(1)}" height="${h.toFixed(1)}" rx="4" style="fill:${color}"></rect>`;
+  const cells = M.map((m, i) => {
+    const rt = RATINGS[monthRating(r, i + 1)];
+    const hasRain = m.rain != null && rainMax > 0;
+    const op = hasRain ? (0.3 + 0.7 * Math.min(1, m.rain / rainMax)).toFixed(2) : 1;
+    return `
+      <div class="month-cell" style="--r:${rt.color};background:${rt.tint}">
+        <div class="mc-name">${MONTHS[i]}</div>
+        <div class="mc-temp">${Math.round(m.mean)}°</div>
+        ${m.rain != null ? `<div class="mc-rain"><span class="mc-drop" style="opacity:${op}">💧</span>${m.rain}</div>` : ""}
+      </div>`;
   }).join("");
-
-  // Mean value printed just outside each bar (above if positive, below if not).
-  const values = M.map((m, i) => {
-    const yv = y(m.mean);
-    const yt = m.mean >= 0 ? yv - 6 : yv + 15;
-    return `<text class="temp-value" x="${cx(i).toFixed(1)}" y="${yt.toFixed(1)}">${Math.round(m.mean)}</text>`;
-  }).join("");
-
-  // Rainfall, per month: a droplet (fading with how dry the month is) above the
-  // millimetre value — so the wet months read at a glance and the colour above
-  // them makes sense. Sits in the padding band under the plot.
-  const dropY = floor + 22, rainY = floor + 37;
-  const rain = hasRain ? M.map((m, i) => {
-    const mm = m.rain || 0;
-    const op = (0.25 + 0.75 * Math.min(1, mm / rainMax)).toFixed(2);
-    return `<text class="rain-drop" x="${cx(i).toFixed(1)}" y="${dropY}" opacity="${op}">💧</text>
-      <text class="rain-val" x="${cx(i).toFixed(1)}" y="${rainY}">${mm}</text>`;
-  }).join("") : "";
-
-  // Month labels along the bottom, tinted to match each month's rating.
-  const labelY = H - 8;
-  const labels = M.map((_, i) =>
-    `<text class="month-label" x="${cx(i).toFixed(1)}" y="${labelY}" style="fill:${RATINGS[ratings[i]].color}">${MONTHS[i][0]}</text>`
-  ).join("");
 
   const bestLabel = bestMonthsLabel(r.best);
-  const where = r.name ? ` in ${esc(r.name)}` : "";
 
   return `
     <div class="climate-region">
       ${r.name ? `<h3 class="region-name">📍 ${esc(r.name)}</h3>` : ""}
       ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
-      <svg class="climate-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
-           xmlns="http://www.w3.org/2000/svg" role="img"
-           aria-label="Mean monthly temperature (${esc(unit)}) and rainfall (mm)${where}, with each month coloured by how good it is to visit">
-        ${grid}
-        ${bars}
-        ${values}
-        ${rain}
-        ${labels}
-      </svg>
+      <div class="month-grid">${cells}</div>
       ${r.note ? `<p class="note region-note">${esc(r.note)}</p>` : ""}
     </div>`;
 }
@@ -325,16 +272,11 @@ function climateBlock(c) {
   const valid = regions.filter((r) => r.months && r.months.length === 12);
   if (!valid.length) return "";
 
-  // Share one temperature scale across every region so charts read side by side.
-  const allMeans = valid.flatMap((r) => r.months.map((m) => m.mean));
-  const lo = Math.floor((Math.min(0, ...allMeans) - 2) / 5) * 5;
-  const hi = Math.ceil((Math.max(0, ...allMeans) + 2) / 5) * 5;
-
-  // Likewise a shared rainfall scale, rounded up to a tidy 50 mm.
+  // A rainfall scale shared across regions so the droplet strength compares.
   const rainPeak = Math.max(0, ...valid.flatMap((r) => r.months.map((m) => m.rain || 0)));
   const rainMax = rainPeak > 0 ? Math.ceil(rainPeak / 50) * 50 : 0;
 
-  const charts = valid.map((r) => regionChart(r, unit, lo, hi, rainMax)).join("");
+  const charts = valid.map((r) => regionChart(r, rainMax)).join("");
 
   return `
     <section class="block" id="sec-climate">
@@ -345,7 +287,7 @@ function climateBlock(c) {
           <span><i class="sw" style="background:${RATINGS.ok.color}"></i> ${RATINGS.ok.label}</span>
           <span><i class="sw" style="background:${RATINGS.avoid.color}"></i> ${RATINGS.avoid.label}</span>
           ${rainMax > 0 ? `<span><span class="rain-key">💧</span> Rainfall (mm)</span>` : ""}
-          <span class="unit">bars °C · rain mm</span>
+          <span class="unit">temp ${esc(unit)} · rain mm</span>
         </div>
         ${charts}
         ${cl.note ? `<p class="note climate-note">${esc(cl.note)}</p>` : ""}
