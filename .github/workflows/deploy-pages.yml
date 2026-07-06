@@ -1,0 +1,40 @@
+name: Deploy static site to Pages
+
+# Publishes the app (plain static HTML/JS/CSS) to GitHub Pages on every push
+# to main. Replaces reliance on GitHub's managed "pages build and deployment",
+# which had wedged a re-run in a permanent pre-queue state.
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: # lets you trigger a fresh run by hand from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a new run cancels a stuck/older one instead of
+# queueing behind it forever.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "." # the site is served from the repo root (index.html)
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
