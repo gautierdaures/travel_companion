@@ -6,10 +6,12 @@
 // (firestore.rules), NOT by keeping these secret.
 
 export const firebaseConfig = {
-  apiKey:            "PASTE_apiKey_HERE",
-  authDomain:        "PASTE_authDomain_HERE",      // e.g. your-project.firebaseapp.com
-  projectId:         "PASTE_projectId_HERE",
-  appId:             "PASTE_appId_HERE",
+  apiKey: "AIzaSyAunPqpjyppaEQO_8Acq_NWaN3d8hTSHn0",
+  authDomain: "trip-companion-29e31.firebaseapp.com",
+  projectId: "trip-companion-29e31",
+  storageBucket: "trip-companion-29e31.firebasestorage.app",
+  messagingSenderId: "439906304436",
+  appId: "1:439906304436:web:a63c8073775fca695472e1"
 };
 
 // Only these Google accounts may read or write expenses. This list is a
@@ -17,13 +19,13 @@ export const firebaseConfig = {
 // lives in firestore.rules, which must contain the same two emails.
 export const ALLOWED_EMAILS = [
   "gautier.daures@gmail.com",
-  "WIFE_EMAIL_HERE@example.com",   // ← replace with your wife's Google email
+  "chloe.michel@outlook.com",
 ];
 
 // Optional: pretty names shown in the dashboard (falls back to the email prefix).
 export const NAMES = {
   "gautier.daures@gmail.com": "Gautier",
-  // "WIFE_EMAIL_HERE@example.com": "…",
+  "chloe.michel@outlook.com": "Chloe"
 };
 
 // Your "home" currency — every expense is also totalled in this one, using live
