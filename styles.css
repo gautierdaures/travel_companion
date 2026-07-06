@@ -514,3 +514,17 @@ code {
   padding: 6px 4px; cursor: pointer;
 }
 .exp-del:active { color: var(--cat-food); }
+
+/* Combined home-currency total card */
+.exp-home { border-color: var(--accent); }
+.exp-home .exp-total-num { color: var(--accent); }
+.exp-settle {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 14px; color: var(--text);
+}
+.exp-settle.even { color: var(--cat-nature); }
+.exp-settle span { color: var(--text-dim); }
+.exp-rate-note { margin-top: 10px; font-size: 12px; color: var(--text-dim); }
+.exp-rate-note.warn { color: var(--ev-note); margin-top: 4px; }
+.exp-rate-note.pending { color: var(--text); font-size: 14px; }

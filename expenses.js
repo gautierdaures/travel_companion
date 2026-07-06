@@ -7,7 +7,8 @@
 // Google accounts in ALLOWED_EMAILS can read or write, enforced server-side by
 // firestore.rules. The Firebase config is public by design.
 
-import { firebaseConfig, ALLOWED_EMAILS, isConfigured, nameFor } from "./firebase-config.js";
+import { firebaseConfig, ALLOWED_EMAILS, isConfigured, nameFor, HOME_CURRENCY } from "./firebase-config.js";
+import { ensureRates, toHome, ratesInfo } from "./fx.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2";
 
@@ -47,6 +48,15 @@ function topbar() {
 
 /* ── Firebase (lazy-loaded, only when this screen opens) ───────────────────── */
 let fb = null; // { auth, db, ...fns } once loaded
+
+// Set while the dashboard is open; called when the network comes back so a
+// pending currency conversion fetches and fills in on its own.
+let fxRetry = null;
+if (typeof window !== "undefined") {
+  window.addEventListener("online", () => {
+    if (fxRetry && location.hash.startsWith("#/expenses")) fxRetry();
+  });
+}
 
 async function loadFirebase() {
   if (fb) return fb;
@@ -148,12 +158,80 @@ function totalsByCurrency(items) {
   return byCur;
 }
 
+// A single combined total in the home currency, using live FX rates. Shown
+// whenever any expense is in a foreign currency (otherwise it'd just repeat the
+// one home-currency card below).
+function homeSummaryCard(items) {
+  const hasForeign = items.some((e) => (e.currency || "EUR") !== HOME_CURRENCY);
+  if (!hasForeign) return "";
+
+  const info = ratesInfo();
+  if (info.source === "none") {
+    return `<div class="panel exp-summary exp-home">
+      <div class="exp-total"><span class="exp-total-num">${esc(HOME_CURRENCY)}</span>
+      <span class="exp-total-lbl">converting…</span></div></div>`;
+  }
+  if (info.source === "unavailable") {
+    // Offline and rates were never fetched — don't invent a number. The
+    // per-currency totals below are exact; this fills in once back online.
+    return `<div class="panel exp-summary exp-home">
+      <div class="exp-rate-note pending">💱 Combined ${esc(HOME_CURRENCY)} total is pending —
+      you're offline and rates haven't been fetched yet. It'll appear automatically
+      once you're back online.</div></div>`;
+  }
+
+  let total = 0;
+  const byPerson = {};
+  const unknown = new Set();
+  for (const e of items) {
+    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    if (v == null) { unknown.add(e.currency); continue; }
+    total += v;
+    byPerson[e.paidBy] = (byPerson[e.paidBy] || 0) + v;
+  }
+
+  const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
+
+  // Settle-up on a 50/50 split when exactly two people paid.
+  let settle = "";
+  if (people.length === 2) {
+    const [[aWho, aAmt], [, bAmt]] = people;
+    const owe = (aAmt - bAmt) / 2;
+    settle = owe < 0.01
+      ? `<div class="exp-settle even">✓ You're even</div>`
+      : `<div class="exp-settle">${esc(nameFor(people[1][0]))} owes ${esc(nameFor(aWho))}
+         <strong>${esc(fmt(owe, HOME_CURRENCY))}</strong> to even up <span>(50/50)</span></div>`;
+  }
+
+  const note = info.stale
+    ? `≈ last fetched rates${info.date ? " · " + esc(info.date) : ""} (offline)`
+    : `live rates${info.date ? " · " + esc(info.date) : ""}`;
+
+  return `
+    <div class="panel exp-summary exp-home">
+      <div class="exp-total">
+        <span class="exp-total-num">${esc(fmt(total, HOME_CURRENCY))}</span>
+        <span class="exp-total-lbl">all in ${esc(HOME_CURRENCY)}</span>
+      </div>
+      <div class="exp-people">
+        ${people.map(([who, amt]) => `
+          <div class="exp-person">
+            <span class="who">${esc(nameFor(who))}</span>
+            <span class="amt">${esc(fmt(amt, HOME_CURRENCY))}</span>
+          </div>`).join("")}
+      </div>
+      ${settle}
+      <div class="exp-rate-note">${note}</div>
+      ${unknown.size ? `<div class="exp-rate-note warn">⚠ no rate for ${esc([...unknown].join(", "))} — excluded from this total</div>` : ""}
+    </div>`;
+}
+
 function summaryCards(items) {
   const groups = totalsByCurrency(items);
   const curs = Object.keys(groups).sort();
   if (!curs.length) return `<div class="panel exp-empty">No expenses yet — add the first one below.</div>`;
 
-  return curs.map((cur) => {
+  const perCurrency = curs.map((cur) => {
     const g = groups[cur];
     const people = Object.entries(g.byPerson).sort((a, b) => b[1] - a[1]);
     const cats = Object.entries(g.byCat).sort((a, b) => b[1] - a[1]);
@@ -184,6 +262,8 @@ function summaryCards(items) {
         </div>
       </div>`;
   }).join("");
+
+  return homeSummaryCard(items) + perCurrency;
 }
 
 function expenseRows(items, onDelete) {
@@ -355,10 +435,19 @@ export async function renderExpenses() {
       signOut: doSignOut,
     };
 
+    let lastItems = null;
+    // Load FX rates in the background; re-render once they land so the combined
+    // home-currency total fills in. If we're offline now, the "online" listener
+    // below retries automatically when the connection returns.
+    const refreshFx = () => ensureRates().then(() => { if (lastItems) dashboard(user, lastItems, actions); });
+    fxRetry = refreshFx;
+    refreshFx();
+
     unsub = f.onSnapshot(
       q,
       (snap) => {
         const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        lastItems = items;
         dashboard(user, items, actions);
       },
       (err) => screen(el(`<div class="panel exp-notice">

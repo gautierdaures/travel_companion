@@ -26,6 +26,10 @@ export const NAMES = {
   // "WIFE_EMAIL_HERE@example.com": "…",
 };
 
+// Your "home" currency — every expense is also totalled in this one, using live
+// exchange rates fetched when you're online (see fx.js).
+export const HOME_CURRENCY = "EUR";
+
 // True once the placeholders above have actually been replaced.
 export const isConfigured = () =>
   !Object.values(firebaseConfig).some((v) => String(v).includes("PASTE_"));

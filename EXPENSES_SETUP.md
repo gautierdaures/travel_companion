@@ -80,6 +80,13 @@ same live list.
 
 - **Offline:** the country ID-cards still work with no signal. The expense
   dashboard needs a connection because the data is shared/live.
+- **Currency conversion:** amounts stay in whatever currency you enter, and a
+  combined total in your home currency (`HOME_CURRENCY` in `firebase-config.js`,
+  default `EUR`) is shown using live exchange rates — fetched from a free, no-key
+  API and cached for the day. No setup needed. If you enter an expense while
+  offline and rates were never fetched, the combined total shows as *pending* and
+  fills in automatically when you're back online; the per-currency totals are
+  always exact.
 - **Adding a third person later:** add their email in *both* `firestore.rules`
   (and re-publish in the console) and `ALLOWED_EMAILS`.
 - **"Permission denied" on the dashboard:** the signed-in email isn't in
