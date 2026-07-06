@@ -19,7 +19,7 @@ service cloud.firestore {
         && request.auth.token.email_verified == true
         && request.auth.token.email in [
              'gautier.daures@gmail.com',
-             'WIFE_EMAIL_HERE@example.com'   // ← replace with your wife's Google email
+             'chloe.michel@outlook.com'
            ];
     }
 
