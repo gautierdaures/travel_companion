@@ -207,6 +207,46 @@ function totalsByCurrency(items) {
   return byCur;
 }
 
+// ── Settle-up ────────────────────────────────────────────────────────────────
+// Net balance per person in the home currency, under the "joint account is owned
+// 50/50" model. An expense has two independent sides:
+//   • who PAID (source of money) — credited to that person, in full for a
+//     personal payment or split half-each when it came from the shared account;
+//   • who it's FOR (how the cost splits) — charged to whoever benefits: 50/50
+//     when it's for both of you, or entirely to one person for a "just for them"
+//     expense (a solo gift, a personal purchase, …).
+// balance = paid − owed. Positive → that person fronted more than their share and
+// is owed money; for two people the balances are equal and opposite. So a gift
+// bought on the shared card for one person leaves them owing the other half.
+function settleBalances(items) {
+  const bal = Object.fromEntries(ALLOWED_EMAILS.map((e) => [e, 0]));
+  const share = (v) => v / ALLOWED_EMAILS.length;
+  for (const e of items) {
+    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    if (v == null) continue; // no rate yet — leave it out rather than guess
+    // Who fronted the money.
+    if (e.paidBy === COMMON_ACCOUNT) ALLOWED_EMAILS.forEach((p) => (bal[p] += share(v)));
+    else if (e.paidBy in bal) bal[e.paidBy] += v;
+    // Who the cost is for ("both"/unknown → shared evenly).
+    const split = e.split || "both";
+    if (split in bal) bal[split] -= v;
+    else ALLOWED_EMAILS.forEach((p) => (bal[p] -= share(v)));
+  }
+  return bal;
+}
+
+// The "who owes whom" line for a two-person ledger (or "" if it doesn't apply).
+function settleHTML(items) {
+  if (ALLOWED_EMAILS.length !== 2) return "";
+  const bal = settleBalances(items);
+  const ranked = ALLOWED_EMAILS.map((p) => [p, bal[p]]).sort((a, b) => b[1] - a[1]);
+  const [creditor, owed] = ranked[0];
+  const debtor = ranked[ranked.length - 1][0];
+  if (owed < 0.01) return `<div class="exp-settle even">✓ You're even</div>`;
+  return `<div class="exp-settle">${esc(nameFor(debtor))} owes ${esc(nameFor(creditor))}
+    <strong>${esc(fmt(owed, HOME_CURRENCY))}</strong> to even up</div>`;
+}
+
 // A single combined total in the home currency, using live FX rates. Shown
 // whenever any expense is in a foreign currency (otherwise it'd just repeat the
 // one home-currency card below).
@@ -240,20 +280,7 @@ function homeSummaryCard(items) {
   }
 
   const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
-
-  // Settle-up on a 50/50 split, considering only what each person paid out of
-  // their own pocket. The shared account is already split evenly by definition,
-  // so it's excluded from who-owes-whom.
-  const individuals = people.filter(([who]) => who !== COMMON_ACCOUNT);
-  let settle = "";
-  if (individuals.length === 2) {
-    const [[aWho, aAmt], [, bAmt]] = individuals;
-    const owe = (aAmt - bAmt) / 2;
-    settle = owe < 0.01
-      ? `<div class="exp-settle even">✓ You're even</div>`
-      : `<div class="exp-settle">${esc(nameFor(individuals[1][0]))} owes ${esc(nameFor(aWho))}
-         <strong>${esc(fmt(owe, HOME_CURRENCY))}</strong> to even up <span>(50/50)</span></div>`;
-  }
+  const settle = settleHTML(items);
 
   const note = info.stale
     ? `≈ last fetched rates${info.date ? " · " + esc(info.date) : ""} (offline)`
@@ -379,41 +406,45 @@ function countrySpendCard(items) {
 }
 
 /* ── Budget tracker ────────────────────────────────────────────────────────── */
-// "Am I on track?" — compares actual spend (in the home currency) against the
-// budget you'd expect to have used by today if it were spread evenly across the
-// trip dates. Everything is optional: no budget configured → no card.
-function budgetCard(items) {
-  if (!(TRIP_BUDGET > 0)) return "";
+// "Are we on track?" — each of you has their own slice of the trip budget
+// (TRIP_BUDGET split evenly), and each bar counts the cost attributed to that
+// person: half of every shared expense plus all of their solo ones, regardless
+// of who actually paid or which card — the same "owed" share the settle-up uses.
+// Spend is compared against what you'd expect to have used by today if the
+// budget were spread evenly across the trip dates. Optional: no budget → no card.
 
-  const info = ratesInfo();
-  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
-  const pending = hasForeign && info.source !== "live";
-
-  let spent = 0;
+// Cost attributed to each person, in the home currency: a "just for them"
+// expense lands fully on them, a shared one splits evenly. Independent of who
+// paid. `pending` flags foreign expenses with no rate yet (left out for now).
+function spentByPerson(items) {
+  const spent = Object.fromEntries(ALLOWED_EMAILS.map((e) => [e, 0]));
+  const share = (v) => v / ALLOWED_EMAILS.length;
+  let pending = false;
   for (const e of items) {
     const v = toHome(e.amount, e.currency || HOME_CURRENCY);
-    if (v != null) spent += v;
+    if (v == null) { pending = true; continue; }
+    const split = e.split || "both";
+    if (split in spent) spent[split] += v;
+    else ALLOWED_EMAILS.forEach((p) => (spent[p] += share(v)));
   }
+  return { spent, pending };
+}
 
-  const budget = TRIP_BUDGET;
+// One person's budget block: the numbers, a progress bar with a pace marker,
+// and a verdict. `elapsed`/`phase` describe where we are in the trip and are
+// shared across people (computed once in budgetCard).
+function personBudgetBlock(name, spent, budget, elapsed, phase) {
   const remaining = budget - spent;
   const usedPct = Math.min((spent / budget) * 100, 100);
 
-  const start = Date.parse(TRIP_START), end = Date.parse(TRIP_END), now = Date.now();
   let expected = null, verdict = "", vClass = "ok", note = "";
-  if (!Number.isNaN(start) && !Number.isNaN(end) && end > start) {
-    const elapsed = Math.min(Math.max((now - start) / (end - start), 0), 1);
+  if (elapsed != null) {
     expected = budget * elapsed;
-    const daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
-
-    if (now < start) {
+    if (phase === "pre") {
       // Pre-trip: pace hasn't started, but anything already spent (e.g. train
-      // tickets booked ahead) still counts and is shown as pre-booked.
+      // tickets booked ahead) still counts and shows as pre-booked.
       verdict = "Not started"; vClass = "ok";
-      const daysToStart = Math.max(0, Math.ceil((start - now) / 86400000));
-      const bits = [`trip starts in ${daysToStart} day${daysToStart === 1 ? "" : "s"}`];
-      if (spent > 0) bits.push(`${esc(fmt(spent, HOME_CURRENCY))} pre-booked`);
-      note = bits.join(" · ");
+      if (spent > 0) note = `${esc(fmt(spent, HOME_CURRENCY))} pre-booked`;
     } else {
       if (spent > budget) { verdict = "Over budget"; vClass = "over"; }
       else if (spent <= expected * 1.05) { verdict = "On track"; vClass = "ok"; }
@@ -422,15 +453,14 @@ function budgetCard(items) {
       const bits = [`expected by today ≈ <strong>${esc(fmt(expected, HOME_CURRENCY))}</strong>`];
       if (elapsed > 0 && elapsed < 1)
         bits.push(`projected total <strong>${esc(fmt(spent / elapsed, HOME_CURRENCY))}</strong>`);
-      if (now < end) bits.push(`${daysLeft} day${daysLeft === 1 ? "" : "s"} left`);
       note = bits.join(" · ");
     }
   }
 
   return `
-    <div class="panel exp-budget">
-      <div class="exp-budget-head">
-        <h2>Budget</h2>
+    <div class="exp-budget-person">
+      <div class="exp-budget-prow">
+        <span class="exp-budget-name">${esc(name)}</span>
         ${verdict ? `<span class="exp-verdict ${vClass}">${esc(verdict)}</span>` : ""}
       </div>
       <div class="exp-budget-nums">
@@ -445,7 +475,47 @@ function budgetCard(items) {
       </div>
       <div class="exp-budget-scale"><span>${esc(fmt(0, HOME_CURRENCY))}</span><span>${esc(fmt(budget, HOME_CURRENCY))}</span></div>
       ${note ? `<div class="exp-rate-note">▲ ${note}</div>` : ""}
-      ${pending ? `<div class="exp-rate-note warn">⚠ some foreign expenses aren't converted yet — “spent” is understated until rates load</div>` : ""}
+    </div>`;
+}
+
+function budgetCard(items) {
+  if (!(TRIP_BUDGET > 0)) return "";
+  const perBudget = TRIP_BUDGET / ALLOWED_EMAILS.length; // each person's own slice
+
+  const info = ratesInfo();
+  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
+  const pending = hasForeign && info.source !== "live";
+
+  const { spent } = spentByPerson(items);
+
+  // Where we are in the trip — the same pace applies to both people.
+  const start = Date.parse(TRIP_START), end = Date.parse(TRIP_END), now = Date.now();
+  let elapsed = null, phase = "none", paceNote = "";
+  if (!Number.isNaN(start) && !Number.isNaN(end) && end > start) {
+    elapsed = Math.min(Math.max((now - start) / (end - start), 0), 1);
+    if (now < start) {
+      phase = "pre";
+      const d = Math.max(0, Math.ceil((start - now) / 86400000));
+      paceNote = `trip starts in ${d} day${d === 1 ? "" : "s"}`;
+    } else {
+      phase = "during";
+      const d = Math.max(0, Math.ceil((end - now) / 86400000));
+      if (now < end) paceNote = `${d} day${d === 1 ? "" : "s"} left`;
+    }
+  }
+
+  const blocks = ALLOWED_EMAILS
+    .map((p) => personBudgetBlock(nameFor(p), spent[p], perBudget, elapsed, phase))
+    .join("");
+
+  return `
+    <div class="panel exp-budget">
+      <div class="exp-budget-head">
+        <h2>Budget</h2>
+        <span class="exp-budget-sub">${esc(fmt(perBudget, HOME_CURRENCY))} each${paceNote ? ` · ${esc(paceNote)}` : ""}</span>
+      </div>
+      ${blocks}
+      ${pending ? `<div class="exp-rate-note warn">⚠ some foreign expenses aren't converted yet — spend is understated until rates load</div>` : ""}
     </div>`;
 }
 
@@ -486,13 +556,23 @@ function summaryCards(items) {
       </div>`;
   }).join("");
 
-  return homeSummaryCard(items) + perCurrency;
+  // homeSummaryCard carries the settle-up, but only renders when there's foreign
+  // spend. When everything is already in the home currency it's suppressed, so
+  // surface the who-owes-whom line on its own instead.
+  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
+  const solo = hasForeign ? "" : settleHTML(items);
+  const settleCard = solo ? `<div class="panel exp-summary exp-settle-solo">${solo}</div>` : "";
+
+  return homeSummaryCard(items) + settleCard + perCurrency;
 }
 
 function expenseRows(items, onDelete) {
   if (!items.length) return "";
   const rows = items.map((e) => {
     const c = catOf(e.category);
+    // Only call out the split when it isn't the default "both" — a "just for X"
+    // expense is worth flagging in the row.
+    const forTag = e.split && e.split !== "both" ? ` · for ${esc(nameFor(e.split))}` : "";
     return `
       <div class="exp-row" data-id="${esc(e.id)}">
         <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
@@ -501,7 +581,7 @@ function expenseRows(items, onDelete) {
             <span class="exp-note">${esc(e.note || c.label)}</span>
             <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
           </span>
-          <span class="exp-row-sub">${esc(e.date || "")} · ${esc(nameFor(e.paidBy))}</span>
+          <span class="exp-row-sub">${esc(e.date || "")} · ${esc(nameFor(e.paidBy))}${forTag}</span>
         </span>
         <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
       </div>`;
@@ -568,6 +648,12 @@ function addForm(user, onAdd) {
     `<option value="${esc(COMMON_ACCOUNT)}">🤝 ${esc(nameFor(COMMON_ACCOUNT))} (shared)</option>`;
   const catOpts = CATEGORIES.map((c) => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
 
+  // "For whom" — who the cost is split between. Defaults to both of you (the
+  // usual case); pick one person for something only they benefit from (a solo
+  // gift, a personal purchase) so it doesn't land on the other's half.
+  const splitOpts = `<option value="both">👫 Both of us</option>` +
+    ALLOWED_EMAILS.map((em) => `<option value="${esc(em)}">${esc(nameFor(em))} only</option>`).join("");
+
   // Default the currency/country to whatever was used last (falling back to the
   // home currency and the first trip country) so repeat entries are quick.
   const last = readLast();
@@ -597,6 +683,10 @@ function addForm(user, onAdd) {
         <label class="exp-field who">
           <span>Paid by</span>
           <select name="paidBy">${peopleOpts}</select>
+        </label>
+        <label class="exp-field forwhom">
+          <span>For</span>
+          <select name="split">${splitOpts}</select>
         </label>
         <label class="exp-field date">
           <span>Date</span>
@@ -631,6 +721,7 @@ function addForm(user, onAdd) {
         category: f.category.value,
         country: f.country.value,
         paidBy: f.paidBy.value,
+        split: f.split.value,
         date: f.date.value || todayISO(),
         note: f.note.value.trim(),
       });
