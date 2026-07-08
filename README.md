@@ -19,10 +19,11 @@ project — see [`EXPENSES_SETUP.md`](EXPENSES_SETUP.md).
 
 ## Preview it locally
 
-No Node needed — just Python 3 (already on macOS):
+Either runtime works — both serve the site at http://127.0.0.1:4321:
 
 ```bash
-python3 serve.py         # serves http://127.0.0.1:4321
+python3 serve.py         # Python 3 (already on macOS)
+node serve.mjs           # or Node, if you prefer
 ```
 
 Open <http://127.0.0.1:4321> in a browser.
@@ -76,7 +77,8 @@ styles.css              styling (mobile-first, dark)
 app.js                  router + rendering
 manifest.webmanifest    PWA manifest
 sw.js                   service worker (offline cache)
-serve.py                local preview server
+serve.py                local preview server (Python)
+serve.mjs               local preview server (Node)
 icons/                  app icons (svg + png)
 data/
   index.js              schema docs + country registry

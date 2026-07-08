@@ -32,6 +32,16 @@ export const NAMES = {
 // exchange rates fetched when you're online (see fx.js).
 export const HOME_CURRENCY = "EUR";
 
+// ── Trip budget ──────────────────────────────────────────────────────────────
+// Total budget for the whole trip, in HOME_CURRENCY. The Expenses dashboard uses
+// this (together with the trip dates below) to tell you whether you're on track:
+// it compares what you've actually spent against what you'd expect to have spent
+// by today if you spread the budget evenly across the trip. Edit these to match
+// your real plan. Set TRIP_BUDGET to 0 to hide the budget tracker entirely.
+export const TRIP_BUDGET = 12000;      // e.g. 12000 EUR
+export const TRIP_START  = "2026-07-01"; // first day of the trip (YYYY-MM-DD)
+export const TRIP_END    = "2026-10-31"; // last day of the trip  (YYYY-MM-DD)
+
 // True once the placeholders above have actually been replaced.
 export const isConfigured = () =>
   !Object.values(firebaseConfig).some((v) => String(v).includes("PASTE_"));

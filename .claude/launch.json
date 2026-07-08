@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "trip-companion",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["/Users/gautierdaures/Documents/projects/travel_companion/serve.py"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["/Users/gautierdaures/Documents/projects/travel_companion/serve.mjs"],
       "port": 4321
     }
   ]

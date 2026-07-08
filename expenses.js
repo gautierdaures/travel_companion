@@ -7,8 +7,12 @@
 // Google accounts in ALLOWED_EMAILS can read or write, enforced server-side by
 // firestore.rules. The Firebase config is public by design.
 
-import { firebaseConfig, ALLOWED_EMAILS, isConfigured, nameFor, HOME_CURRENCY } from "./firebase-config.js";
-import { ensureRates, toHome, ratesInfo, ensureCurrencies, isSupported } from "./fx.js";
+import {
+  firebaseConfig, ALLOWED_EMAILS, isConfigured, nameFor, HOME_CURRENCY,
+  TRIP_BUDGET, TRIP_START, TRIP_END,
+} from "./firebase-config.js";
+import { toHome, ratesInfo, ensureCurrencies, isSupported } from "./fx.js";
+import { COUNTRIES, byCode } from "./data/index.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2";
 
@@ -27,6 +31,12 @@ const catOf = (id) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORI
 // access; the rest follow alphabetically.
 const COMMON_CUR = ["EUR", "USD", "GBP", "RUB", "CNY", "VND", "LAK", "KHR", "THB"];
 let CURRENCIES = null; // [{ code, name }] once ensureCurrencies() resolves
+
+// Country breakdown: each expense carries a `country` code (one of COUNTRIES, or
+// "" when unassigned). These colours are assigned to the pie slices / legend.
+const COUNTRY_COLORS = ["#6ea8fe", "#ffd166", "#06d6a0", "#ef476f", "#c792ea", "#f78c6b", "#78c6d0"];
+const UNASSIGNED = { code: "", name: "Unassigned", flag: "🌍", color: "#8a97a5" };
+const countryOf = (code) => byCode(code) || (code ? { code, name: code, flag: "🌍" } : UNASSIGNED);
 
 /* ── tiny helpers ─────────────────────────────────────────────────────────── */
 const esc = (s = "") =>
@@ -232,6 +242,171 @@ function homeSummaryCard(items) {
     </div>`;
 }
 
+/* ── Spend by country (pie) ────────────────────────────────────────────────── */
+// Everything summed into the home currency, grouped by country. Colours are keyed
+// to each country's position in COUNTRIES so they stay stable across renders.
+function spendByCountry(items) {
+  const by = new Map();
+  let unconvertible = 0;
+  for (const e of items) {
+    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    if (v == null) { unconvertible += 1; continue; }
+    const key = e.country || "";
+    by.set(key, (by.get(key) || 0) + v);
+  }
+  const order = [...COUNTRIES.map((c) => c.code), ""]; // trip order, unassigned last
+  const groups = [...by.entries()]
+    .filter(([, total]) => total > 0)
+    .sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
+    .map(([code, total]) => {
+      const c = countryOf(code);
+      const idx = COUNTRIES.findIndex((x) => x.code === code);
+      return {
+        code, total, name: c.name, flag: c.flag,
+        color: code === "" ? UNASSIGNED.color : COUNTRY_COLORS[idx % COUNTRY_COLORS.length],
+      };
+    });
+  const total = groups.reduce((s, g) => s + g.total, 0);
+  return { groups, total, unconvertible };
+}
+
+// One donut wedge from startDeg→endDeg (12 o'clock = 0°, clockwise).
+function donutArc(cx, cy, r, ri, startDeg, endDeg) {
+  const pol = (rad, deg) => {
+    const a = ((deg - 90) * Math.PI) / 180;
+    return [(cx + rad * Math.cos(a)).toFixed(2), (cy + rad * Math.sin(a)).toFixed(2)];
+  };
+  const large = endDeg - startDeg > 180 ? 1 : 0;
+  const [x1, y1] = pol(r, endDeg);
+  const [x2, y2] = pol(r, startDeg);
+  const [x3, y3] = pol(ri, startDeg);
+  const [x4, y4] = pol(ri, endDeg);
+  return `M${x1} ${y1} A${r} ${r} 0 ${large} 0 ${x2} ${y2} L${x3} ${y3} A${ri} ${ri} 0 ${large} 1 ${x4} ${y4} Z`;
+}
+
+function pieSVG(groups, total) {
+  const cx = 120, cy = 120, r = 100, ri = 62;
+  let slices;
+  if (groups.length === 1) {
+    // A single 100% slice: a 360° arc is degenerate, so draw a full ring.
+    slices = `<circle cx="${cx}" cy="${cy}" r="${(r + ri) / 2}" fill="none"
+                stroke="${groups[0].color}" stroke-width="${r - ri}" />`;
+  } else {
+    let a = 0;
+    slices = groups.map((g) => {
+      const start = a, end = a + (g.total / total) * 360;
+      a = end;
+      return `<path d="${donutArc(cx, cy, r, ri, start, end)}" fill="${g.color}" />`;
+    }).join("");
+  }
+  return `
+    <svg class="exp-pie" viewBox="0 0 240 240" role="img" aria-label="Spend by country">
+      ${slices}
+      <text x="${cx}" y="${cy - 4}" class="exp-pie-total" text-anchor="middle">${esc(fmt(total, HOME_CURRENCY))}</text>
+      <text x="${cx}" y="${cy + 16}" class="exp-pie-sub" text-anchor="middle">total</text>
+    </svg>`;
+}
+
+function countrySpendCard(items) {
+  if (!items.length) return "";
+
+  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
+  const info = ratesInfo();
+  if (hasForeign && info.source === "none")
+    return `<div class="panel exp-country"><h2>By country</h2>
+      <p class="exp-rate-note pending">💱 converting…</p></div>`;
+  if (hasForeign && info.source === "unavailable")
+    return `<div class="panel exp-country"><h2>By country</h2>
+      <p class="exp-rate-note pending">💱 The by-country breakdown needs exchange rates —
+      you're offline and they haven't been fetched yet. It'll appear once you're back online.</p></div>`;
+
+  const { groups, total, unconvertible } = spendByCountry(items);
+  if (total <= 0)
+    return `<div class="panel exp-country"><h2>By country</h2>
+      <p class="exp-empty">No convertible spend yet.</p></div>`;
+
+  const legend = groups.map((g) => `
+    <div class="exp-legend-row">
+      <span class="sw" style="background:${g.color}"></span>
+      <span class="lg-name">${g.flag} ${esc(g.name)}</span>
+      <span class="lg-amt">${esc(fmt(g.total, HOME_CURRENCY))}</span>
+      <span class="lg-pct">${(g.total / total * 100).toFixed(0)}%</span>
+    </div>`).join("");
+
+  return `
+    <div class="panel exp-country">
+      <h2>By country</h2>
+      <div class="exp-country-body">
+        ${pieSVG(groups, total)}
+        <div class="exp-legend">${legend}</div>
+      </div>
+      ${unconvertible ? `<div class="exp-rate-note warn">⚠ ${unconvertible} expense${unconvertible > 1 ? "s" : ""} in a currency with no rate — excluded</div>` : ""}
+    </div>`;
+}
+
+/* ── Budget tracker ────────────────────────────────────────────────────────── */
+// "Am I on track?" — compares actual spend (in the home currency) against the
+// budget you'd expect to have used by today if it were spread evenly across the
+// trip dates. Everything is optional: no budget configured → no card.
+function budgetCard(items) {
+  if (!(TRIP_BUDGET > 0)) return "";
+
+  const info = ratesInfo();
+  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
+  const pending = hasForeign && info.source !== "live";
+
+  let spent = 0;
+  for (const e of items) {
+    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    if (v != null) spent += v;
+  }
+
+  const budget = TRIP_BUDGET;
+  const remaining = budget - spent;
+  const usedPct = Math.min((spent / budget) * 100, 100);
+
+  const start = Date.parse(TRIP_START), end = Date.parse(TRIP_END), now = Date.now();
+  let expected = null, verdict = "", vClass = "ok", note = "";
+  if (!Number.isNaN(start) && !Number.isNaN(end) && end > start) {
+    const elapsed = Math.min(Math.max((now - start) / (end - start), 0), 1);
+    expected = budget * elapsed;
+    const daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
+
+    if (now < start) { verdict = "Not started"; vClass = "ok"; }
+    else if (spent > budget) { verdict = "Over budget"; vClass = "over"; }
+    else if (spent <= expected * 1.05) { verdict = "On track"; vClass = "ok"; }
+    else { verdict = "Ahead of pace"; vClass = "warn"; }
+
+    const bits = [];
+    if (now >= start) bits.push(`expected by today ≈ <strong>${esc(fmt(expected, HOME_CURRENCY))}</strong>`);
+    if (elapsed > 0 && elapsed < 1)
+      bits.push(`projected total <strong>${esc(fmt(spent / elapsed, HOME_CURRENCY))}</strong>`);
+    if (now < end) bits.push(`${daysLeft} day${daysLeft === 1 ? "" : "s"} left`);
+    note = bits.join(" · ");
+  }
+
+  return `
+    <div class="panel exp-budget">
+      <div class="exp-budget-head">
+        <h2>Budget</h2>
+        ${verdict ? `<span class="exp-verdict ${vClass}">${esc(verdict)}</span>` : ""}
+      </div>
+      <div class="exp-budget-nums">
+        <div><span class="k">Spent</span><span class="v">${esc(fmt(spent, HOME_CURRENCY))}</span></div>
+        <div><span class="k">${remaining >= 0 ? "Remaining" : "Over by"}</span>
+             <span class="v${remaining < 0 ? " over" : ""}">${esc(fmt(Math.abs(remaining), HOME_CURRENCY))}</span></div>
+        <div><span class="k">Budget</span><span class="v">${esc(fmt(budget, HOME_CURRENCY))}</span></div>
+      </div>
+      <div class="exp-budget-bar">
+        <div class="exp-budget-fill${spent > budget ? " over" : ""}" style="width:${usedPct.toFixed(1)}%"></div>
+        ${expected != null ? `<div class="exp-budget-mark" style="left:${Math.min((expected / budget) * 100, 100).toFixed(1)}%"></div>` : ""}
+      </div>
+      <div class="exp-budget-scale"><span>${esc(fmt(0, HOME_CURRENCY))}</span><span>${esc(fmt(budget, HOME_CURRENCY))}</span></div>
+      ${note ? `<div class="exp-rate-note">▲ ${note}</div>` : ""}
+      ${pending ? `<div class="exp-rate-note warn">⚠ some foreign expenses aren't converted yet — “spent” is understated until rates load</div>` : ""}
+    </div>`;
+}
+
 function summaryCards(items) {
   const groups = totalsByCurrency(items);
   const curs = Object.keys(groups).sort();
@@ -330,6 +505,8 @@ function addForm(user, onAdd) {
     .map((em) => `<option value="${esc(em)}"${em === user.email ? " selected" : ""}>${esc(nameFor(em))}</option>`)
     .join("");
   const catOpts = CATEGORIES.map((c) => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+  const countryOpts = COUNTRIES.map((c) => `<option value="${esc(c.code)}">${c.flag} ${esc(c.name)}</option>`).join("")
+    + `<option value="">🌍 Other / unassigned</option>`;
 
   const form = el(`
     <form class="panel exp-form">
@@ -346,6 +523,10 @@ function addForm(user, onAdd) {
         <label class="exp-field cat">
           <span>Category</span>
           <select name="category">${catOpts}</select>
+        </label>
+        <label class="exp-field country">
+          <span>Country</span>
+          <select name="country">${countryOpts}</select>
         </label>
         <label class="exp-field who">
           <span>Paid by</span>
@@ -382,6 +563,7 @@ function addForm(user, onAdd) {
         amount,
         currency,
         category: f.category.value,
+        country: f.country.value,
         paidBy: f.paidBy.value,
         date: f.date.value || todayISO(),
         note: f.note.value.trim(),
@@ -409,7 +591,7 @@ function dashboard(user, items, actions) {
     </div>`);
   head.querySelector(".exp-out").addEventListener("click", actions.signOut);
 
-  const summary = el(`<div>${summaryCards(items)}</div>`);
+  const summary = el(`<div>${budgetCard(items)}${countrySpendCard(items)}${summaryCards(items)}</div>`);
   const rows = expenseRows(items, actions.remove);
   const form = addForm(user, actions.add);
 
