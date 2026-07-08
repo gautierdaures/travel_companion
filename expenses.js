@@ -8,8 +8,8 @@
 // firestore.rules. The Firebase config is public by design.
 
 import {
-  firebaseConfig, ALLOWED_EMAILS, isConfigured, nameFor, HOME_CURRENCY,
-  TRIP_BUDGET, TRIP_START, TRIP_END,
+  firebaseConfig, ALLOWED_EMAILS, COMMON_ACCOUNT, isConfigured, nameFor,
+  HOME_CURRENCY, TRIP_BUDGET, TRIP_START, TRIP_END,
 } from "./firebase-config.js";
 import { toHome, ratesInfo, ensureCurrencies, isSupported } from "./fx.js";
 import { ensureCountries, countryName } from "./countries.js";
@@ -241,14 +241,17 @@ function homeSummaryCard(items) {
 
   const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
 
-  // Settle-up on a 50/50 split when exactly two people paid.
+  // Settle-up on a 50/50 split, considering only what each person paid out of
+  // their own pocket. The shared account is already split evenly by definition,
+  // so it's excluded from who-owes-whom.
+  const individuals = people.filter(([who]) => who !== COMMON_ACCOUNT);
   let settle = "";
-  if (people.length === 2) {
-    const [[aWho, aAmt], [, bAmt]] = people;
+  if (individuals.length === 2) {
+    const [[aWho, aAmt], [, bAmt]] = individuals;
     const owe = (aAmt - bAmt) / 2;
     settle = owe < 0.01
       ? `<div class="exp-settle even">✓ You're even</div>`
-      : `<div class="exp-settle">${esc(nameFor(people[1][0]))} owes ${esc(nameFor(aWho))}
+      : `<div class="exp-settle">${esc(nameFor(individuals[1][0]))} owes ${esc(nameFor(aWho))}
          <strong>${esc(fmt(owe, HOME_CURRENCY))}</strong> to even up <span>(50/50)</span></div>`;
   }
 
@@ -561,7 +564,8 @@ function countryOptionsHTML(selected) {
 function addForm(user, onAdd) {
   const peopleOpts = ALLOWED_EMAILS
     .map((em) => `<option value="${esc(em)}"${em === user.email ? " selected" : ""}>${esc(nameFor(em))}</option>`)
-    .join("");
+    .join("") +
+    `<option value="${esc(COMMON_ACCOUNT)}">🤝 ${esc(nameFor(COMMON_ACCOUNT))} (shared)</option>`;
   const catOpts = CATEGORIES.map((c) => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
 
   // Default the currency/country to whatever was used last (falling back to the

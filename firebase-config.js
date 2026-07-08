@@ -28,6 +28,12 @@ export const NAMES = {
   "chloemichel1112@gmail.com": "Chloe"
 };
 
+// The shared "joint account". Expenses paid from it (groceries on the common
+// card, a hotel split down the middle, …) are stored with paidBy === COMMON so
+// they don't count toward either person's individual total or the settle-up:
+// they're already shared, not owed by one to the other.
+export const COMMON_ACCOUNT = "common";
+
 // Your "home" currency — every expense is also totalled in this one, using live
 // exchange rates fetched when you're online (see fx.js).
 export const HOME_CURRENCY = "EUR";
@@ -49,6 +55,8 @@ export const TRIP_END    = "2027-09-03"; // last day of the trip  (YYYY-MM-DD)
 export const isConfigured = () =>
   !Object.values(firebaseConfig).some((v) => String(v).includes("PASTE_"));
 
-// Display name for an email (config name → email prefix fallback).
+// Display name for an email (config name → email prefix fallback). The shared
+// joint account gets its own label.
 export const nameFor = (email) =>
-  NAMES[email] || (email ? email.split("@")[0] : "—");
+  email === COMMON_ACCOUNT ? "Common"
+    : NAMES[email] || (email ? email.split("@")[0] : "—");
