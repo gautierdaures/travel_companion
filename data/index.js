@@ -56,9 +56,16 @@
 //           | "avoid" — crowds / closures / heat; steer around it
 //           | "note"  — good to know, plan accordingly
 //
-//    places: [ { name, category, region, description, coords? }, ... ]
+//    places: [ { name, category, region, description, long?, wiki?, coords? }, ... ]
 //      category ∈ "architecture" | "history" | "nature" | "food" | "offbeat"
-//      coords   = [lat, lng] — optional, drops a numbered pin on the map
+//      description = one succinct line, shown in the Places list
+//      long        = the full guide (1–3 short paragraphs) on the place's
+//                    own page at #/<code>/place/<i>; separate paragraphs
+//                    with a blank line. Falls back to `description`.
+//      wiki        = English Wikipedia article title (e.g. "Hạ Long Bay").
+//                    Drives the place's photos and a live extract, pulled at
+//                    runtime by wiki.js. Fails soft — offline just shows text.
+//      coords      = [lat, lng] — optional, drops a numbered pin on the map
 //  }
 //
 //  TO ADD A COUNTRY:

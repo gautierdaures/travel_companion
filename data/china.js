@@ -108,12 +108,131 @@ export default {
   ],
 
   places: [
-    { name: "The Great Wall (Jinshanling)", category: "history", coords: [40.677, 117.244], region: "near Beijing", description: "Skip the crowded stretches for this partly wild, partly restored section — hike between watchtowers with the wall to yourself." },
-    { name: "Forbidden City", category: "architecture", coords: [39.9163, 116.3972], region: "Beijing", description: "The vast imperial palace of the Ming and Qing emperors — 900 buildings behind vermilion walls at the city's heart." },
-    { name: "Terracotta Army", category: "history", coords: [34.3841, 109.2785], region: "Xi'an", description: "Thousands of life-size clay soldiers buried to guard the first emperor, each face individually modeled." },
-    { name: "Zhangjiajie", category: "nature", coords: [29.317, 110.479], region: "Hunan", description: "Thousands of sheer sandstone pillars rising from the mist — the landscape that inspired the floating mountains of 'Avatar'." },
-    { name: "Li River (Guilin to Yangshuo)", category: "nature", coords: [24.9, 110.49], region: "Guangxi", description: "Drift past the karst peaks and water buffalo painted on every scroll of classical China — best by bamboo raft." },
-    { name: "Bund & French Concession", category: "architecture", coords: [31.2304, 121.4737], region: "Shanghai", description: "Colonial-era waterfront facing a futurist skyline, and leafy plane-tree streets behind — old and new Shanghai in one walk." },
-    { name: "Jiuzhaigou", category: "offbeat", coords: [33.2603, 103.918], region: "Sichuan", description: "A high valley of impossibly turquoise lakes and waterfalls fed by snowmelt, ringed by Tibetan villages." },
+    {
+      name: "The Great Wall (Jinshanling)", category: "history", coords: [40.677, 117.244], region: "near Beijing",
+      description: "Skip the crowded stretches for this partly wild, partly restored section — hike between watchtowers with the wall to yourself.",
+      wiki: "Jinshanling",
+      long:
+        "The Great Wall is not one wall but many, built and rebuilt over two thousand years and running for thousands of kilometres along China's northern frontier. The mistake most visitors make is to see it only at Badaling, the restored, cable-car-served section nearest Beijing that fills with crowds. Jinshanling, a couple of hours further out, is the antidote.\n\nHere a stretch of Ming-era wall marches along a knife-edge ridge, part solidly restored and part crumbling and overgrown, its watchtowers spaced along the skyline. The classic walk east toward Simatai gives hours of ridge-top wall largely to yourself, with the stonework snaking away over the hills in both directions — the Great Wall as it lodges in the imagination.",
+    },
+    {
+      name: "Forbidden City", category: "architecture", coords: [39.9163, 116.3972], region: "Beijing",
+      description: "The vast imperial palace of the Ming and Qing emperors — 900 buildings behind vermilion walls at the city's heart.",
+      wiki: "Forbidden City",
+      long:
+        "For almost five centuries, from the Ming dynasty to the fall of the Qing in 1912, the Forbidden City was the ceremonial and political centre of China and the home of the emperor — a walled city-within-a-city that ordinary people could not enter on pain of death. Behind a moat and vermilion walls lie some 980 surviving buildings along a strict north–south axis, a masterpiece of Chinese palatial planning.\n\nYou enter from the vast Tiananmen Square through a sequence of gates and courtyards, past the great throne halls with their golden roofs, into the more intimate residential quarters and gardens where the imperial family actually lived. It is enormous — allow at least half a day — and the Palace Museum's collections of imperial treasures reward slowing down amid the crowds.",
+    },
+    {
+      name: "Terracotta Army", category: "history", coords: [34.3841, 109.2785], region: "Xi'an",
+      description: "Thousands of life-size clay soldiers buried to guard the first emperor, each face individually modeled.",
+      wiki: "Terracotta Army",
+      long:
+        "In 1974 farmers digging a well near Xi'an broke into one of the archaeological finds of the century: a buried army of thousands of life-size terracotta soldiers, arrayed in battle formation to guard the tomb of Qin Shi Huang, the first emperor of a unified China, who died in 210 BCE. Every figure is individually modelled — different faces, hairstyles, ranks and armour — and they were once brightly painted and armed with real weapons.\n\nThree excavated pits are roofed by hangar-like halls; Pit 1, with its massed ranks of infantry receding into the distance, is the unforgettable one. Much of the emperor's mausoleum complex remains unexcavated, including the tomb mound itself. Xi'an rewards a longer stay too, for its intact Ming city wall and the food of its Muslim Quarter.",
+    },
+    {
+      name: "Zhangjiajie", category: "nature", coords: [29.317, 110.479], region: "Hunan",
+      description: "Thousands of sheer sandstone pillars rising from the mist — the landscape that inspired the floating mountains of 'Avatar'.",
+      wiki: "Zhangjiajie National Forest Park",
+      long:
+        "The forest park at Zhangjiajie protects a landscape that looks invented: thousands of quartz-sandstone pillars, some over 200 metres tall, rising vertically out of subtropical forest and drifting in and out of the mist. It's widely credited as an inspiration for the floating Hallelujah Mountains of the film 'Avatar', and in person the scale and strangeness live up to the billing.\n\nA network of trails, lifts and shuttle buses threads the park — the glass Bailong elevator rides the outside of a cliff, and a glass-bottomed bridge spans a nearby canyon for those with the nerve. Rise early and pick quieter trails to escape the domestic tour groups, and give the misty mornings, when the peaks seem to hover, priority over blue-sky afternoons.",
+    },
+    {
+      name: "Li River (Guilin to Yangshuo)", category: "nature", coords: [24.9, 110.49], region: "Guangxi",
+      description: "Drift past the karst peaks and water buffalo painted on every scroll of classical China — best by bamboo raft.",
+      wiki: "Li River",
+      long:
+        "The stretch of the Li River between Guilin and Yangshuo is the archetypal landscape of Chinese painting: conical karst peaks rising from the water and the paddies, fishermen on bamboo rafts, water buffalo in the shallows, all softened by river mist. The view is famous enough to appear on the back of the 20-yuan note.\n\nThe river cruise is the classic way to see it, but the quieter pleasures lie at either end: renting a bicycle or scooter around Yangshuo to ride through the peaks, drifting a bamboo raft on the smaller Yulong River, or hiking the riverside path near Xingping. Yangshuo town has grown touristy, so aim to sleep out among the villages and paddies where the scenery is the whole point.",
+    },
+    {
+      name: "Bund & French Concession", category: "architecture", coords: [31.2304, 121.4737], region: "Shanghai",
+      description: "Colonial-era waterfront facing a futurist skyline, and leafy plane-tree streets behind — old and new Shanghai in one walk.",
+      wiki: "The Bund",
+      long:
+        "No single view captures modern China better than the Bund at dusk: a curving parade of grand 1920s banks and trading houses in stone — Shanghai's colonial-era 'Wall Street of the East' — facing across the Huangpu River to the neon-lit spires of Pudong, a skyline that barely existed thirty years ago. Walk the promenade as the lights come on and the contrast does the work.\n\nInland lies the former French Concession, the loveliest part of the city to wander: plane-tree-shaded streets of Art Deco apartments and shikumen lane houses, now full of cafés, boutiques and quiet gardens. Together the two make a walkable portrait of Shanghai's layered past and headlong present — best explored slowly, on foot, with time for a lane-house meal.",
+    },
+    {
+      name: "Jiuzhaigou", category: "offbeat", coords: [33.2603, 103.918], region: "Sichuan",
+      description: "A high valley of impossibly turquoise lakes and waterfalls fed by snowmelt, ringed by Tibetan villages.",
+      wiki: "Jiuzhaigou",
+      long:
+        "High on the eastern edge of the Tibetan plateau, the valley of Jiuzhaigou — 'nine village valley', for the Tibetan settlements within it — holds a chain of lakes so intensely coloured they look tinted: turquoise, emerald and cobalt, the clarity a product of mineral-rich water and calcium terraces, threaded by waterfalls and travertine shoals. Boardwalks and shuttle buses lead through the forest from pool to pool.\n\nSacred to the local Tibetans and framed by snow peaks, it is at its most spectacular in autumn, when the surrounding forest turns and doubles itself in the still water. A 2017 earthquake closed the park for a time and visitor numbers are now capped, so book ahead — and consider pairing it with the calcite terraces of nearby Huanglong.",
+    },
+    {
+      name: "Mogao Caves", category: "history", coords: [40.0417, 94.8096], region: "Dunhuang, Gansu",
+      description: "A thousand years of Buddhist cave-painting on the Silk Road — the 'Caves of the Thousand Buddhas'.",
+      wiki: "Mogao Caves",
+      long:
+        "At the oasis town of Dunhuang, where the Silk Road split to skirt the Taklamakan Desert, monks and merchants cut and decorated hundreds of Buddhist grottoes into a cliff over the course of a thousand years, from the 4th century on. Nearly 500 survive, their walls and ceilings covered with murals — flying apsaras, jataka tales, portraits of donors — and filled with painted clay statues, together forming one of the world's greatest treasuries of Buddhist art.\n\nIt was here, too, that a sealed 'library cave' yielded tens of thousands of medieval manuscripts, including the printed Diamond Sutra, much of it later carried off to foreign museums. Visits are tightly managed to protect the fragile pigments — timed, guided, and rotating through a selection of caves — but the encounter with such age and artistry, out on the desert's edge, is profound.",
+    },
+    {
+      name: "Potala Palace", category: "architecture", coords: [29.6558, 91.1170], region: "Lhasa, Tibet",
+      description: "The towering winter palace of the Dalai Lamas, rising white and red above Lhasa on its sacred hill.",
+      wiki: "Potala Palace",
+      long:
+        "Climbing thirteen storeys up the Red Hill above Lhasa, the Potala Palace is the great symbol of Tibet: a fortress-monastery of whitewashed walls and a crimson central block, home to the Dalai Lamas from the 17th century until the 14th fled into exile in 1959. Inside are hundreds of rooms — chapels, meditation halls, and the jewelled golden tombs of past Dalai Lamas — reached through a dim maze of steep stairs and butter-lamp-lit passages.\n\nAt 3,700 metres the altitude is real, so acclimatise before you tackle the climb, and note that visits are timed and permits for Tibet must be arranged in advance through a tour. Below, the pilgrim circuit of the old town and the Jokhang temple, thick with prostrating worshippers, is every bit as memorable as the palace above.",
+    },
+    {
+      name: "Pingyao", category: "architecture", coords: [37.1917, 112.1750], region: "Shanxi",
+      description: "A completely walled Ming-and-Qing city of grey-brick courtyard houses, banks, and temples — old China intact.",
+      wiki: "Pingyao",
+      long:
+        "Pingyao is the best-preserved old walled city in China: an entire Ming and Qing town still enclosed by its 14th-century ramparts, with the grid of streets, grey-brick courtyard houses, temples and shopfronts largely intact. In the 19th century it was an unlikely financial capital — China's first draft banks, forerunners of the modern cheque, were founded here — and their fortified premises can still be visited.\n\nStaying overnight, once the day-trippers leave, is the trick: sleep in a converted courtyard inn, walk the top of the city walls, and let the lantern-lit streets take you back. Shanxi province around it adds the hanging monastery and grottoes further afield, but Pingyao itself is the rare place where you can simply live inside old China for a day or two.",
+    },
+    {
+      name: "Longji Rice Terraces", category: "nature", coords: [25.9500, 110.1300], region: "Guangxi",
+      description: "The 'Dragon's Backbone' — mountainsides sculpted into curving terraces by Zhuang and Yao communities.",
+      wiki: "Longsheng Rice Terraces",
+      long:
+        "In the hills north of Guilin, generations of Zhuang and Yao farmers have carved entire mountainsides into stacked, curving rice terraces that follow every contour of the slopes — the 'Dragon's Backbone', Longji. Wooden villages cling to the ridges among them, and paths link viewpoints where the terraces fan out below like contour lines made solid.\n\nThe terraces shift with the seasons: mirror-bright with water in spring, deep green in summer, and burnished gold before the autumn harvest. Walking between villages such as Ping'an and Dazhai, staying in a timber guesthouse, and — if you're lucky — catching a local market are the rewards. The Red Yao women here are famous for hair kept uncut for a lifetime.",
+    },
+    {
+      name: "Hongcun", category: "architecture", coords: [29.9800, 117.9800], region: "Anhui",
+      description: "A postcard Huizhou village of white walls and black tiles mirrored in a lotus-fringed pond.",
+      wiki: "Hongcun",
+      long:
+        "At the foot of the Huangshan mountains, Hongcun is the quintessential village of the old Huizhou merchant culture: whitewashed walls and black-tiled roofs, upturned eaves and carved wooden halls, laid out — so tradition says — in the shape of an ox, with a network of channels bringing water to every door. The still Moon Pond and the lake at the village edge give the classic mirror-image reflections.\n\nThe wealth of Huizhou salt merchants paid for the exquisite wood, brick and stone carving inside the ancestral halls and courtyard homes. Hongcun and neighbouring Xidi are UNESCO-listed and understandably popular with painters and photographers, so come early or stay the night to have the lanes to yourself, and pair the visit with a climb up Huangshan next door.",
+    },
+    {
+      name: "Huangshan (Yellow Mountain)", category: "nature", coords: [30.1333, 118.1667], region: "Anhui",
+      description: "Granite peaks, twisted pines, and seas of cloud — the mountain that shaped Chinese landscape painting.",
+      wiki: "Huangshan",
+      long:
+        "Few places have influenced Chinese art as deeply as Huangshan, the 'Yellow Mountain', whose granite peaks, gnarled pines clinging to bare rock, and rolling seas of cloud have been painted and written about for centuries. The classic experience is to climb (or take a cable car) up into this world of stone staircases and vertiginous viewpoints, and to stay overnight on the summit to catch the sunrise breaking over a sea of cloud.\n\nThe peaks have names and legends, the pines are individually celebrated, and hot springs bubble at the base. It can be busy and, in cloud, briefly viewless — but when the mist parts to reveal pinnacles floating above the white, you understand instantly why generations of painters kept coming back. Combine it with the Huizhou villages of Hongcun and Xidi below.",
+    },
+    {
+      name: "Fenghuang Ancient Town", category: "offbeat", coords: [27.9481, 109.5990], region: "Hunan",
+      description: "Stilt houses leaning over the Tuo River in a riverside town of the Miao and Tujia peoples.",
+      wiki: "Fenghuang County",
+      long:
+        "Set on the Tuo River in the hills of western Hunan, Fenghuang — 'Phoenix' — is an unusually pretty old town of wooden stilt houses (diaojiaolou) leaning out over the water, arched stone bridges, and lantern-hung lanes, in a region historically home to the Miao and Tujia minorities. Ferrymen pole flat boats beneath the bridges, and at night the reflected lights turn the river into a ribbon of colour.\n\nThe writer Shen Congwen, whose stories put the town on the map, is buried here, and his former home is among the sights. Fenghuang has grown lively and commercial along the waterfront, so wander the back lanes and the surrounding Miao villages for quieter corners — and consider it a natural stop between Zhangjiajie's pillars and the wider south-west.",
+    },
+    {
+      name: "Leshan Giant Buddha", category: "history", coords: [29.5450, 103.7717], region: "Sichuan",
+      description: "A 71-metre Buddha carved into a river cliff in the 8th century — the largest stone Buddha on Earth.",
+      wiki: "Leshan Giant Buddha",
+      long:
+        "Where three rivers meet near the Sichuan town of Leshan, a Tang-dynasty monk began carving a colossal Buddha into the red sandstone cliff in 713, hoping the works — and the merit — would calm the turbulent, boat-wrecking waters below. Completed ninety years later, the seated Maitreya is 71 metres tall, its ears alone longer than a person, making it the largest pre-modern stone Buddha in the world.\n\nYou can view it from a river boat that takes in the whole serene figure at once, or descend a steep staircase cut into the cliff beside it for a vertiginous close-up of its feet and toes. An ingenious hidden drainage system has kept the statue standing for over a thousand years. Nearby Mount Emei, a sacred Buddhist peak, makes a natural pairing.",
+    },
+    {
+      name: "Yungang Grottoes", category: "history", coords: [40.1100, 113.1330], region: "Datong, Shanxi",
+      description: "51,000 Buddhist statues carved into sandstone cliffs in the 5th century, from towering to tiny.",
+      wiki: "Yungang Grottoes",
+      long:
+        "Just outside Datong, the Yungang Grottoes are one of China's earliest and greatest ensembles of Buddhist cave sculpture, cut into a sandstone ridge in the 5th century under the Northern Wei dynasty. Some 45 major caves hold over 50,000 statues, from a serene seated Buddha 17 metres high to countless miniature figures covering the walls, blending Indian, Central Asian and Chinese styles at a moment when Buddhism was taking root in China.\n\nMuch original pigment survives in the sheltered interiors, and the sheer density of carving — every surface worked — is overwhelming. Datong itself, once a Wei capital, adds a rebuilt old town and, an hour away, the gravity-defying Hanging Temple pinned to a cliff face, making the sooty coal city a surprisingly rich base.",
+    },
+    {
+      name: "West Lake", category: "nature", coords: [30.2500, 120.1500], region: "Hangzhou, Zhejiang",
+      description: "The lake of causeways, willows, and misty pavilions that has defined Chinese ideas of beauty for a millennium.",
+      wiki: "West Lake",
+      long:
+        "For over a thousand years the West Lake at Hangzhou has been the very model of cultivated Chinese scenery, endlessly celebrated by poets and painters and imitated in gardens across East Asia. Willow-lined causeways built by the poet-governors Bai Juyi and Su Dongpo cross the water, arched bridges and lakeside pavilions frame the views, and pagodas rise on the surrounding hills.\n\nThe pleasure is gentle and civilised: stroll or cycle the causeways, take a boat to the island pavilions, and seek out the 'ten scenes' — each a named, seasonal mood, from lotus in summer to moonlight over the water. Hangzhou is also China's tea capital, so climb into the terraced Longjing (Dragon Well) plantations in the hills behind the lake for a cup at the source.",
+    },
+    {
+      name: "Zhangye Danxia", category: "nature", coords: [38.9600, 100.1300], region: "Gansu",
+      description: "Rainbow-striped hills of banded red, orange, and gold sandstone in the arid northwest.",
+      wiki: "Zhangye National Geopark",
+      long:
+        "In arid Gansu, on the old Silk Road corridor, millions of years of layered sandstone and mineral deposits have been folded, tilted and eroded into a range of low hills striped in improbable bands of rust-red, orange, cream and green — the 'rainbow mountains' of Zhangye Danxia. Boardwalks and viewing platforms lead to the best vantages across the ribboned ridges.\n\nThe colours come alive in low, warm light — early morning or, best of all, the hour before sunset, and especially just after rain when the hues deepen. It's an easy, photogenic detour on a journey along the Hexi Corridor between Xi'an and Dunhuang, and pairs naturally with the Silk Road art of the Mogao Caves further west.",
+    },
   ],
 };

@@ -1,5 +1,6 @@
 import { COUNTRIES, byCode } from "./data/index.js";
 import { GEO } from "./data/geo.js";
+import { wikiInfo, wikiThumb } from "./wiki.js";
 
 const app = document.getElementById("app");
 
@@ -18,15 +19,16 @@ const EVENT_KINDS = {
   note:  { label: "Heads-up",     color: "var(--ev-note)",  icon: "⚠️" },
 };
 
+// Places and Map lead; the reference material follows.
 const SECTIONS = [
+  { id: "places", label: "Places" },
+  { id: "map", label: "Map" },
   { id: "languages", label: "Language" },
   { id: "history", label: "History" },
   { id: "climate", label: "When to go" },
   { id: "events", label: "Events" },
   { id: "books", label: "Books" },
   { id: "meals", label: "Food" },
-  { id: "map", label: "Map" },
-  { id: "places", label: "Places" },
 ];
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -172,25 +174,61 @@ function mealsBlock(c) {
 function placesBlock(c) {
   return `
     <section class="block" id="sec-places">
-      <h2>Key places to visit</h2>
+      <h2>Places to visit</h2>
       <div class="panel">
         ${c.places
           .map((p, i) => {
             const cat = CATS[p.category] || { label: p.category, color: "var(--text-dim)", icon: "📍" };
             return `
-          <div class="place" id="place-${c.code}-${i}">
-            <div class="head">
-              ${p.coords ? `<span class="num" data-i="${i}" title="Show on map">${i + 1}</span>` : ""}
-              <span class="t">${esc(p.name)}</span>
-              <span class="tag" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
+          <a class="place" id="place-${c.code}-${i}" href="#/${c.code}/place/${i}">
+            <div class="place-thumb" ${p.wiki ? `data-wiki="${esc(p.wiki)}"` : ""}>
+              <span class="place-thumb-ph">${cat.icon}</span>
             </div>
-            ${p.region ? `<div class="region">${esc(p.region)}</div>` : ""}
-            <div class="d">${esc(p.description)}</div>
-          </div>`;
+            <div class="place-body">
+              <div class="head">
+                ${p.coords ? `<span class="num" data-i="${i}" title="Show on map">${i + 1}</span>` : ""}
+                <span class="t">${esc(p.name)}</span>
+                <span class="tag" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
+              </div>
+              ${p.region ? `<div class="region">${esc(p.region)}</div>` : ""}
+              <div class="d">${esc(p.description)}</div>
+              <span class="more">Full guide →</span>
+            </div>
+          </a>`;
           })
           .join("")}
       </div>
     </section>`;
+}
+
+// Fill in each place's list thumbnail from Wikipedia. Works through the rows
+// top-to-bottom with a small concurrency limit — gentle on the API and, unlike
+// an IntersectionObserver, it runs even when the tab isn't in the foreground.
+// Fails soft: a missing image just leaves the category-icon placeholder.
+function loadThumbs(scope) {
+  const boxes = [...scope.querySelectorAll(".place-thumb[data-wiki]")];
+  if (!boxes.length) return;
+
+  const fill = async (box) => {
+    try {
+      const src = await wikiThumb(box.dataset.wiki);
+      if (!src || !box.isConnected) return;
+      const img = new Image();
+      img.alt = "";
+      img.decoding = "async";
+      img.onload = () => box.classList.add("has-img");
+      img.src = src;
+      box.prepend(img);
+    } catch {
+      /* offline or unknown title — keep the placeholder */
+    }
+  };
+
+  let next = 0;
+  const worker = async () => {
+    while (next < boxes.length) await fill(boxes[next++]);
+  };
+  for (let i = 0; i < Math.min(3, boxes.length); i++) worker();
 }
 
 /* ── Weather (monthly temperature chart) ───────────────────────────────── */
@@ -485,14 +523,14 @@ function renderCountry(code) {
   });
 
   const body = el(`<div>
+    ${placesBlock(c)}
+    ${mapBlock(c)}
     ${languagesBlock(c)}
     ${historyBlock(c)}
     ${climateBlock(c)}
     ${eventsBlock(c)}
     ${booksBlock(c)}
     ${mealsBlock(c)}
-    ${mapBlock(c)}
-    ${placesBlock(c)}
     <div class="footer">Offline ID card · edit content in the <code>data/</code> folder</div>
   </div>`);
 
@@ -506,8 +544,12 @@ function renderCountry(code) {
         flash(card, "flash");
       });
     });
+    // The number badge lives inside the place link; keep its click from
+    // opening the detail page — it jumps to the map instead.
     body.querySelectorAll(".place .num").forEach((num) => {
-      num.addEventListener("click", () => {
+      num.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         document.getElementById("sec-map")?.scrollIntoView({ behavior: "smooth", block: "start" });
         flash(svg.querySelector(`.pin[data-i="${num.dataset.i}"]`), "pin-flash");
       });
@@ -515,6 +557,102 @@ function renderCountry(code) {
   }
 
   app.append(topbar, hero, jump, body);
+  loadThumbs(body);
+  window.scrollTo(0, 0);
+
+  // Arriving back from a place's detail page via "Show on map": jump to the
+  // map and ping the pin so you can see where it sits.
+  const focus = sessionStorage.getItem("tc_focusPin");
+  if (focus !== null && svg) {
+    sessionStorage.removeItem("tc_focusPin");
+    requestAnimationFrame(() => {
+      document.getElementById("sec-map")?.scrollIntoView({ block: "start" });
+      flash(svg.querySelector(`.pin[data-i="${focus}"]`), "pin-flash");
+    });
+  }
+}
+
+/* ── Place detail view ─────────────────────────────────────────────────── */
+function renderPlaceDetail(code, i) {
+  const c = byCode(code);
+  const p = c && c.places[i];
+  if (!p) {
+    location.hash = c ? `#/${code}` : "#/";
+    return;
+  }
+  const cat = CATS[p.category] || { label: p.category, color: "var(--text-dim)", icon: "📍" };
+  document.title = `${p.name} · ${c.name}`;
+  app.innerHTML = "";
+
+  const topbar = el(`
+    <div class="topbar"><span class="back">← ${esc(c.name)}</span></div>
+  `);
+  topbar.querySelector(".back").addEventListener("click", () => (location.hash = `#/${code}`));
+
+  const longHtml = (p.long || p.description || "")
+    .split(/\n\n+/)
+    .map((para) => `<p>${esc(para.trim())}</p>`)
+    .join("");
+
+  const view = el(`
+    <article class="place-detail">
+      <div class="pd-hero">
+        <span class="tag" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
+        <h1>${esc(p.name)}</h1>
+        ${p.region ? `<div class="region">📍 ${esc(p.region)}</div>` : ""}
+      </div>
+      <div class="pd-gallery" hidden></div>
+      <div class="pd-prose">${longHtml}</div>
+      <div class="pd-extract" hidden></div>
+      <div class="pd-actions">
+        ${p.coords ? `<button class="pd-btn pd-map">🗺️ Show on map</button>` : ""}
+        <a class="pd-btn pd-wiki" hidden target="_blank" rel="noopener">📖 Read more on Wikipedia ↗</a>
+      </div>
+      <div class="footer">Photos &amp; extra notes via Wikipedia · needs a connection</div>
+    </article>
+  `);
+
+  // "Show on map" → back to the country page, then ping the pin there.
+  view.querySelector(".pd-map")?.addEventListener("click", () => {
+    sessionStorage.setItem("tc_focusPin", String(i));
+    location.hash = `#/${code}`;
+  });
+
+  // Pull photos + a fuller blurb + the article link from Wikipedia.
+  if (p.wiki) {
+    const gallery = view.querySelector(".pd-gallery");
+    const extractBox = view.querySelector(".pd-extract");
+    const wikiLink = view.querySelector(".pd-wiki");
+    wikiInfo(p.wiki, { extra: 1 })
+      .then((info) => {
+        if (info.images.length) {
+          gallery.innerHTML = info.images
+            .map((src) => `<div class="pd-shot"><img decoding="async" alt="" src="${esc(src)}"></div>`)
+            .join("");
+          gallery.hidden = false;
+          // Reveal each shot only once its photo actually loads; drop failures.
+          // (Keeps an empty grey box from showing while a photo loads or 404s.)
+          gallery.querySelectorAll("img").forEach((img) => {
+            const reveal = () => img.closest(".pd-shot")?.classList.add("ready");
+            const drop = () => img.closest(".pd-shot")?.remove();
+            if (img.complete) return img.naturalWidth > 0 ? reveal() : drop();
+            img.onload = reveal;
+            img.onerror = drop;
+          });
+        }
+        if (info.extract) {
+          extractBox.innerHTML = `<h3>From Wikipedia</h3><p>${esc(info.extract)}</p>`;
+          extractBox.hidden = false;
+        }
+        if (info.url) {
+          wikiLink.href = info.url;
+          wikiLink.hidden = false;
+        }
+      })
+      .catch(() => {});
+  }
+
+  app.append(topbar, view);
   window.scrollTo(0, 0);
 }
 
@@ -525,6 +663,10 @@ function route() {
   if (parts[0] === "expenses") {
     // Loaded on demand so Firebase never touches the offline country pages.
     return import("./expenses.js").then((m) => m.renderExpenses());
+  }
+  // #/<code>/place/<i> → a single place's full guide.
+  if (parts[1] === "place" && parts[2] != null) {
+    return renderPlaceDetail(parts[0], Number(parts[2]));
   }
   return renderCountry(parts[0]);
 }
