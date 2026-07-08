@@ -32,11 +32,65 @@ const catOf = (id) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORI
 const COMMON_CUR = ["EUR", "USD", "GBP", "RUB", "CNY", "VND", "LAK", "KHR", "THB"];
 let CURRENCIES = null; // [{ code, name }] once ensureCurrencies() resolves
 
-// Country breakdown: each expense carries a `country` code (one of COUNTRIES, or
-// "" when unassigned). These colours are assigned to the pie slices / legend.
+// Country breakdown: each expense carries a `country` code — an ISO 3166-1
+// alpha-2 code (the trip countries in COUNTRIES already use these: vn, cn, …),
+// or "" when unassigned. Currency is deliberately independent of country: you
+// might pay in USD in Japan, so the picker offers EVERY country, not just the
+// trip ones. These colours are assigned to the pie slices / legend.
 const COUNTRY_COLORS = ["#6ea8fe", "#ffd166", "#06d6a0", "#ef476f", "#c792ea", "#f78c6b", "#78c6d0"];
 const UNASSIGNED = { code: "", name: "Unassigned", flag: "🌍", color: "#8a97a5" };
-const countryOf = (code) => byCode(code) || (code ? { code, name: code, flag: "🌍" } : UNASSIGNED);
+
+const REGION_NAMES = (() => {
+  try { return new Intl.DisplayNames(["en"], { type: "region" }); } catch { return null; }
+})();
+
+// ISO alpha-2 code → flag emoji (two regional-indicator letters).
+function flagOf(code) {
+  if (!code || !/^[a-zA-Z]{2}$/.test(code)) return "🌍";
+  return String.fromCodePoint(...[...code.toUpperCase()].map((ch) => 0x1f1e6 + ch.charCodeAt(0) - 65));
+}
+
+// Name + flag for any country code (trip countries keep their curated flag).
+function countryOf(code) {
+  if (!code) return UNASSIGNED;
+  const trip = byCode(code);
+  if (trip) return { code: trip.code, name: trip.name, flag: trip.flag };
+  let name = code.toUpperCase();
+  try { name = REGION_NAMES?.of(code.toUpperCase()) || name; } catch { /* keep the raw code */ }
+  return { code, name, flag: flagOf(code) };
+}
+
+// Rank a code so trip countries sort first (in trip order), then everyone else.
+const tripRank = (code) => { const i = COUNTRIES.findIndex((c) => c.code === code); return i < 0 ? 99 : i; };
+
+// The full country list for the picker, built once from Intl — no bundled data.
+let COUNTRY_LIST = null;
+function allCountries() {
+  if (COUNTRY_LIST) return COUNTRY_LIST;
+  let nf = null;
+  try { nf = new Intl.DisplayNames(["en"], { type: "region", fallback: "none" }); } catch { /* old engine */ }
+  const out = [];
+  if (nf) {
+    for (let a = 65; a <= 90; a++) {
+      for (let b = 65; b <= 90; b++) {
+        const code = String.fromCharCode(a, b);
+        let name;
+        try { name = nf.of(code); } catch { name = null; }
+        if (name && name !== code) out.push({ code: code.toLowerCase(), name });
+      }
+    }
+    out.sort((x, y) => x.name.localeCompare(y.name));
+  }
+  // Fallback if Intl.DisplayNames is unavailable: at least the trip countries.
+  COUNTRY_LIST = out.length ? out : COUNTRIES.map((c) => ({ code: c.code, name: c.name }));
+  return COUNTRY_LIST;
+}
+
+// Remember the last country/currency used so the next expense defaults to them
+// (you're usually adding several in the same place).
+const LS_LAST = "trip-exp-last";
+const readLast = () => { try { return JSON.parse(localStorage.getItem(LS_LAST)) || {}; } catch { return {}; } };
+const writeLast = (obj) => { try { localStorage.setItem(LS_LAST, JSON.stringify({ ...readLast(), ...obj })); } catch { /* private mode */ } };
 
 /* ── tiny helpers ─────────────────────────────────────────────────────────── */
 const esc = (s = "") =>
@@ -243,8 +297,9 @@ function homeSummaryCard(items) {
 }
 
 /* ── Spend by country (pie) ────────────────────────────────────────────────── */
-// Everything summed into the home currency, grouped by country. Colours are keyed
-// to each country's position in COUNTRIES so they stay stable across renders.
+// Everything summed into the home currency, grouped by country (any ISO code,
+// not just trip ones). Ordered trip-countries → others (alphabetical) →
+// unassigned; palette colours are assigned in that order, unassigned always grey.
 function spendByCountry(items) {
   const by = new Map();
   let unconvertible = 0;
@@ -254,18 +309,15 @@ function spendByCountry(items) {
     const key = e.country || "";
     by.set(key, (by.get(key) || 0) + v);
   }
-  const order = [...COUNTRIES.map((c) => c.code), ""]; // trip order, unassigned last
+  const tier = (code) => (code === "" ? 3 : tripRank(code) < 99 ? 1 : 2);
   const groups = [...by.entries()]
     .filter(([, total]) => total > 0)
-    .sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
-    .map(([code, total]) => {
-      const c = countryOf(code);
-      const idx = COUNTRIES.findIndex((x) => x.code === code);
-      return {
-        code, total, name: c.name, flag: c.flag,
-        color: code === "" ? UNASSIGNED.color : COUNTRY_COLORS[idx % COUNTRY_COLORS.length],
-      };
-    });
+    .map(([code, total]) => { const c = countryOf(code); return { code, total, name: c.name, flag: c.flag }; })
+    .sort((a, b) =>
+      tier(a.code) - tier(b.code) ||
+      tripRank(a.code) - tripRank(b.code) ||
+      a.name.localeCompare(b.name))
+    .map((g, i) => ({ ...g, color: g.code === "" ? UNASSIGNED.color : COUNTRY_COLORS[i % COUNTRY_COLORS.length] }));
   const total = groups.reduce((s, g) => s + g.total, 0);
   return { groups, total, unconvertible };
 }
@@ -500,13 +552,34 @@ function currencyOptionsHTML(selected) {
     </optgroup>`;
 }
 
+// Options for the country <select>: the trip countries first, then an
+// "unassigned" choice, then every other country (name via Intl, flag from code).
+function countryOptionsHTML(selected) {
+  const opt = (code, label) =>
+    `<option value="${esc(code)}"${code === selected ? " selected" : ""}>${esc(label)}</option>`;
+  const tripCodes = new Set(COUNTRIES.map((c) => c.code));
+  const others = allCountries().filter((c) => !tripCodes.has(c.code));
+  return `
+    <optgroup label="Trip">
+      ${COUNTRIES.map((c) => opt(c.code, `${c.flag} ${c.name}`)).join("")}
+    </optgroup>
+    ${opt("", "🌍 Other / unassigned")}
+    <optgroup label="All countries">
+      ${others.map((c) => opt(c.code, `${flagOf(c.code)} ${c.name}`)).join("")}
+    </optgroup>`;
+}
+
 function addForm(user, onAdd) {
   const peopleOpts = ALLOWED_EMAILS
     .map((em) => `<option value="${esc(em)}"${em === user.email ? " selected" : ""}>${esc(nameFor(em))}</option>`)
     .join("");
   const catOpts = CATEGORIES.map((c) => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
-  const countryOpts = COUNTRIES.map((c) => `<option value="${esc(c.code)}">${c.flag} ${esc(c.name)}</option>`).join("")
-    + `<option value="">🌍 Other / unassigned</option>`;
+
+  // Default the currency/country to whatever was used last (falling back to the
+  // home currency and the first trip country) so repeat entries are quick.
+  const last = readLast();
+  const defaultCur = last.currency || HOME_CURRENCY;
+  const defaultCountry = last.country != null ? last.country : (COUNTRIES[0]?.code ?? "");
 
   const form = el(`
     <form class="panel exp-form">
@@ -518,7 +591,7 @@ function addForm(user, onAdd) {
         </label>
         <label class="exp-field cur">
           <span>Currency</span>
-          <select name="currency" required>${currencyOptionsHTML(HOME_CURRENCY)}</select>
+          <select name="currency" required>${currencyOptionsHTML(defaultCur)}</select>
         </label>
         <label class="exp-field cat">
           <span>Category</span>
@@ -526,7 +599,7 @@ function addForm(user, onAdd) {
         </label>
         <label class="exp-field country">
           <span>Country</span>
-          <select name="country">${countryOpts}</select>
+          <select name="country">${countryOptionsHTML(defaultCountry)}</select>
         </label>
         <label class="exp-field who">
           <span>Paid by</span>
@@ -568,6 +641,7 @@ function addForm(user, onAdd) {
         date: f.date.value || todayISO(),
         note: f.note.value.trim(),
       });
+      writeLast({ currency, country: f.country.value }); // default the next entry here
       f.amount.value = "";
       f.note.value = "";
       f.amount.focus();
