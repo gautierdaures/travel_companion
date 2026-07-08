@@ -28,17 +28,24 @@ export const NAMES = {
   "chloemichel1112@gmail.com": "Chloe"
 };
 
+// The shared "joint account". Expenses paid from it (groceries on the common
+// card, a hotel split down the middle, …) are stored with paidBy === COMMON so
+// they don't count toward either person's individual total or the settle-up:
+// they're already shared, not owed by one to the other.
+export const COMMON_ACCOUNT = "common";
+
 // Your "home" currency — every expense is also totalled in this one, using live
 // exchange rates fetched when you're online (see fx.js).
 export const HOME_CURRENCY = "EUR";
 
 // ── Trip budget ──────────────────────────────────────────────────────────────
-// Total budget for the whole trip, in HOME_CURRENCY. The Expenses dashboard uses
-// this (together with the trip dates below) to tell you whether you're on track:
-// it compares what you've actually spent against what you'd expect to have spent
-// by today if you spread the budget evenly across the trip. Edit these to match
-// your real plan. Set TRIP_BUDGET to 0 to hide the budget tracker entirely.
-export const TRIP_BUDGET = 24000;      // total trip budget in EUR
+// Total budget for the whole trip, in HOME_CURRENCY. The Expenses dashboard
+// splits this evenly between the two of you and tracks a separate bar per person
+// (so 24000 total → 12000 each). Each person's bar counts the cost attributed to
+// them — half of every shared expense plus all of their solo ones — compared
+// against what you'd expect to have spent by today if the budget were spread
+// evenly across the trip dates. Set TRIP_BUDGET to 0 to hide the tracker.
+export const TRIP_BUDGET = 24000;      // total trip budget in EUR (12000 each)
 export const TRIP_START  = "2026-10-04"; // first day of the trip (YYYY-MM-DD)
 export const TRIP_END    = "2027-09-03"; // last day of the trip  (YYYY-MM-DD)
 // Note: expenses dated before TRIP_START (e.g. train tickets booked in advance)
@@ -49,6 +56,8 @@ export const TRIP_END    = "2027-09-03"; // last day of the trip  (YYYY-MM-DD)
 export const isConfigured = () =>
   !Object.values(firebaseConfig).some((v) => String(v).includes("PASTE_"));
 
-// Display name for an email (config name → email prefix fallback).
+// Display name for an email (config name → email prefix fallback). The shared
+// joint account gets its own label.
 export const nameFor = (email) =>
-  NAMES[email] || (email ? email.split("@")[0] : "—");
+  email === COMMON_ACCOUNT ? "Common"
+    : NAMES[email] || (email ? email.split("@")[0] : "—");
