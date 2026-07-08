@@ -19,13 +19,13 @@ export const firebaseConfig = {
 // lives in firestore.rules, which must contain the same two emails.
 export const ALLOWED_EMAILS = [
   "gautier.daures@gmail.com",
-  "chloe.michel@outlook.com",
+  "chloemichel1112@gmail.com",
 ];
 
 // Optional: pretty names shown in the dashboard (falls back to the email prefix).
 export const NAMES = {
   "gautier.daures@gmail.com": "Gautier",
-  "chloe.michel@outlook.com": "Chloe"
+  "chloemichel1112@gmail.com": "Chloe"
 };
 
 // Your "home" currency — every expense is also totalled in this one, using live
