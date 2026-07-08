@@ -403,17 +403,25 @@ function budgetCard(items) {
     expected = budget * elapsed;
     const daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
 
-    if (now < start) { verdict = "Not started"; vClass = "ok"; }
-    else if (spent > budget) { verdict = "Over budget"; vClass = "over"; }
-    else if (spent <= expected * 1.05) { verdict = "On track"; vClass = "ok"; }
-    else { verdict = "Ahead of pace"; vClass = "warn"; }
+    if (now < start) {
+      // Pre-trip: pace hasn't started, but anything already spent (e.g. train
+      // tickets booked ahead) still counts and is shown as pre-booked.
+      verdict = "Not started"; vClass = "ok";
+      const daysToStart = Math.max(0, Math.ceil((start - now) / 86400000));
+      const bits = [`trip starts in ${daysToStart} day${daysToStart === 1 ? "" : "s"}`];
+      if (spent > 0) bits.push(`${esc(fmt(spent, HOME_CURRENCY))} pre-booked`);
+      note = bits.join(" · ");
+    } else {
+      if (spent > budget) { verdict = "Over budget"; vClass = "over"; }
+      else if (spent <= expected * 1.05) { verdict = "On track"; vClass = "ok"; }
+      else { verdict = "Ahead of pace"; vClass = "warn"; }
 
-    const bits = [];
-    if (now >= start) bits.push(`expected by today ≈ <strong>${esc(fmt(expected, HOME_CURRENCY))}</strong>`);
-    if (elapsed > 0 && elapsed < 1)
-      bits.push(`projected total <strong>${esc(fmt(spent / elapsed, HOME_CURRENCY))}</strong>`);
-    if (now < end) bits.push(`${daysLeft} day${daysLeft === 1 ? "" : "s"} left`);
-    note = bits.join(" · ");
+      const bits = [`expected by today ≈ <strong>${esc(fmt(expected, HOME_CURRENCY))}</strong>`];
+      if (elapsed > 0 && elapsed < 1)
+        bits.push(`projected total <strong>${esc(fmt(spent / elapsed, HOME_CURRENCY))}</strong>`);
+      if (now < end) bits.push(`${daysLeft} day${daysLeft === 1 ? "" : "s"} left`);
+      note = bits.join(" · ");
+    }
   }
 
   return `

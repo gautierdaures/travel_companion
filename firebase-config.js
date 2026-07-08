@@ -38,9 +38,12 @@ export const HOME_CURRENCY = "EUR";
 // it compares what you've actually spent against what you'd expect to have spent
 // by today if you spread the budget evenly across the trip. Edit these to match
 // your real plan. Set TRIP_BUDGET to 0 to hide the budget tracker entirely.
-export const TRIP_BUDGET = 12000;      // e.g. 12000 EUR
-export const TRIP_START  = "2026-07-01"; // first day of the trip (YYYY-MM-DD)
-export const TRIP_END    = "2026-10-31"; // last day of the trip  (YYYY-MM-DD)
+export const TRIP_BUDGET = 24000;      // total trip budget in EUR
+export const TRIP_START  = "2026-10-04"; // first day of the trip (YYYY-MM-DD)
+export const TRIP_END    = "2027-09-03"; // last day of the trip  (YYYY-MM-DD)
+// Note: expenses dated before TRIP_START (e.g. train tickets booked in advance)
+// are fully allowed and still count toward the budget — the "pace" comparison
+// just doesn't start until the trip does.
 
 // True once the placeholders above have actually been replaced.
 export const isConfigured = () =>
