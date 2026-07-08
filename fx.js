@@ -84,3 +84,77 @@ export function toHome(amount, cur) {
 }
 
 export function ratesInfo() { return meta; }
+
+/* ── Currency catalogue (for the picker) ──────────────────────────────────────
+   The same currency-api also publishes the full list of currency codes + names.
+   We use it to populate the "Currency" dropdown so a code is never typed by hand
+   — and we only offer codes we actually hold a EUR rate for, which means every
+   selectable currency is guaranteed convertible to the home currency. */
+
+const NAMES_SOURCES = [
+  "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.min.json",
+  "https://latest.currency-api.pages.dev/v1/currencies.min.json",
+];
+const LS_NAMES = "trip-fx-names";
+
+// A small built-in list so the picker still works offline before anything has
+// been fetched. The full ~160-currency catalogue replaces it on first load.
+const FALLBACK_NAMES = {
+  EUR: "Euro", USD: "US Dollar", GBP: "British Pound", JPY: "Japanese Yen",
+  RUB: "Russian Ruble", CNY: "Chinese Yuan", VND: "Vietnamese Dong",
+  LAK: "Lao Kip", KHR: "Cambodian Riel", THB: "Thai Baht",
+};
+
+let names = null; // { "EUR": "Euro", … } upper-cased, once loaded
+
+function readNames() { try { return JSON.parse(localStorage.getItem(LS_NAMES)); } catch { return null; } }
+function writeNames(obj) { try { localStorage.setItem(LS_NAMES, JSON.stringify(obj)); } catch { /* private mode */ } }
+
+async function fetchNames() {
+  for (const url of NAMES_SOURCES) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const data = await res.json();          // { "eur": "Euro", … }
+      const out = {};
+      for (const k in data) if (data[k]) out[k.toUpperCase()] = data[k];
+      if (Object.keys(out).length) return out;
+    } catch { /* try the next source */ }
+  }
+  return null;
+}
+
+// True once we hold a real rates map (not just the home=1 seed).
+function haveRates() { return !!(rates && Object.keys(rates).length > 1); }
+
+// The list of currencies to offer in the picker: [{ code, name }], sorted by
+// code. When rates are loaded we intersect with them so only convertible codes
+// are offered; offline-before-first-fetch we fall back to the catalogue/built-in
+// list and conversion simply shows as pending until rates arrive.
+export async function ensureCurrencies() {
+  await ensureRates();
+  if (!names) names = readNames();
+  if (!names) { names = await fetchNames(); if (names) writeNames(names); }
+  const src = names || FALLBACK_NAMES;
+
+  const out = [];
+  const seen = new Set();
+  for (const code in src) {
+    if (haveRates() && !(code in rates)) continue; // only convertible codes
+    out.push({ code, name: src[code] });
+    seen.add(code);
+  }
+  if (!seen.has(HOME_CURRENCY)) out.push({ code: HOME_CURRENCY, name: src[HOME_CURRENCY] || HOME_CURRENCY });
+  out.sort((a, b) => a.code.localeCompare(b.code));
+  return out;
+}
+
+// Can this code be converted to the home currency (now, or once rates land)?
+// Used as a safety net on submit — the picker already restricts the choices.
+export function isSupported(cur) {
+  if (!cur) return false;
+  const c = cur.toUpperCase();
+  if (c === HOME_CURRENCY) return true;
+  if (haveRates()) return c in rates;
+  return !!((names && names[c]) || FALLBACK_NAMES[c]); // rates pending — trust the catalogue
+}

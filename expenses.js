@@ -8,7 +8,7 @@
 // firestore.rules. The Firebase config is public by design.
 
 import { firebaseConfig, ALLOWED_EMAILS, isConfigured, nameFor, HOME_CURRENCY } from "./firebase-config.js";
-import { ensureRates, toHome, ratesInfo } from "./fx.js";
+import { ensureRates, toHome, ratesInfo, ensureCurrencies, isSupported } from "./fx.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2";
 
@@ -21,6 +21,12 @@ const CATEGORIES = [
   { id: "other",     label: "Other",      icon: "•"  },
 ];
 const catOf = (id) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORIES.length - 1];
+
+// Currency picker: the full catalogue is fetched from the FX API (see fx.js) and
+// cached here once loaded. These trip currencies float to the top for quick
+// access; the rest follow alphabetically.
+const COMMON_CUR = ["EUR", "USD", "GBP", "RUB", "CNY", "VND", "LAK", "KHR", "THB"];
+let CURRENCIES = null; // [{ code, name }] once ensureCurrencies() resolves
 
 /* ── tiny helpers ─────────────────────────────────────────────────────────── */
 const esc = (s = "") =>
@@ -293,6 +299,32 @@ function expenseRows(items, onDelete) {
   return list;
 }
 
+// Build the <option>s for the currency <select>. Before the catalogue loads we
+// still show the common trip currencies so the form is usable immediately; it
+// re-renders with the full list once ensureCurrencies() resolves.
+function currencyOptionsHTML(selected) {
+  const opt = (code, label) =>
+    `<option value="${esc(code)}"${code === selected ? " selected" : ""}>${esc(label)}</option>`;
+
+  if (!CURRENCIES) {
+    return COMMON_CUR.map((c) => opt(c, c)).join("");
+  }
+
+  const byCode = new Map(CURRENCIES.map((x) => [x.code, x]));
+  const common = COMMON_CUR.filter((c) => byCode.has(c));
+  const commonSet = new Set(common);
+  const rest = CURRENCIES.filter((x) => !commonSet.has(x.code));
+  const label = (x) => `${x.code} — ${x.name}`;
+
+  return `
+    <optgroup label="Common">
+      ${common.map((c) => opt(c, label(byCode.get(c)))).join("")}
+    </optgroup>
+    <optgroup label="All currencies">
+      ${rest.map((x) => opt(x.code, label(x))).join("")}
+    </optgroup>`;
+}
+
 function addForm(user, onAdd) {
   const peopleOpts = ALLOWED_EMAILS
     .map((em) => `<option value="${esc(em)}"${em === user.email ? " selected" : ""}>${esc(nameFor(em))}</option>`)
@@ -309,8 +341,7 @@ function addForm(user, onAdd) {
         </label>
         <label class="exp-field cur">
           <span>Currency</span>
-          <input name="currency" type="text" maxlength="3" value="EUR" required
-                 autocapitalize="characters" autocomplete="off" />
+          <select name="currency" required>${currencyOptionsHTML(HOME_CURRENCY)}</select>
         </label>
         <label class="exp-field cat">
           <span>Category</span>
@@ -337,12 +368,19 @@ function addForm(user, onAdd) {
     const f = form.elements;
     const amount = parseFloat(f.amount.value);
     if (!(amount > 0)) return;
+    const currency = (f.currency.value || HOME_CURRENCY).toUpperCase().trim();
+    // Safety net: the picker only offers convertible codes, but never store one
+    // we couldn't later turn into euros.
+    if (!isSupported(currency)) {
+      alert(`Can't use "${currency}" — no ${HOME_CURRENCY} conversion is available for it. Pick another currency.`);
+      return;
+    }
     const btn = form.querySelector(".btn-add");
     btn.disabled = true;
     try {
       await onAdd({
         amount,
-        currency: (f.currency.value || "EUR").toUpperCase().trim(),
+        currency,
         category: f.category.value,
         paidBy: f.paidBy.value,
         date: f.date.value || todayISO(),
@@ -436,10 +474,14 @@ export async function renderExpenses() {
     };
 
     let lastItems = null;
-    // Load FX rates in the background; re-render once they land so the combined
-    // home-currency total fills in. If we're offline now, the "online" listener
-    // below retries automatically when the connection returns.
-    const refreshFx = () => ensureRates().then(() => { if (lastItems) dashboard(user, lastItems, actions); });
+    // Load FX rates + the currency catalogue in the background; re-render once
+    // they land so the combined home-currency total and the full currency picker
+    // fill in. ensureCurrencies() awaits the rates internally. If we're offline
+    // now, the "online" listener below retries when the connection returns.
+    const refreshFx = () => ensureCurrencies().then((curs) => {
+      CURRENCIES = curs;
+      if (lastItems) dashboard(user, lastItems, actions);
+    });
     fxRetry = refreshFx;
     refreshFx();
 
