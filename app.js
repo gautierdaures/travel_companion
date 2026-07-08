@@ -50,7 +50,10 @@ function renderHome() {
 
   const head = el(`
     <header class="home-head">
-      <h1>Trip Companion 🌍</h1>
+      <div class="home-top">
+        <h1>Trip Companion 🌍</h1>
+        <a class="exp-link" href="#/expenses" title="Private expense dashboard">💰 Expenses</a>
+      </div>
       <p>${COUNTRIES.length} countries · tap a card for its ID card</p>
       <input class="search" type="search" placeholder="Search country or region…"
              autocomplete="off" autocorrect="off" spellcheck="false" />
@@ -519,6 +522,10 @@ function renderCountry(code) {
 function route() {
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   if (parts.length === 0) return renderHome();
+  if (parts[0] === "expenses") {
+    // Loaded on demand so Firebase never touches the offline country pages.
+    return import("./expenses.js").then((m) => m.renderExpenses());
+  }
   return renderCountry(parts[0]);
 }
 

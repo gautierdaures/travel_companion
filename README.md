@@ -10,6 +10,11 @@ An offline, installable **country ID-card** app for a worldwide trip. For each c
 
 It's a plain HTML/CSS/JS **PWA** — no build step, no dependencies. Once loaded on your iPhone it works **fully offline**, which is the whole point when you're abroad with patchy signal.
 
+There's also a private **💰 Expenses** dashboard — a shared expense tracker for you
+and one other person, gated behind Google sign-in so nobody else can see it even
+though the app is public. It's optional and off until you connect a free Firebase
+project — see [`EXPENSES_SETUP.md`](EXPENSES_SETUP.md).
+
 ---
 
 ## Preview it locally
