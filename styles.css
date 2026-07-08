@@ -528,3 +528,40 @@ code {
 .exp-rate-note { margin-top: 10px; font-size: 12px; color: var(--text-dim); }
 .exp-rate-note.warn { color: var(--ev-note); margin-top: 4px; }
 .exp-rate-note.pending { color: var(--text); font-size: 14px; }
+
+/* By-country pie */
+.exp-country h2, .exp-budget h2 {
+  font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--accent); margin-bottom: 12px;
+}
+.exp-country-body { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.exp-pie { width: 176px; height: 176px; flex: 0 0 auto; }
+.exp-pie-total { fill: var(--text); font-size: 22px; font-weight: 700; }
+.exp-pie-sub { fill: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; }
+.exp-legend { flex: 1 1 190px; display: flex; flex-direction: column; gap: 9px; min-width: 180px; }
+.exp-legend-row { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.exp-legend-row .sw { width: 12px; height: 12px; border-radius: 3px; flex: 0 0 auto; }
+.exp-legend-row .lg-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exp-legend-row .lg-amt { font-variant-numeric: tabular-nums; font-weight: 600; }
+.exp-legend-row .lg-pct { color: var(--text-dim); width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Budget tracker */
+.exp-budget-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.exp-budget-head h2 { margin-bottom: 0; }
+.exp-verdict { font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+.exp-verdict.ok   { background: rgba(6, 214, 160, 0.16);  color: #06d6a0; }
+.exp-verdict.warn { background: rgba(255, 209, 102, 0.18); color: #e0a800; }
+.exp-verdict.over { background: rgba(239, 71, 111, 0.18);  color: #ef476f; }
+.exp-budget-nums { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.exp-budget-nums > div { display: flex; flex-direction: column; gap: 2px; }
+.exp-budget-nums .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-dim); }
+.exp-budget-nums .v { font-size: 17px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.exp-budget-nums .v.over { color: #ef476f; }
+.exp-budget-bar {
+  position: relative; height: 14px; background: var(--bg-elev-2);
+  border: 1px solid var(--border); border-radius: 999px;
+}
+.exp-budget-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+.exp-budget-fill.over { background: #ef476f; }
+.exp-budget-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text); opacity: 0.75; }
+.exp-budget-scale { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--text-dim); font-variant-numeric: tabular-nums; }

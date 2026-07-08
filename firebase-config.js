@@ -19,18 +19,31 @@ export const firebaseConfig = {
 // lives in firestore.rules, which must contain the same two emails.
 export const ALLOWED_EMAILS = [
   "gautier.daures@gmail.com",
-  "chloe.michel@outlook.com",
+  "chloemichel1112@gmail.com",
 ];
 
 // Optional: pretty names shown in the dashboard (falls back to the email prefix).
 export const NAMES = {
   "gautier.daures@gmail.com": "Gautier",
-  "chloe.michel@outlook.com": "Chloe"
+  "chloemichel1112@gmail.com": "Chloe"
 };
 
 // Your "home" currency — every expense is also totalled in this one, using live
 // exchange rates fetched when you're online (see fx.js).
 export const HOME_CURRENCY = "EUR";
+
+// ── Trip budget ──────────────────────────────────────────────────────────────
+// Total budget for the whole trip, in HOME_CURRENCY. The Expenses dashboard uses
+// this (together with the trip dates below) to tell you whether you're on track:
+// it compares what you've actually spent against what you'd expect to have spent
+// by today if you spread the budget evenly across the trip. Edit these to match
+// your real plan. Set TRIP_BUDGET to 0 to hide the budget tracker entirely.
+export const TRIP_BUDGET = 24000;      // total trip budget in EUR
+export const TRIP_START  = "2026-10-04"; // first day of the trip (YYYY-MM-DD)
+export const TRIP_END    = "2027-09-03"; // last day of the trip  (YYYY-MM-DD)
+// Note: expenses dated before TRIP_START (e.g. train tickets booked in advance)
+// are fully allowed and still count toward the budget — the "pace" comparison
+// just doesn't start until the trip does.
 
 // True once the placeholders above have actually been replaced.
 export const isConfigured = () =>
