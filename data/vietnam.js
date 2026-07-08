@@ -74,12 +74,117 @@ export default {
   ],
 
   places: [
-    { name: "Hạ Long Bay", category: "nature", coords: [20.9101, 107.1839], region: "Quảng Ninh (north)", description: "Thousands of limestone islands rising from emerald water; sleep aboard a junk and slip into quieter Bái Tử Long to dodge crowds." },
-    { name: "Hội An Old Town", category: "history", coords: [15.8801, 108.338], region: "central coast", description: "A lantern-lit former trading port of tailor shops and yellow merchant houses, car-free and glowing after dark." },
-    { name: "Hà Giang Loop", category: "offbeat", coords: [22.8268, 104.9784], region: "far north", description: "A three-day motorbike ride through the country's most dramatic mountains, terraced valleys, and ethnic-minority markets." },
-    { name: "Imperial Citadel of Huế", category: "history", coords: [16.4698, 107.5796], region: "central Vietnam", description: "The moated palace complex of the Nguyễn emperors on the Perfume River — partly ruined, deeply atmospheric." },
-    { name: "Phong Nha caves", category: "nature", coords: [17.59, 106.283], region: "Quảng Bình", description: "Home to Sơn Đoòng, the world's largest cave; even the accessible caverns here are cathedral-scaled." },
-    { name: "Mekong Delta", category: "nature", coords: [10.0452, 105.7469], region: "the south", description: "A watery maze of floating markets, fruit orchards, and stilt houses — explore by boat from Cần Thơ at dawn." },
-    { name: "Sa Pa rice terraces", category: "nature", coords: [22.3364, 103.8438], region: "Lào Cai", description: "Staircase valleys of green-and-gold paddies farmed by Hmong and Dao communities; trek village-to-village." },
+    {
+      name: "Hạ Long Bay", category: "nature", coords: [20.9101, 107.1839], region: "Quảng Ninh (north)",
+      description: "Thousands of limestone islands rising from emerald water; sleep aboard a junk and slip into quieter Bái Tử Long to dodge crowds.",
+      wiki: "Hạ Long Bay",
+      long:
+        "Nearly 2,000 limestone karsts and islets rise sheer from the jade-green Gulf of Tonkin, a drowned landscape of towers, arches, and hidden lagoons that has been carved by the sea for millions of years. It is Vietnam's signature view and a UNESCO World Heritage Site — and, inevitably, its most visited, so where and how you go matters more than whether you go.\n\nThe rewarding move is an overnight cruise on a wooden junk, waking to mist between the peaks before the day boats arrive, and choosing an operator that pushes into neighbouring Bái Tử Long or Lan Hạ Bay, where the same scenery comes without the flotilla. Kayak into sea caves, swim off the boat, and visit a floating fishing village to see how people still live on this water.",
+    },
+    {
+      name: "Hội An Old Town", category: "history", coords: [15.8801, 108.338], region: "central coast",
+      description: "A lantern-lit former trading port of tailor shops and yellow merchant houses, car-free and glowing after dark.",
+      wiki: "Hội An Ancient Town",
+      long:
+        "For three centuries Hội An was one of Southeast Asia's great trading ports, where Japanese, Chinese, Dutch and Portuguese merchants met and left their mark. The town silted up and the trade moved on — which is exactly why it survives, a remarkably complete old quarter of tube houses, assembly halls, and the little wooden Japanese Covered Bridge, all washed in fading ochre and closed to cars.\n\nCome at dusk, when the electric signs give way to thousands of silk lanterns and the riverfront fills with the glow of paper lights set adrift on the water. Between the sightseeing, this is a town for tailors (a suit run up overnight), for cао lầu noodles found nowhere else, and for cycling out through rice paddies to the beach.",
+    },
+    {
+      name: "Hà Giang Loop", category: "offbeat", coords: [22.8268, 104.9784], region: "far north",
+      description: "A three-day motorbike ride through the country's most dramatic mountains, terraced valleys, and ethnic-minority markets.",
+      wiki: "Hà Giang province",
+      long:
+        "Vietnam's far northern frontier with China is its wildest and most beautiful corner: a karst plateau of limestone spires, hairpin passes, and terraced valleys where Hmong, Dao, Tày and Lô Lô communities keep their own dress, markets, and languages. The classic way to see it is a three-to-four-day loop by motorbike from Hà Giang town — self-ridden if you're confident, or on the back of an 'easy rider' guide's bike if you're not.\n\nThe road climbs to the Mã Pì Lèng Pass, arguably the country's greatest viewpoint, where the emerald Nho Quế river threads a canyon far below. Nights are spent in village homestays over rice wine and shared meals. Go for the scenery and the encounters; this is about as far from a package tour as Vietnam gets.",
+    },
+    {
+      name: "Imperial Citadel of Huế", category: "history", coords: [16.4698, 107.5796], region: "central Vietnam",
+      description: "The moated palace complex of the Nguyễn emperors on the Perfume River — partly ruined, deeply atmospheric.",
+      wiki: "Imperial City, Huế",
+      long:
+        "Huế was the seat of the Nguyễn dynasty, Vietnam's last emperors, from 1802 to 1945, and its walled Imperial City is a scaled reflection of Beijing's Forbidden City set on the Perfume River. Behind a wide moat and monumental gates lie throne halls, temples, and courtyards — many battered by the wars of the 20th century, which lends the whole place a melancholy, half-ruined grandeur that ongoing restoration hasn't erased.\n\nGive it half a day inside the walls, then take a boat or bicycle out to the royal tombs scattered in the pine-clad hills, each an emperor's private landscaped retreat. Huế is also a distinct food city — the fiery bún bò Huế and a tradition of delicate 'imperial' dishes reward lingering.",
+    },
+    {
+      name: "Phong Nha caves", category: "nature", coords: [17.59, 106.283], region: "Quảng Bình",
+      description: "Home to Sơn Đoòng, the world's largest cave; even the accessible caverns here are cathedral-scaled.",
+      wiki: "Phong Nha-Kẻ Bàng National Park",
+      long:
+        "The Phong Nha-Kẻ Bàng National Park hides one of the planet's great concentrations of caves, dissolved out of an ancient limestone massif near the Laos border. It is famous as the home of Sơn Đoòng, the largest cave passage on Earth — big enough to hold a city block and its own jungle and clouds — reachable only on a costly, permit-limited expedition.\n\nHappily, you don't need Sơn Đoòng to be awed. Paradise Cave is a cathedral of stalactites you walk deep into on a boardwalk; the original Phong Nha Cave is entered by boat along an underground river; and Dark Cave adds a zip-line, a mud bath, and a swim. The surrounding countryside of karst, rivers and quiet villages has become a laid-back base in its own right.",
+    },
+    {
+      name: "Mekong Delta", category: "nature", coords: [10.0452, 105.7469], region: "the south",
+      description: "A watery maze of floating markets, fruit orchards, and stilt houses — explore by boat from Cần Thơ at dawn.",
+      wiki: "Mekong Delta",
+      long:
+        "Where the Mekong finally reaches the sea it splinters into a vast, fertile lattice of channels, rice paddies, orchards and mangrove — the rice bowl and fruit basket of Vietnam, and a whole way of life lived on and beside the water. Days here run to the river's rhythm: sampans slipping down coconut-lined canals, workshops turning out rice paper and coconut candy, and homes on stilts at the water's edge.\n\nThe classic experience is a dawn visit to a floating market such as Cái Răng near Cần Thơ, where wholesalers hawk produce boat-to-boat with samples hoisted on a pole. Skip a rushed day trip from Saigon in favour of a night or two out here, ideally in a homestay, to feel the delta's unhurried pace.",
+    },
+    {
+      name: "Sa Pa rice terraces", category: "nature", coords: [22.3364, 103.8438], region: "Lào Cai",
+      description: "Staircase valleys of green-and-gold paddies farmed by Hmong and Dao communities; trek village-to-village.",
+      wiki: "Sa Pa",
+      long:
+        "In the mountains near the Chinese border, the Muong Hoa valley falls away in immense staircases of rice terrace, sculpted over generations and farmed by Black Hmong, Red Dao and other communities who still wear their distinctive indigo and embroidery. The town of Sa Pa itself has grown brash and over-built, so the point is to walk out of it, descending on foot between villages through the paddies.\n\nThe terraces are at their most photogenic when flooded and mirror-bright around May–June, or heavy and gold just before the autumn harvest. A guided trek with a local woman, staying overnight in a village homestay, is both the most rewarding way to see the valley and the way the money reaches the people who farm it.",
+    },
+    {
+      name: "Hanoi Old Quarter", category: "food", coords: [21.0333, 105.8500], region: "Hanoi",
+      description: "A thousand-year tangle of guild streets and street-food stalls — the beating, scooter-swarmed heart of the capital.",
+      wiki: "Old Quarter, Hanoi",
+      long:
+        "Hanoi's Old Quarter has been a dense commercial warren for a thousand years, its lanes still named for the guilds that once filled them — Hàng Bạc (silver), Hàng Gai (silk), Hàng Thiếc (tin). Today it's a glorious sensory overload: narrow 'tube houses', crumbling colonial shutters, tangles of overhead wire, and a ceaseless river of motorbikes you learn to cross by walking slowly and steadily into it.\n\nAbove all it is one of the world's great street-food cities. This is the home of phở and of bún chả — grilled pork and noodles that Obama and Anthony Bourdain famously shared nearby — plus egg coffee, bia hơi (fresh draught beer) on plastic stools, and a hundred one-dish specialists. Come hungry, eat where the crowds are, and let yourself get lost.",
+    },
+    {
+      name: "Temple of Literature", category: "architecture", coords: [21.0293, 105.8355], region: "Hanoi",
+      description: "Vietnam's first university, a serene Confucian temple of walled courtyards and stelae on stone tortoises.",
+      wiki: "Temple of Literature, Hanoi",
+      long:
+        "Founded in 1070 and home to Vietnam's first national university, the Temple of Literature is a rare survival of classical Confucian architecture and the calmest spot in central Hanoi. You pass through a sequence of five walled courtyards and ornamental gates, each more contemplative than the last, around lotus ponds and pavilions.\n\nIts treasures are 82 stone stelae, mounted on the backs of stone tortoises, engraved with the names of doctoral graduates going back to the 15th century — students still come to touch them for luck before exams. It's a short, rewarding visit that puts the country's deep reverence for scholarship in front of you, and a graceful contrast to the chaos of the Old Quarter nearby.",
+    },
+    {
+      name: "Tràng An & Ninh Bình", category: "nature", coords: [20.2506, 105.8990], region: "Ninh Bình",
+      description: "Karst towers over flooded rice fields — the 'Hạ Long Bay on land', best seen from a rowed sampan.",
+      wiki: "Tràng An",
+      long:
+        "A two-hour hop south of Hanoi, the province of Ninh Bình offers the drama of Hạ Long Bay without the sea: the same limestone towers, here rising straight out of flooded rice paddies and slow green rivers. In the Tràng An landscape complex, a UNESCO site, local women row you in flat sampans through a chain of water-filled caves and past hidden temples, often propelling the oars with their feet.\n\nNearby Tam Cốc offers a similar river trip through 'three caves', best when the paddies turn gold in late spring; Hoa Lư preserves the temples of Vietnam's 10th-century first capital; and a hard climb up the steps of Múa Cave delivers the classic panorama over the whole valley. It's an easy, richly rewarding escape from the capital.",
+    },
+    {
+      name: "Mỹ Sơn Sanctuary", category: "history", coords: [15.7639, 108.1244], region: "near Hội An",
+      description: "Brick Hindu temple-towers of the vanished Chăm kingdom, mouldering in a jungle valley.",
+      wiki: "Mỹ Sơn",
+      long:
+        "Long before the Vietnamese pushed south, central Vietnam was the domain of the Chăm, a Hindu-Malay seafaring kingdom whose spiritual heart was Mỹ Sơn. In a lush ring of hills, they raised clusters of red-brick towers to Shiva between the 4th and 13th centuries, bonded with a vegetable resin whose recipe is still not fully understood.\n\nAmerican bombing during the war destroyed the largest group, and time and roots have claimed much of the rest, but what remains — carved sandstone lintels, dancing figures, weathered lingams — is deeply atmospheric, especially early before the tour buses. Visited as a half-day trip from Hội An, it's a window onto a sophisticated culture most travellers never knew existed.",
+    },
+    {
+      name: "Cát Bà & Lan Hạ Bay", category: "offbeat", coords: [20.7280, 107.0490], region: "Hải Phòng",
+      description: "The wilder, quieter neighbour to Hạ Long — a forested island fringed by an even prettier bay.",
+      wiki: "Cát Bà Island",
+      long:
+        "Cát Bà is the largest island off Vietnam's north coast, and its adjoining Lan Hạ Bay is, to many eyes, lovelier than Hạ Long proper — the same karst seascape, studded with quiet beaches and floating pearl farms, but with a fraction of the boats. Much of the island is protected as a national park, home to the critically endangered golden-headed langur.\n\nUse it as an active, independent base rather than a cruise stop: hike or cycle through the forested interior, kayak among the islets of Lan Hạ, climb the limestone on a growing number of routes, and swim off empty coves. The main town is workaday, but you're here for the water and the hills, both of which deliver.",
+    },
+    {
+      name: "Đà Lạt", category: "architecture", coords: [11.9404, 108.4583], region: "central highlands",
+      description: "A cool-climate hill town of French villas, pine forest, flower farms, and eccentric architecture.",
+      wiki: "Da Lat",
+      long:
+        "Built by the French as a highland retreat from the coastal heat, Đà Lạt sits among pine forests and lakes at 1,500 metres, and the mild climate still defines it. The legacy is a townscape of pastel Art Deco villas, a mock-Eiffel radio tower, and a former summer palace, all wrapped in a faint, incongruous alpine air — but there's an eccentric, hippie-ish streak too, epitomised by the surreal, Gaudí-esque 'Crazy House'.\n\nThe cool uplands make this Vietnam's garden: strawberry farms, artichoke tea, greenhouses of flowers, and — increasingly — very good coffee grown on the surrounding slopes. Around the town lie waterfalls, canyoning routes, and the Lang Biang highlands, making it a refreshing change of pace and temperature from anywhere else in the country.",
+    },
+    {
+      name: "Marble Mountains", category: "history", coords: [16.0036, 108.2620], region: "Đà Nẵng",
+      description: "Five marble-and-limestone hills honeycombed with caves, shrines, and Buddhist grottoes above the coast.",
+      wiki: "Marble Mountains (Vietnam)",
+      long:
+        "Rising abruptly from the coastal plain between Đà Nẵng and Hội An, the five Marble Mountains are named for the five elements and riddled with caves that have been turned into Buddhist and Hindu shrines over centuries. You climb stone staircases past pagodas to cave-temples where shafts of light fall on altars, some of which sheltered Việt Cộng fighters and a field hospital during the war.\n\nFrom the summit of Thủy Sơn, the largest, the view sweeps along China Beach and back to the city. The stone-carving villages at the base still turn the local marble into everything from Buddhas to bracelets. It's an easy, atmospheric half-day between the two cities, well worth the leg-work up the steps.",
+    },
+    {
+      name: "Côn Đảo Islands", category: "offbeat", coords: [8.6833, 106.6000], region: "off the south coast",
+      description: "A remote, achingly beautiful archipelago with a dark prison history and pristine reefs and turtles.",
+      wiki: "Côn Đảo",
+      long:
+        "Far out in the South China Sea, the Côn Đảo archipelago pairs postcard beauty with a sombre past. Under the French and then the South Vietnamese regime, its notorious prisons — including the infamous 'tiger cages' — held and killed tens of thousands of political prisoners; the sites are now moving memorials, and the grave of the revolutionary heroine Võ Thị Sáu draws pilgrims through the night.\n\nBeyond that history the islands are among Vietnam's most pristine: forested hills dropping to empty white beaches, a protected marine park with healthy coral, and nesting sea turtles in season. Reached by a short flight or a long ferry, Côn Đảo stays blissfully quiet — a place to dive, walk, and reflect rather than party.",
+    },
+    {
+      name: "Mai Châu Valley", category: "nature", coords: [20.6600, 105.1000], region: "Hòa Bình",
+      description: "A gentle valley of stilt-house villages and paddy fields, an easy rural escape from Hanoi.",
+      wiki: "Mai Châu",
+      long:
+        "Only a few hours west of Hanoi but a world away in feel, Mai Châu is a broad, flat-bottomed valley of luminous rice paddies ringed by low forested hills, farmed by White Thai communities who live in traditional wooden stilt houses. It offers the terraced-north experience in gentler, more accessible form — ideal if the Hà Giang loop is more than you're after.\n\nDays are for cycling the dirt paths between villages, walking to viewpoints over the patchwork of fields, and buying the hand-woven textiles the Thai are known for. Nights are spent in a homestay beneath a stilt house, over grilled fish and rice wine. It's low-key, welcoming, and one of the simplest ways to swap the city for the countryside.",
+    },
   ],
 };
