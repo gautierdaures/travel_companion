@@ -12,6 +12,7 @@ import {
   TRIP_BUDGET, TRIP_START, TRIP_END,
 } from "./firebase-config.js";
 import { toHome, ratesInfo, ensureCurrencies, isSupported } from "./fx.js";
+import { ensureCountries, countryName } from "./countries.js";
 import { COUNTRIES, byCode } from "./data/index.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2";
@@ -40,51 +41,29 @@ let CURRENCIES = null; // [{ code, name }] once ensureCurrencies() resolves
 const COUNTRY_COLORS = ["#6ea8fe", "#ffd166", "#06d6a0", "#ef476f", "#c792ea", "#f78c6b", "#78c6d0"];
 const UNASSIGNED = { code: "", name: "Unassigned", flag: "🌍", color: "#8a97a5" };
 
-const REGION_NAMES = (() => {
-  try { return new Intl.DisplayNames(["en"], { type: "region" }); } catch { return null; }
-})();
+// The full country catalogue, fetched from an API (see countries.js) and cached
+// here once it resolves. null until then — the picker shows the trip countries
+// in the meantime and re-renders when the list lands.
+let COUNTRIES_ALL = null;
 
-// ISO alpha-2 code → flag emoji (two regional-indicator letters).
+// ISO alpha-2 code → flag emoji (two regional-indicator letters). This is an
+// algorithm, not a list, so it works for any country the catalogue returns.
 function flagOf(code) {
   if (!code || !/^[a-zA-Z]{2}$/.test(code)) return "🌍";
   return String.fromCodePoint(...[...code.toUpperCase()].map((ch) => 0x1f1e6 + ch.charCodeAt(0) - 65));
 }
 
-// Name + flag for any country code (trip countries keep their curated flag).
+// Name + flag for any country code (trip countries keep their curated flag;
+// others get their name from the fetched catalogue, falling back to the code).
 function countryOf(code) {
   if (!code) return UNASSIGNED;
   const trip = byCode(code);
   if (trip) return { code: trip.code, name: trip.name, flag: trip.flag };
-  let name = code.toUpperCase();
-  try { name = REGION_NAMES?.of(code.toUpperCase()) || name; } catch { /* keep the raw code */ }
-  return { code, name, flag: flagOf(code) };
+  return { code, name: countryName(code) || code.toUpperCase(), flag: flagOf(code) };
 }
 
 // Rank a code so trip countries sort first (in trip order), then everyone else.
 const tripRank = (code) => { const i = COUNTRIES.findIndex((c) => c.code === code); return i < 0 ? 99 : i; };
-
-// The full country list for the picker, built once from Intl — no bundled data.
-let COUNTRY_LIST = null;
-function allCountries() {
-  if (COUNTRY_LIST) return COUNTRY_LIST;
-  let nf = null;
-  try { nf = new Intl.DisplayNames(["en"], { type: "region", fallback: "none" }); } catch { /* old engine */ }
-  const out = [];
-  if (nf) {
-    for (let a = 65; a <= 90; a++) {
-      for (let b = 65; b <= 90; b++) {
-        const code = String.fromCharCode(a, b);
-        let name;
-        try { name = nf.of(code); } catch { name = null; }
-        if (name && name !== code) out.push({ code: code.toLowerCase(), name });
-      }
-    }
-    out.sort((x, y) => x.name.localeCompare(y.name));
-  }
-  // Fallback if Intl.DisplayNames is unavailable: at least the trip countries.
-  COUNTRY_LIST = out.length ? out : COUNTRIES.map((c) => ({ code: c.code, name: c.name }));
-  return COUNTRY_LIST;
-}
 
 // Remember the last country/currency used so the next expense defaults to them
 // (you're usually adding several in the same place).
@@ -553,20 +532,22 @@ function currencyOptionsHTML(selected) {
 }
 
 // Options for the country <select>: the trip countries first, then an
-// "unassigned" choice, then every other country (name via Intl, flag from code).
+// "unassigned" choice, then every other country from the fetched catalogue
+// (name from the API, flag derived from the code). Before the catalogue loads
+// only the trip group shows; the form re-renders once it lands.
 function countryOptionsHTML(selected) {
   const opt = (code, label) =>
     `<option value="${esc(code)}"${code === selected ? " selected" : ""}>${esc(label)}</option>`;
   const tripCodes = new Set(COUNTRIES.map((c) => c.code));
-  const others = allCountries().filter((c) => !tripCodes.has(c.code));
+  const others = (COUNTRIES_ALL || []).filter((c) => !tripCodes.has(c.code));
   return `
     <optgroup label="Trip">
       ${COUNTRIES.map((c) => opt(c.code, `${c.flag} ${c.name}`)).join("")}
     </optgroup>
     ${opt("", "🌍 Other / unassigned")}
-    <optgroup label="All countries">
+    ${others.length ? `<optgroup label="All countries">
       ${others.map((c) => opt(c.code, `${flagOf(c.code)} ${c.name}`)).join("")}
-    </optgroup>`;
+    </optgroup>` : ""}`;
 }
 
 function addForm(user, onAdd) {
@@ -730,12 +711,19 @@ export async function renderExpenses() {
     };
 
     let lastItems = null;
-    // Load FX rates + the currency catalogue in the background; re-render once
-    // they land so the combined home-currency total and the full currency picker
-    // fill in. ensureCurrencies() awaits the rates internally. If we're offline
-    // now, the "online" listener below retries when the connection returns.
-    const refreshFx = () => ensureCurrencies().then((curs) => {
+    // Load the currency + country catalogues (and FX rates) in the background;
+    // re-render once they land so the combined home-currency total and the full
+    // currency/country pickers fill in. ensureCurrencies() awaits the rates
+    // internally. If we're offline now, the "online" listener below retries when
+    // the connection returns. The trip countries are passed as an offline-only
+    // fallback so the picker still works before the first fetch.
+    const tripFallback = COUNTRIES.map((c) => ({ code: c.code, name: c.name }));
+    const refreshFx = () => Promise.all([
+      ensureCurrencies(),
+      ensureCountries(tripFallback),
+    ]).then(([curs, countries]) => {
       CURRENCIES = curs;
+      COUNTRIES_ALL = countries;
       if (lastItems) dashboard(user, lastItems, actions);
     });
     fxRetry = refreshFx;
