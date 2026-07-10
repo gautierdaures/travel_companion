@@ -595,15 +595,23 @@ code {
 }
 .btn-add:disabled { opacity: 0.5; }
 
-/* Expense list */
-.exp-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
-.exp-list h2 + .exp-row { border-top: none; }
-.exp-cat { font-size: 20px; flex: 0 0 auto; width: 26px; text-align: center; }
-.exp-row-main { flex: 1 1 auto; min-width: 0; }
-.exp-row-top { display: flex; justify-content: space-between; gap: 10px; }
-.exp-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.exp-amt { font-weight: 600; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
-.exp-row-sub { color: var(--text-dim); font-size: 13px; }
+/* Expense list — kept compact so a long trip's worth of rows stays scannable */
+.exp-rows { display: flex; flex-direction: column; }
+.exp-day {
+  font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--text-dim);
+  padding: 12px 0 5px;
+  position: sticky; top: 0; z-index: 1;
+  background: var(--bg-elev);
+}
+.exp-rows > .exp-day:first-child { padding-top: 2px; }
+.exp-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--border); }
+.exp-day + .exp-row { border-top: none; }
+.exp-cat { font-size: 18px; flex: 0 0 auto; width: 24px; text-align: center; }
+.exp-row-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.exp-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.exp-row-sub { color: var(--text-dim); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exp-amt { font-weight: 600; font-variant-numeric: tabular-nums; flex: 0 0 auto; font-size: 14px; }
 .exp-del {
   flex: 0 0 auto;
   background: transparent; border: none;
@@ -611,6 +619,17 @@ code {
   padding: 6px 4px; cursor: pointer;
 }
 .exp-del:active { color: var(--cat-food); }
+
+.exp-more { margin-top: 12px; }
+.btn-more {
+  width: 100%; padding: 10px;
+  font-size: 13px; font-weight: 600;
+  color: var(--accent); background: transparent;
+  border: 1px solid var(--border); border-radius: 10px; cursor: pointer;
+}
+.btn-more:active { background: var(--bg-elev-2); }
+.exp-more-of { color: var(--text-dim); font-weight: 400; }
+.exp-count { text-align: center; font-size: 12px; color: var(--text-dim); }
 
 /* Combined home-currency total card */
 .exp-home { border-color: var(--accent); }

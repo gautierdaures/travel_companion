@@ -566,33 +566,76 @@ function summaryCards(items) {
   return homeSummaryCard(items) + settleCard + perCurrency;
 }
 
+// The list can grow to hundreds of entries, so it isn't all rendered at once:
+// only the first PAGE rows go into the DOM, and "Show more" reveals the next
+// batch. `expShown` persists across the re-renders that a new Firestore
+// snapshot triggers (so adding an expense doesn't collapse an expanded list);
+// renderExpenses() resets it when the screen is opened fresh.
+const PAGE = 50;
+let expShown = PAGE;
+
+// Pretty day header from an ISO date ("2026-07-10" → "Wed 10 Jul 2026").
+function dayHeading(iso) {
+  const d = new Date(`${iso}T00:00:00`);
+  if (!iso || Number.isNaN(d.getTime())) return "Undated";
+  return d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+}
+
 function expenseRows(items, onDelete) {
   if (!items.length) return "";
-  const rows = items.map((e) => {
-    const c = catOf(e.category);
-    // Only call out the split when it isn't the default "both" — a "just for X"
-    // expense is worth flagging in the row.
-    const forTag = e.split && e.split !== "both" ? ` · for ${esc(nameFor(e.split))}` : "";
-    return `
-      <div class="exp-row" data-id="${esc(e.id)}">
-        <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
-        <span class="exp-row-main">
-          <span class="exp-row-top">
+
+  const list = el(`
+    <div class="panel exp-list">
+      <h2>All expenses</h2>
+      <div class="exp-rows"></div>
+      <div class="exp-more"></div>
+    </div>`);
+  const body = list.querySelector(".exp-rows");
+  const moreWrap = list.querySelector(".exp-more");
+
+  const render = () => {
+    const shown = Math.min(expShown, items.length);
+    // Group into day sections (items already arrive sorted by date, newest
+    // first), dropping a subheading each time the date changes.
+    let html = "", curDay = null;
+    for (const e of items.slice(0, shown)) {
+      if (e.date !== curDay) {
+        curDay = e.date;
+        html += `<div class="exp-day">${esc(dayHeading(e.date))}</div>`;
+      }
+      const c = catOf(e.category);
+      // Only call out the split when it isn't the default "both" — a "just for
+      // X" expense is worth flagging in the row.
+      const forTag = e.split && e.split !== "both" ? ` · for ${esc(nameFor(e.split))}` : "";
+      html += `
+        <div class="exp-row" data-id="${esc(e.id)}">
+          <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
+          <span class="exp-row-main">
             <span class="exp-note">${esc(e.note || c.label)}</span>
-            <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
+            <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}</span>
           </span>
-          <span class="exp-row-sub">${esc(e.date || "")} · ${esc(nameFor(e.paidBy))}${forTag}</span>
-        </span>
-        <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
-      </div>`;
-  }).join("");
-  const list = el(`<div class="panel exp-list"><h2>All expenses</h2>${rows}</div>`);
-  list.querySelectorAll(".exp-del").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.closest(".exp-row").dataset.id;
-      if (confirm("Delete this expense?")) onDelete(id);
+          <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
+          <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
+        </div>`;
+    }
+    body.innerHTML = html;
+
+    const remaining = items.length - shown;
+    moreWrap.innerHTML = remaining > 0
+      ? `<button class="btn-more" type="button">Show ${Math.min(PAGE, remaining)} more<span class="exp-more-of"> · ${remaining} of ${items.length} hidden</span></button>`
+      : (items.length > PAGE ? `<div class="exp-count">${items.length} expenses</div>` : "");
+
+    body.querySelectorAll(".exp-del").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.closest(".exp-row").dataset.id;
+        if (confirm("Delete this expense?")) onDelete(id);
+      });
     });
-  });
+    const more = moreWrap.querySelector(".btn-more");
+    if (more) more.addEventListener("click", () => { expShown += PAGE; render(); });
+  };
+
+  render();
   return list;
 }
 
@@ -761,6 +804,7 @@ function dashboard(user, items, actions) {
 /* ── Entry point ──────────────────────────────────────────────────────────── */
 export async function renderExpenses() {
   document.title = "Expenses · Trip Companion";
+  expShown = PAGE; // collapse the list back to the first page on a fresh open
 
   if (!isConfigured()) return setupNeededScreen();
 
