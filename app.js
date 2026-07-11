@@ -45,6 +45,17 @@ function el(html) {
   return t.content.firstElementChild;
 }
 
+// A country's "what can I do here" tags (nature, history, trek, beach…),
+// shown on the home cards and the country hero. Empty when none are set.
+function countryTags(c, { limit = 0 } = {}) {
+  let tags = c.tags || [];
+  if (limit > 0) tags = tags.slice(0, limit);
+  if (!tags.length) return "";
+  return `<div class="ctags">${tags
+    .map((t) => `<span class="ctag">${esc(t)}</span>`)
+    .join("")}</div>`;
+}
+
 /* ── Home view ─────────────────────────────────────────────────────────── */
 function renderHome() {
   document.title = "Trip Companion";
@@ -79,6 +90,7 @@ function renderHome() {
           <div class="flag">${c.flag}</div>
           <div class="name">${esc(c.name)}</div>
           <div class="region">${esc(c.region)}</div>
+          ${countryTags(c)}
         </a>`
           )
           .join("")
@@ -504,6 +516,7 @@ function renderCountry(code) {
       <h1>${esc(c.name)}</h1>
       <div class="region">${esc(c.region)}</div>
       ${c.tagline ? `<div class="tagline">${esc(c.tagline)}</div>` : ""}
+      ${countryTags(c)}
     </div>
   `);
 
@@ -572,6 +585,52 @@ function renderCountry(code) {
   }
 }
 
+/* ── Place detail: "Plan your visit" facts + slow-travel notes ──────────── */
+// A compact facts table — entrance fee, hours, time to allow, how to get
+// there, the trailhead for a hike, etc. Anything the data file provides.
+function practicalBlock(p) {
+  const rows = (p.practical || []).filter((f) => f && f.label && f.value);
+  if (!rows.length) return "";
+  return `
+    <section class="pd-facts">
+      <h3>🧭 Plan your visit</h3>
+      <dl class="fact-list">
+        ${rows
+          .map(
+            (f) => `
+          <div class="fact">
+            <dt>${esc(f.label)}</dt>
+            <dd>${esc(f.value)}</dd>
+          </div>`
+          )
+          .join("")}
+      </dl>
+    </section>`;
+}
+
+// The "slow trip" section — where to base yourself: guest houses, homestays,
+// the sleepy village worth an extra night, and any hands-on tips.
+function stayBlock(p) {
+  const hasStay = !!(p.stay && p.stay.trim());
+  const tips = (p.tips || []).filter(Boolean);
+  if (!hasStay && !tips.length) return "";
+  const paras = hasStay
+    ? p.stay
+        .split(/\n\n+/)
+        .map((para) => `<p>${esc(para.trim())}</p>`)
+        .join("")
+    : "";
+  const tipList = tips.length
+    ? `<ul class="pd-tips">${tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`
+    : "";
+  return `
+    <section class="pd-stay">
+      <h3>🛖 Stay &amp; slow travel</h3>
+      ${paras ? `<div class="pd-prose">${paras}</div>` : ""}
+      ${tipList}
+    </section>`;
+}
+
 /* ── Place detail view ─────────────────────────────────────────────────── */
 function renderPlaceDetail(code, i) {
   const c = byCode(code);
@@ -603,12 +662,13 @@ function renderPlaceDetail(code, i) {
       </div>
       <div class="pd-gallery" hidden></div>
       <div class="pd-prose">${longHtml}</div>
-      <div class="pd-extract" hidden></div>
+      ${practicalBlock(p)}
+      ${stayBlock(p)}
       <div class="pd-actions">
         ${p.coords ? `<button class="pd-btn pd-map">🗺️ Show on map</button>` : ""}
         <a class="pd-btn pd-wiki" hidden target="_blank" rel="noopener">📖 Read more on Wikipedia ↗</a>
       </div>
-      <div class="footer">Photos &amp; extra notes via Wikipedia · needs a connection</div>
+      <div class="footer">Photos via Wikipedia · prices &amp; hours are rough guides — confirm locally</div>
     </article>
   `);
 
@@ -618,10 +678,11 @@ function renderPlaceDetail(code, i) {
     location.hash = `#/${code}`;
   });
 
-  // Pull photos + a fuller blurb + the article link from Wikipedia.
+  // Pull photos + the article link from Wikipedia. We no longer surface the
+  // Wikipedia summary text here — the hand-written guide above tells the story;
+  // the link is there for anyone who wants the full article.
   if (p.wiki) {
     const gallery = view.querySelector(".pd-gallery");
-    const extractBox = view.querySelector(".pd-extract");
     const wikiLink = view.querySelector(".pd-wiki");
     wikiInfo(p.wiki, { extra: 1 })
       .then((info) => {
@@ -639,10 +700,6 @@ function renderPlaceDetail(code, i) {
             img.onload = reveal;
             img.onerror = drop;
           });
-        }
-        if (info.extract) {
-          extractBox.innerHTML = `<h3>From Wikipedia</h3><p>${esc(info.extract)}</p>`;
-          extractBox.hidden = false;
         }
         if (info.url) {
           wikiLink.href = info.url;

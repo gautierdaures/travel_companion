@@ -80,6 +80,22 @@ h1, h2, h3 { line-height: 1.2; margin: 0; }
 .card .name { font-weight: 650; font-size: 18px; margin-top: 10px; }
 .card .region { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
 
+/* "What can I do here" tags — on the home cards and the country hero. */
+.ctags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.ctag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: var(--text-dim);
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+.hero .ctags { margin-top: 12px; }
+.hero .ctag { font-size: 12px; padding: 4px 11px; }
+
 .empty { color: var(--text-dim); text-align: center; padding: 40px 0; }
 
 /* ── Country page ──────────────────────────────────────────────────────── */
@@ -269,17 +285,64 @@ section.block > h2 {
 .pd-prose { font-size: 16px; line-height: 1.6; }
 .pd-prose p { margin: 0 0 12px; }
 .pd-prose p:last-child { margin-bottom: 0; }
-.pd-extract {
-  margin-top: 18px;
-  padding: 14px 16px;
+/* Shared heading for the detail sub-sections (Plan your visit, Stay…). */
+.pd-facts h3,
+.pd-stay h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+/* "Plan your visit" — a tidy label/value facts table. */
+.pd-facts { margin-top: 22px; }
+.fact-list {
+  margin: 0;
+  padding: 4px 16px;
   background: var(--bg-elev);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.pd-extract[hidden] { display: none; }
-.pd-extract h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--accent); margin-bottom: 6px; }
-.pd-extract p { font-size: 14px; line-height: 1.55; color: var(--text-dim); }
-.pd-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.fact {
+  display: grid;
+  grid-template-columns: 116px 1fr;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid var(--border);
+}
+.fact:first-child { border-top: none; }
+.fact dt {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding-top: 1px;
+}
+.fact dd { margin: 0; font-size: 15px; line-height: 1.5; }
+
+/* "Stay & slow travel" — a warmly-tinted panel with an accent edge. */
+.pd-stay {
+  margin-top: 22px;
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(90, 200, 184, 0.07), rgba(90, 200, 184, 0.02));
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-2);
+  border-radius: var(--radius);
+}
+.pd-stay .pd-prose { font-size: 15px; line-height: 1.6; }
+.pd-tips {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+.pd-tips li { margin: 5px 0; }
+.pd-tips li::marker { color: var(--accent-2); }
+
+.pd-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .pd-btn {
   appearance: none;
   cursor: pointer;

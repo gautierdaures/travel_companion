@@ -13,6 +13,10 @@
 //    flag: "🇯🇵",             // emoji flag
 //    region: "East Asia",
 //    tagline: "one evocative line",
+//    tags: ["history", "nature", "trek", "beach", …],  // what you can do here;
+//                                         // shown as pills on the home card and
+//                                         // the country hero. Free-form, but keep
+//                                         // to a handful of short, scannable words.
 //
 //    languages: {
 //      name: "Japanese",
@@ -56,15 +60,30 @@
 //           | "avoid" — crowds / closures / heat; steer around it
 //           | "note"  — good to know, plan accordingly
 //
-//    places: [ { name, category, region, description, long?, wiki?, coords? }, ... ]
+//    places: [ { name, category, region, description, long?, practical?,
+//                stay?, tips?, wiki?, coords? }, ... ]
 //      category ∈ "architecture" | "history" | "nature" | "food" | "offbeat"
 //      description = one succinct line, shown in the Places list
 //      long        = the full guide (1–3 short paragraphs) on the place's
 //                    own page at #/<code>/place/<i>; separate paragraphs
 //                    with a blank line. Falls back to `description`.
+//                    For historical/architectural sites, lean into the story;
+//                    for nature, describe the hike/trek and the landscape.
+//      practical   = [ { label, value }, … ] — the "Plan your visit" facts
+//                    table. Use for entrance fee, opening hours, time to
+//                    allow, how to get there, the trailhead/trek, guided-
+//                    tour needs, etc. Keep prices approximate (local currency
+//                    with a rough USD/EUR, "~"): they're a guide, not gospel.
+//      stay        = prose for the "Stay & slow travel" panel — where to base
+//                    yourself: guest houses, homestays, the sleepy village or
+//                    riverside town worth an extra night. Blank line = new
+//                    paragraph. This is the "slow trip" heart of a place.
+//      tips        = [ "…", … ] — short, hands-on tips shown as bullets under
+//                    the stay panel (go at dawn, bring cash, book ahead…).
 //      wiki        = English Wikipedia article title (e.g. "Hạ Long Bay").
-//                    Drives the place's photos and a live extract, pulled at
-//                    runtime by wiki.js. Fails soft — offline just shows text.
+//                    Drives the place's photos and the "Read more" link,
+//                    pulled at runtime by wiki.js. Fails soft — offline the
+//                    hand-written guide above still shows in full.
 //      coords      = [lat, lng] — optional, drops a numbered pin on the map
 //  }
 //
