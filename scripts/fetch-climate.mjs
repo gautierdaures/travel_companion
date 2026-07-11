@@ -43,7 +43,11 @@ const END = process.env.CLIMATE_END || "2020-12-31";
 const ARCHIVE = "https://archive-api.open-meteo.com/v1/archive";
 
 // Country code → data filename (import names don't match codes).
-const CODE_FILE = { ru: "russia.js", cn: "china.js", vn: "vietnam.js", la: "laos.js", kh: "cambodia.js" };
+const CODE_FILE = {
+  ru: "russia.js", cn: "china.js", vn: "vietnam.js", la: "laos.js", kh: "cambodia.js",
+  tr: "turkey.js", kz: "kazakhstan.js", kg: "kyrgyzstan.js", mn: "mongolia.js",
+  th: "thailand.js", my: "malaysia.js", id: "indonesia.js", nz: "newzealand.js",
+};
 
 // Flatten the data into one fetch/rewrite target per region.
 function targets() {
