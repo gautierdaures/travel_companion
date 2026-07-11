@@ -101,9 +101,19 @@ import china from "./china.js";
 import vietnam from "./vietnam.js";
 import laos from "./laos.js";
 import cambodia from "./cambodia.js";
+import turkey from "./turkey.js";
+import kazakhstan from "./kazakhstan.js";
+import kyrgyzstan from "./kyrgyzstan.js";
+import mongolia from "./mongolia.js";
+import thailand from "./thailand.js";
+import malaysia from "./malaysia.js";
+import indonesia from "./indonesia.js";
+import newzealand from "./newzealand.js";
 
-export const COUNTRIES = [russia, china, vietnam, laos, cambodia].sort((a, b) =>
-  a.name.localeCompare(b.name)
-);
+export const COUNTRIES = [
+  russia, china, vietnam, laos, cambodia,
+  turkey, kazakhstan, kyrgyzstan, mongolia,
+  thailand, malaysia, indonesia, newzealand,
+].sort((a, b) => a.name.localeCompare(b.name));
 
 export const byCode = (code) => COUNTRIES.find((c) => c.code === code);

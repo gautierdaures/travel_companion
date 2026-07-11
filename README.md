@@ -83,6 +83,8 @@ icons/                  app icons (svg + png)
 data/
   index.js              schema docs + country registry
   russia.js  china.js  vietnam.js  laos.js  cambodia.js   … one file per country
+  turkey.js  kazakhstan.js  kyrgyzstan.js  mongolia.js
+  thailand.js  malaysia.js  indonesia.js  newzealand.js
 ```
 
-The countries here (Russia, China, Vietnam, Laos, Cambodia) follow one itinerary — replace/extend them with the countries on your actual trip.
+The countries here (Russia, China, Vietnam, Laos, Cambodia, Turkey, Kazakhstan, Kyrgyzstan, Mongolia, Thailand, Malaysia, Indonesia, New Zealand) follow one itinerary — replace/extend them with the countries on your actual trip.

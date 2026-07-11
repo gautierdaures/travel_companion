@@ -1,6 +1,6 @@
 // Service worker — offline caching for Trip Companion.
 // Bump CACHE version whenever you change app files or add a country.
-const CACHE = "trip-companion-v11";
+const CACHE = "trip-companion-v12";
 
 // Every country data file must be listed here so it is available offline.
 const DATA_FILES = [
@@ -11,6 +11,14 @@ const DATA_FILES = [
   "./data/vietnam.js",
   "./data/laos.js",
   "./data/cambodia.js",
+  "./data/turkey.js",
+  "./data/kazakhstan.js",
+  "./data/kyrgyzstan.js",
+  "./data/mongolia.js",
+  "./data/thailand.js",
+  "./data/malaysia.js",
+  "./data/indonesia.js",
+  "./data/newzealand.js",
 ];
 
 const APP_SHELL = [

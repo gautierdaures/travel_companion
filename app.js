@@ -62,6 +62,10 @@ const TAG_EMOJI = {
   winter:         "❄️",
   cities:         "🏙️",
   motorbiking:    "🏍️",
+  ruins:          "🏺",
+  bazaars:        "🛍️",
+  nomads:         "🐎",
+  wildlife:       "🐾",
 };
 
 // A country's "what can I do here" tags (nature, history, trek, beach…),
