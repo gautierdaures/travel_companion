@@ -138,7 +138,7 @@ export default {
         "To understand modern Cambodia you have to confront its darkest chapter, and these two sites in and around Phnom Penh make it unforgettable. Tuol Sleng (S-21) was an ordinary high school that the Khmer Rouge turned into a secret prison and torture centre, where some 12,000–20,000 people were held, photographed, and sent to their deaths; the classrooms, cells, and walls of victims' portraits are preserved as they were.\n\nA short drive away, the Killing Fields of Choeung Ek is where most of those prisoners were murdered and buried in mass graves; today a memorial stupa filled with skulls stands over the site, and an audio guide walks you through it with restraint. It is harrowing rather than enjoyable — but visited respectfully, it honours the victims and is essential context for everything else in the country.",
       practical: [
         { label: "Getting there", value: "Both are in/near Phnom Penh; a tuk-tuk to link the two runs ~$15–20 for the trip." },
-        { label: "Entrance", value: "Tuol Sleng ~$5 and Choeung Ek ~$6, each with an excellent audioguide (well worth it)." },
+        { label: "Entrance", value: "Tuol Sleng ~$5 (audioguide +$3); Choeung Ek ~$6 including its audioguide — both well worth it." },
         { label: "Time to allow", value: "A full, emotionally heavy half-day for both together." },
         { label: "Note", value: "Harrowing but essential; visit respectfully, dress modestly, keep voices low." },
       ],
@@ -271,7 +271,7 @@ export default {
         "Perched on the edge of a 525-metre cliff in the Dângrêk Mountains, right on the disputed Thai border, Preah Vihear is the most spectacularly sited of all Khmer temples. Rather than a single stacked pyramid, it stretches for some 800 metres along a spur, a sequence of sanctuaries, courtyards and monumental stairways climbing the ridge to a shrine that looks out over the plains of Cambodia far below.\n\nBuilt over two centuries and dedicated to Shiva, it's a UNESCO World Heritage Site whose ownership was long fought over — and occasionally shelled — by Cambodia and Thailand, so it's worth checking the border situation before visiting. Remote and hard-won, reached by a hair-raising ride up the escarpment, it rewards the effort with grandeur, history, and a view like no other temple in the country.",
       practical: [
         { label: "Getting there", value: "Remote, on the Thai border ~3–4 hrs from Siem Reap; a 4x4 or motorbike makes the steep final climb." },
-        { label: "Entrance", value: "~$10, plus the mandatory transfer up the mountain from the base." },
+        { label: "Entrance", value: "~$10, plus the mandatory transfer up the mountain from the base (~$25 shared truck)." },
         { label: "Time to allow", value: "A long day trip from Siem Reap, or overnight in Sra Em town nearby." },
         { label: "Note", value: "Check the current border situation before visiting — the area has seen past disputes." },
       ],
@@ -289,7 +289,7 @@ export default {
       long:
         "For a couple of decades in the 10th century, a rival king moved the Khmer capital far to the north-east of Angkor, to Koh Ker, and built furiously before it was abandoned again to the forest. Long remote and heavily land-mined (now cleared along the visitor routes), it has stayed refreshingly uncrowded, and was inscribed as a UNESCO site only recently.\n\nThe centrepiece is Prasat Thom, a startling seven-tiered sandstone pyramid rising 36 metres straight out of the jungle, more Maya than Khmer in silhouette, which you can climb for a view over the treetops. Scattered temples and shrines dot the surrounding forest, many still half-wild. Combined with the temple-town of Beng Mealea en route, it makes a rewarding day for those wanting Angkor-era grandeur without the crowds.",
       practical: [
-        { label: "Getting there", value: "~2–2.5 hrs from Siem Reap by road; a separate ticket (~$10, not the Angkor pass) applies." },
+        { label: "Getting there", value: "~2–2.5 hrs from Siem Reap by road; a separate ticket (~$15, not the Angkor pass) applies." },
         { label: "Time to allow", value: "A half-day, often combined with Beng Mealea en route." },
         { label: "Don't miss", value: "Climbing the 36 m seven-tiered pyramid, Prasat Thom, for the view over the forest." },
         { label: "Note", value: "Stick to cleared paths — the wider area was heavily mined (visitor routes are cleared)." },

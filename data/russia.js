@@ -117,7 +117,7 @@ export default {
         "Red Square is the symbolic centre of Russia, a vast cobbled space hemmed by the crenellated Kremlin wall, the ornate GUM department store, Lenin's granite mausoleum, and — its unmistakable exclamation mark — St. Basil's Cathedral. Commissioned by Ivan the Terrible in the 1550s, St. Basil's is a riot of nine chapels crowned with swirling, candy-striped onion domes, each one different, unlike anything else on earth.\n\nThe interior is a surprise: not one grand nave but a warren of narrow, frescoed chapels and stairways. Come at night, when the domes and the square are floodlit and the crowds thin, for the view that fixes Moscow in the mind. The adjoining Kremlin — cathedrals, armoury, and seat of power — deserves its own half-day.",
       practical: [
         { label: "Getting there", value: "Central Moscow; metro to Okhotny Ryad or Ploshchad Revolyutsii. The square itself is free and open." },
-        { label: "St. Basil's", value: "~800–1,000 ₽ (~$10) for the cathedral interior; the Kremlin is a separate ticket." },
+        { label: "St. Basil's", value: "~1,000 ₽, up to ~2,000 ₽ for foreign visitors, for the cathedral interior; the Kremlin is a separate ticket." },
         { label: "Time to allow", value: "An hour for the square; a half-day to add the Kremlin cathedrals and Armoury." },
         { label: "When", value: "Come after dark, when the domes and the square are floodlit and the crowds thin." },
       ],
@@ -250,7 +250,7 @@ export default {
         "Rising in deliberate, colourful contrast to St. Petersburg's restrained neoclassicism, the Church of the Savior on Spilled Blood was built on the exact spot where Tsar Alexander II — the 'Tsar Liberator' who freed the serfs — was killed by a bomb in 1881. Its clustered, multicoloured onion domes consciously echo St. Basil's in Moscow, a Russian-revival answer to the Italianate city around it.\n\nThe interior is the revelation: over 7,000 square metres of mosaic, covering every wall, pillar and vault with biblical scenes in shimmering colour, one of the largest collections of mosaic art anywhere. A canopied shrine inside preserves the very cobblestones on which the tsar fell. It's compact, dazzling, and best paired with a walk along the adjacent Griboyedov Canal.",
       practical: [
         { label: "Getting there", value: "Off Nevsky Prospekt by the Griboyedov Canal, central St. Petersburg; metro Nevsky Prospekt." },
-        { label: "Entrance", value: "~450 ₽ (~$5); evening tickets in summer are quieter and beautifully lit." },
+        { label: "Entrance", value: "~550 ₽ (~$6); evening tickets in summer are quieter and beautifully lit." },
         { label: "Time to allow", value: "45 min–1 hour for the mosaic interior." },
         { label: "When", value: "Closed Wednesdays; mornings are calmest for the interior." },
       ],
@@ -269,7 +269,7 @@ export default {
         "Peter the Great built Peterhof on the Gulf of Finland as his answer to Versailles, a palace-and-garden statement of Russia's arrival among the European powers. Its glory is the Grand Cascade: a monumental staircase of gilded statues and 64 fountains tumbling down to a canal that runs straight to the sea, the whole system fed entirely by gravity from springs on the heights above, without a single pump.\n\nBeyond the cascade spread formal Lower Gardens studded with trick fountains that soak the unwary, pavilions, and Peter's own modest seaside villa, Monplaisir. Devastated in the Second World War, it has been painstakingly restored. Reach it by hydrofoil across the gulf from the city centre — the approach from the water is the way it was meant to be seen. The fountains run summer only.",
       practical: [
         { label: "Getting there", value: "Hydrofoil from central St. Petersburg across the gulf (~30 min) — the intended approach; or by bus/train." },
-        { label: "Entrance", value: "Lower Gardens (the fountains) ~600–900 ₽; the Grand Palace interior is a separate, pricier ticket." },
+        { label: "Entrance", value: "Lower Gardens (the fountains) ~1,500 ₽ for foreigners; the Grand Palace interior is a separate, pricier ticket." },
         { label: "Season", value: "The fountains run roughly late April/May to mid-October only — check before a winter visit." },
         { label: "Time to allow", value: "Half a day for the cascade and gardens; more with the palace." },
       ],

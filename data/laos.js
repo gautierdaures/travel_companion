@@ -103,7 +103,7 @@ export default {
         "A short drive into the hills from Luang Prabang, the Kuang Si falls tumble down a series of limestone terraces into pools of an almost luminous milky-turquoise, coloured by the dissolved minerals in the water. A shaded forest path climbs alongside the cascades to the main drop, and several of the lower pools are open for swimming beneath the falls.\n\nAt the entrance, the Free the Bears sanctuary cares for Asiatic black bears ('moon bears') rescued from poachers and the bile trade — an easy and worthwhile stop on the way in. Go early or late to beat the tour crowds and the midday heat, and consider the quieter Tad Sae falls as an alternative in the wet season when they're at their fullest.",
       practical: [
         { label: "Getting there", value: "~30 km / 45 min from Luang Prabang: shared tuk-tuk (~50,000 kip return), minivan, or a hired scooter." },
-        { label: "Entrance", value: "~25,000 kip (~$1.25); includes the Free the Bears sanctuary just inside the gate." },
+        { label: "Entrance", value: "~65,000 kip (~$3); includes the shuttle and the Free the Bears sanctuary just inside the gate." },
         { label: "Time to allow", value: "Half a day. A shaded path climbs beside the cascades to the top (~20 min each way)." },
         { label: "Swimming", value: "The lower turquoise pools are open for a dip — bring a swimsuit; the minerals are cold and gorgeous." },
       ],
@@ -141,7 +141,7 @@ export default {
         "Across the uplands of Xieng Khouang, thousands of massive carved stone jars — some over two metres tall — lie scattered in clusters across the hills, the relics of an Iron Age culture that flourished here some 2,000 years ago. Their purpose is still debated; the leading theory is that they were used in funerary practices. Grouped at several accessible sites, they make a genuinely mysterious, atmospheric landscape.\n\nThe plain carries a darker modern history too: this was among the most heavily bombed areas on earth during the CIA's 'Secret War', and unexploded ordnance still litters the ground — visitors keep strictly to the cleared, marked paths. Now UNESCO-listed, the jars and the sobering nearby reminders of the bombing make for a thought-provoking day out from Phonsavan.",
       practical: [
         { label: "Getting there", value: "Fly or bus to Phonsavan (Xieng Khouang); the main jar sites are 10–30 min out by tuk-tuk or hired driver." },
-        { label: "Entrance", value: "~15,000 kip (~$0.75) per site. Site 1 is the largest and closest to town." },
+        { label: "Entrance", value: "~15,000 kip per outer site; Site 1 — the largest and closest — is ~35,000 kip including its shuttle." },
         { label: "Time to allow", value: "A full day to link 2–3 sites plus a UXO/MAG visitor centre." },
         { label: "Safety", value: "Stay strictly on the white-marked cleared paths — unexploded ordnance still lies in the ground here." },
       ],
@@ -312,7 +312,7 @@ export default {
         "On the bank of the Mekong just outside Vientiane, Buddha Park (Xieng Khuan) is one of Laos's strangest and most photogenic sights: a riverside meadow crowded with more than 200 outsized, eccentric concrete sculptures of Hindu and Buddhist deities, demons and animals, created from the late 1950s by an idiosyncratic priest-shaman who fused the two religions in his own cosmology.\n\nThe showpieces are a colossal reclining Buddha and a great domed structure you enter through the mouth of a demon and climb, level by level, to a rooftop view over the whole surreal garden. It's kitsch, mysterious and a little eerie all at once — an easy, offbeat half-day trip from the capital that makes a change from the country's more solemn temples.",
       practical: [
         { label: "Getting there", value: "~25 km from Vientiane along the Mekong; local bus 14, a hired tuk-tuk, or scooter (~40 min)." },
-        { label: "Entrance", value: "~15,000 kip (~$0.75), plus a small camera fee." },
+        { label: "Entrance", value: "~60,000 kip (~$2.75) for foreign visitors." },
         { label: "Time to allow", value: "1–2 hours; often paired with the nearby Friendship Bridge or a riverside lunch." },
         { label: "Don't miss", value: "Climbing inside the giant 'pumpkin' dome through the demon's mouth to the rooftop view over the sculptures." },
       ],

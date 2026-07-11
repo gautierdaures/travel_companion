@@ -155,7 +155,7 @@ export default {
         "In 1974 farmers digging a well near Xi'an broke into one of the archaeological finds of the century: a buried army of thousands of life-size terracotta soldiers, arrayed in battle formation to guard the tomb of Qin Shi Huang, the first emperor of a unified China, who died in 210 BCE. Every figure is individually modelled — different faces, hairstyles, ranks and armour — and they were once brightly painted and armed with real weapons.\n\nThree excavated pits are roofed by hangar-like halls; Pit 1, with its massed ranks of infantry receding into the distance, is the unforgettable one. Much of the emperor's mausoleum complex remains unexcavated, including the tomb mound itself. Xi'an rewards a longer stay too, for its intact Ming city wall and the food of its Muslim Quarter.",
       practical: [
         { label: "Getting there", value: "~1 hr from Xi'an; tourist bus 5 (306) from the train station, or a hired car." },
-        { label: "Entrance", value: "~120 RMB (~$17); includes all three pits and the museum." },
+        { label: "Entrance", value: "~150 RMB peak / 120 off-peak (~$17–21); includes all three pits and the museum." },
         { label: "Time to allow", value: "Half a day — take a guide or audioguide, as the pits mean little unexplained." },
         { label: "Tip", value: "See Pit 1 last, so its massed ranks are the climax." },
       ],
@@ -174,7 +174,7 @@ export default {
         "The forest park at Zhangjiajie protects a landscape that looks invented: thousands of quartz-sandstone pillars, some over 200 metres tall, rising vertically out of subtropical forest and drifting in and out of the mist. It's widely credited as an inspiration for the floating Hallelujah Mountains of the film 'Avatar', and in person the scale and strangeness live up to the billing.\n\nA network of trails, lifts and shuttle buses threads the park — the glass Bailong elevator rides the outside of a cliff, and a glass-bottomed bridge spans a nearby canyon for those with the nerve. Rise early and pick quieter trails to escape the domestic tour groups, and give the misty mornings, when the peaks seem to hover, priority over blue-sky afternoons.",
       practical: [
         { label: "Getting there", value: "Fly or take high-speed rail to Zhangjiajie; the forest park is ~40 min from the city." },
-        { label: "Entrance", value: "~225 RMB multi-day pass (~$32) covering the park shuttles; the Bailong glass elevator is extra." },
+        { label: "Entrance", value: "~240 RMB peak 4-day pass (~$34) covering the park shuttles; the Bailong glass elevator is extra." },
         { label: "Time to allow", value: "2 days, to hike the quieter trails and catch a misty morning." },
         { label: "Best conditions", value: "Misty mornings, when the pillars float, beat clear afternoons." },
       ],
@@ -231,7 +231,7 @@ export default {
         "High on the eastern edge of the Tibetan plateau, the valley of Jiuzhaigou — 'nine village valley', for the Tibetan settlements within it — holds a chain of lakes so intensely coloured they look tinted: turquoise, emerald and cobalt, the clarity a product of mineral-rich water and calcium terraces, threaded by waterfalls and travertine shoals. Boardwalks and shuttle buses lead through the forest from pool to pool.\n\nSacred to the local Tibetans and framed by snow peaks, it is at its most spectacular in autumn, when the surrounding forest turns and doubles itself in the still water. A 2017 earthquake closed the park for a time and visitor numbers are now capped, so book ahead — and consider pairing it with the calcite terraces of nearby Huanglong.",
       practical: [
         { label: "Getting there", value: "Fly to Jiuzhai Huanglong airport, or a long scenic drive from Chengdu (~8–10 hrs)." },
-        { label: "Entrance", value: "~169 RMB peak + ~90 RMB shuttle (~$36); daily numbers are capped, so book ahead." },
+        { label: "Entrance", value: "~190 RMB peak entrance + ~90 RMB shuttle (prices have changed repeatedly — confirm); daily numbers are capped, so book ahead." },
         { label: "Time to allow", value: "1–2 full days on the park's boardwalks and shuttle network." },
         { label: "When", value: "Autumn (Oct) is peak colour and peak crowds; the high altitude keeps days cool." },
       ],
@@ -307,7 +307,7 @@ export default {
         "In the hills north of Guilin, generations of Zhuang and Yao farmers have carved entire mountainsides into stacked, curving rice terraces that follow every contour of the slopes — the 'Dragon's Backbone', Longji. Wooden villages cling to the ridges among them, and paths link viewpoints where the terraces fan out below like contour lines made solid.\n\nThe terraces shift with the seasons: mirror-bright with water in spring, deep green in summer, and burnished gold before the autumn harvest. Walking between villages such as Ping'an and Dazhai, staying in a timber guesthouse, and — if you're lucky — catching a local market are the rewards. The Red Yao women here are famous for hair kept uncut for a lifetime.",
       practical: [
         { label: "Getting there", value: "~2 hrs by bus from Guilin to Longsheng; a shuttle climbs to the Ping'an and Dazhai trailheads." },
-        { label: "Entrance", value: "~80 RMB (~$11); small cable cars serve the higher viewpoints above Dazhai." },
+        { label: "Entrance", value: "~100 RMB peak / 80 off (~$11–14); small cable cars serve the higher viewpoints above Dazhai." },
         { label: "Trek", value: "Walk village-to-village between Ping'an and Dazhai (~4–5 hrs) for the best of the terraces." },
         { label: "When", value: "Flooded and mirror-bright in spring; deep green in summer; gold before the autumn harvest." },
       ],
@@ -364,7 +364,7 @@ export default {
         "Set on the Tuo River in the hills of western Hunan, Fenghuang — 'Phoenix' — is an unusually pretty old town of wooden stilt houses (diaojiaolou) leaning out over the water, arched stone bridges, and lantern-hung lanes, in a region historically home to the Miao and Tujia minorities. Ferrymen pole flat boats beneath the bridges, and at night the reflected lights turn the river into a ribbon of colour.\n\nThe writer Shen Congwen, whose stories put the town on the map, is buried here, and his former home is among the sights. Fenghuang has grown lively and commercial along the waterfront, so wander the back lanes and the surrounding Miao villages for quieter corners — and consider it a natural stop between Zhangjiajie's pillars and the wider south-west.",
       practical: [
         { label: "Getting there", value: "~1 hr by bus from Jishou (high-speed rail), or ~4 hrs from Zhangjiajie." },
-        { label: "Cost", value: "The town is free to enter; a combined ticket (~148 RMB) covers nine museums and the boat trip." },
+        { label: "Cost", value: "The town is free to enter; a combined attractions ticket (~128–148 RMB) covers the museums and the boat trip." },
         { label: "Time to allow", value: "1–2 nights — it's loveliest lit up after dark and quiet in the early morning." },
         { label: "Also", value: "Long boats pole under the bridges; the Miao villages nearby reward a day trip." },
       ],

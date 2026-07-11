@@ -159,7 +159,7 @@ export default {
         "The Phong Nha-Kẻ Bàng National Park hides one of the planet's great concentrations of caves, dissolved out of an ancient limestone massif near the Laos border. It is famous as the home of Sơn Đoòng, the largest cave passage on Earth — big enough to hold a city block and its own jungle and clouds — reachable only on a costly, permit-limited expedition.\n\nHappily, you don't need Sơn Đoòng to be awed. Paradise Cave is a cathedral of stalactites you walk deep into on a boardwalk; the original Phong Nha Cave is entered by boat along an underground river; and Dark Cave adds a zip-line, a mud bath, and a swim. The surrounding countryside of karst, rivers and quiet villages has become a laid-back base in its own right.",
       practical: [
         { label: "Getting there", value: "Train or bus to Đồng Hới, then ~45 min to Phong Nha village; direct buses run from Huế and Hanoi." },
-        { label: "Cave entry", value: "Paradise Cave ~250,000 VND; Phong Nha Cave (by boat) ~150,000 VND + boat. Sơn Đoòng is a costly, permit-limited multi-day expedition." },
+        { label: "Cave entry", value: "Paradise Cave ~270,000 VND; Phong Nha Cave ~150,000 VND + boat (~550,000/boat). Sơn Đoòng is a costly, permit-limited multi-day expedition." },
         { label: "Time to allow", value: "2–3 nights to combine the caves with the countryside." },
         { label: "Trek option", value: "Guided cave-and-jungle treks (Tú Làn, Hang Én) range from a day to several days." },
       ],
@@ -235,7 +235,7 @@ export default {
         "Founded in 1070 and home to Vietnam's first national university, the Temple of Literature is a rare survival of classical Confucian architecture and the calmest spot in central Hanoi. You pass through a sequence of five walled courtyards and ornamental gates, each more contemplative than the last, around lotus ponds and pavilions.\n\nIts treasures are 82 stone stelae, mounted on the backs of stone tortoises, engraved with the names of doctoral graduates going back to the 15th century — students still come to touch them for luck before exams. It's a short, rewarding visit that puts the country's deep reverence for scholarship in front of you, and a graceful contrast to the chaos of the Old Quarter nearby.",
       practical: [
         { label: "Getting there", value: "Central Hanoi, ~2 km west of Hoàn Kiếm Lake; walk, cyclo, or Grab." },
-        { label: "Entrance", value: "~30,000 VND (~$1.20)." },
+        { label: "Entrance", value: "~70,000 VND (~$2.80)." },
         { label: "Time to allow", value: "About an hour through the five walled courtyards." },
         { label: "Dress", value: "Modest dress is appreciated at this Confucian temple." },
       ],
