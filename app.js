@@ -45,14 +45,36 @@ function el(html) {
   return t.content.firstElementChild;
 }
 
+// Each free-form country tag renders as an emoji (with the word kept as a
+// hover title for accessibility). Unmapped tags fall back to a generic label.
+const TAG_EMOJI = {
+  history:        "🏰",
+  architecture:   "🏛️",
+  nature:         "⛰️",
+  food:           "🍜",
+  trek:           "🥾",
+  beach:          "🏖️",
+  diving:         "🤿",
+  temples:        "🛕",
+  "river life":   "🛶",
+  "slow travel":  "🐌",
+  rail:           "🚂",
+  winter:         "❄️",
+  cities:         "🏙️",
+  motorbiking:    "🏍️",
+};
+
 // A country's "what can I do here" tags (nature, history, trek, beach…),
-// shown on the home cards and the country hero. Empty when none are set.
+// shown as emojis on the home cards and the country hero. Empty when none set.
 function countryTags(c, { limit = 0 } = {}) {
   let tags = c.tags || [];
   if (limit > 0) tags = tags.slice(0, limit);
   if (!tags.length) return "";
   return `<div class="ctags">${tags
-    .map((t) => `<span class="ctag">${esc(t)}</span>`)
+    .map(
+      (t) =>
+        `<span class="ctag" title="${esc(t)}"><span class="ctag-emoji">${TAG_EMOJI[t] || "🏷️"}</span></span>`
+    )
     .join("")}</div>`;
 }
 

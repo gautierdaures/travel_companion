@@ -80,21 +80,22 @@ h1, h2, h3 { line-height: 1.2; margin: 0; }
 .card .name { font-weight: 650; font-size: 18px; margin-top: 10px; }
 .card .region { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
 
-/* "What can I do here" tags — on the home cards and the country hero. */
-.ctags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+/* "What can I do here" tags — emoji chips on the home cards and country hero. */
+.ctags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
 .ctag {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
   background: var(--bg-elev-2);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 3px 9px;
-  white-space: nowrap;
+  border-radius: 10px;
 }
-.hero .ctags { margin-top: 12px; }
-.hero .ctag { font-size: 12px; padding: 4px 11px; }
+.ctag-emoji { font-size: 18px; line-height: 1; }
+.hero .ctags { margin-top: 14px; gap: 8px; }
+.hero .ctag { width: 40px; height: 40px; border-radius: 12px; }
+.hero .ctag-emoji { font-size: 21px; }
 
 .empty { color: var(--text-dim); text-align: center; padding: 40px 0; }
 

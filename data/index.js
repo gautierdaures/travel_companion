@@ -14,9 +14,12 @@
 //    region: "East Asia",
 //    tagline: "one evocative line",
 //    tags: ["history", "nature", "trek", "beach", …],  // what you can do here;
-//                                         // shown as pills on the home card and
-//                                         // the country hero. Free-form, but keep
-//                                         // to a handful of short, scannable words.
+//                                         // rendered as emoji chips on the home
+//                                         // card and country hero (the word is
+//                                         // the hover title). app.js maps each
+//                                         // word → emoji in TAG_EMOJI; add a
+//                                         // mapping there for any new tag, else
+//                                         // it falls back to a generic 🏷️.
 //
 //    languages: {
 //      name: "Japanese",
