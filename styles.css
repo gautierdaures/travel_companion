@@ -595,15 +595,45 @@ code {
 }
 .btn-add:disabled { opacity: 0.5; }
 
-/* Expense list */
-.exp-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
-.exp-list h2 + .exp-row { border-top: none; }
-.exp-cat { font-size: 20px; flex: 0 0 auto; width: 26px; text-align: center; }
-.exp-row-main { flex: 1 1 auto; min-width: 0; }
-.exp-row-top { display: flex; justify-content: space-between; gap: 10px; }
-.exp-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.exp-amt { font-weight: 600; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
-.exp-row-sub { color: var(--text-dim); font-size: 13px; }
+/* Expense list — kept compact so a long trip's worth of rows stays scannable */
+.exp-list-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.exp-clear {
+  background: transparent; border: none; cursor: pointer;
+  color: var(--accent); font-size: 12px; font-weight: 600;
+  padding: 0;
+}
+.exp-clear[hidden] { display: none; }
+
+.exp-filter { display: grid; gap: 8px; margin-bottom: 12px; }
+.exp-search, .exp-fsel {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px; color: var(--text);
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border); border-radius: 9px;
+  outline: none;
+}
+.exp-search::placeholder { color: var(--text-dim); }
+.exp-search:focus, .exp-fsel:focus { border-color: var(--accent); }
+.exp-filter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.exp-fsel { padding: 8px 10px; font-size: 13px; }
+
+.exp-rows { display: flex; flex-direction: column; }
+.exp-day {
+  font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--text-dim);
+  padding: 12px 0 5px;
+  position: sticky; top: 0; z-index: 1;
+  background: var(--bg-elev);
+}
+.exp-rows > .exp-day:first-child { padding-top: 2px; }
+.exp-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--border); }
+.exp-day + .exp-row { border-top: none; }
+.exp-cat { font-size: 18px; flex: 0 0 auto; width: 24px; text-align: center; }
+.exp-row-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.exp-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.exp-row-sub { color: var(--text-dim); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exp-amt { font-weight: 600; font-variant-numeric: tabular-nums; flex: 0 0 auto; font-size: 14px; }
 .exp-del {
   flex: 0 0 auto;
   background: transparent; border: none;
@@ -611,6 +641,17 @@ code {
   padding: 6px 4px; cursor: pointer;
 }
 .exp-del:active { color: var(--cat-food); }
+
+.exp-more { margin-top: 12px; }
+.btn-more {
+  width: 100%; padding: 10px;
+  font-size: 13px; font-weight: 600;
+  color: var(--accent); background: transparent;
+  border: 1px solid var(--border); border-radius: 10px; cursor: pointer;
+}
+.btn-more:active { background: var(--bg-elev-2); }
+.exp-more-of { color: var(--text-dim); font-weight: 400; }
+.exp-count { text-align: center; font-size: 12px; color: var(--text-dim); }
 
 /* Combined home-currency total card */
 .exp-home { border-color: var(--accent); }

@@ -566,33 +566,164 @@ function summaryCards(items) {
   return homeSummaryCard(items) + settleCard + perCurrency;
 }
 
+// The list can grow to hundreds of entries, so it isn't all rendered at once:
+// only the first PAGE rows go into the DOM, and "Show more" reveals the next
+// batch. `expShown` persists across the re-renders that a new Firestore
+// snapshot triggers (so adding an expense doesn't collapse an expanded list);
+// renderExpenses() resets it when the screen is opened fresh.
+const PAGE = 50;
+let expShown = PAGE;
+
+// Live filter/search state, kept module-level for the same reason as expShown:
+// a snapshot update mustn't wipe what you've typed or picked. "" (or ALL for the
+// dropdowns) means "no constraint". renderExpenses() clears it on a fresh open.
+const ALL = "__all";
+const expFilter = { q: "", category: ALL, country: ALL, paidBy: ALL };
+const filterActive = () =>
+  expFilter.q.trim() !== "" || expFilter.category !== ALL ||
+  expFilter.country !== ALL || expFilter.paidBy !== ALL;
+
+const norm = (s) => String(s || "").toLowerCase();
+
+// Does one expense pass the current filter? Text search spans the note plus the
+// category, country and payer labels so "food", "vietnam" or a name all work.
+function matchesFilter(e) {
+  if (expFilter.category !== ALL && e.category !== expFilter.category) return false;
+  if (expFilter.paidBy !== ALL && e.paidBy !== expFilter.paidBy) return false;
+  if (expFilter.country !== ALL && (e.country || "") !== expFilter.country) return false;
+  const q = norm(expFilter.q).trim();
+  if (q) {
+    const hay = norm([e.note, catOf(e.category).label,
+      countryOf(e.country || "").name, nameFor(e.paidBy)].join(" "));
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+// Pretty day header from an ISO date ("2026-07-10" → "Wed 10 Jul 2026").
+function dayHeading(iso) {
+  const d = new Date(`${iso}T00:00:00`);
+  if (!iso || Number.isNaN(d.getTime())) return "Undated";
+  return d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+}
+
+// The filter bar: a search box plus category / country / payer dropdowns. The
+// country and payer options are built from what's actually present in the data.
+function filterBarHTML(items) {
+  const optsFor = (list, sel) => list
+    .map(([val, label]) => `<option value="${esc(val)}"${val === sel ? " selected" : ""}>${esc(label)}</option>`)
+    .join("");
+
+  const catOpts = [[ALL, "All categories"],
+    ...CATEGORIES.map((c) => [c.id, `${c.icon} ${c.label}`])];
+
+  const tier = (code) => (code === "" ? 3 : tripRank(code) < 99 ? 1 : 2);
+  const countries = [...new Set(items.map((e) => e.country || ""))]
+    .map((code) => { const c = countryOf(code); return { code, name: c.name, flag: c.flag }; })
+    .sort((a, b) => tier(a.code) - tier(b.code) || tripRank(a.code) - tripRank(b.code) || a.name.localeCompare(b.name));
+  const countryOpts = [[ALL, "All countries"],
+    ...countries.map((c) => [c.code, `${c.flag} ${c.name}`])];
+
+  const people = [...new Set(items.map((e) => e.paidBy))];
+  const paidByOpts = [[ALL, "Anyone"],
+    ...people.map((p) => [p, nameFor(p)])];
+
+  return `
+    <div class="exp-filter">
+      <input class="exp-search" type="search" name="q" placeholder="Search expenses…"
+             autocomplete="off" value="${esc(expFilter.q)}" aria-label="Search expenses" />
+      <div class="exp-filter-row">
+        <select class="exp-fsel" name="category" aria-label="Filter by category">${optsFor(catOpts, expFilter.category)}</select>
+        <select class="exp-fsel" name="country" aria-label="Filter by country">${optsFor(countryOpts, expFilter.country)}</select>
+        <select class="exp-fsel" name="paidBy" aria-label="Filter by who paid">${optsFor(paidByOpts, expFilter.paidBy)}</select>
+      </div>
+    </div>`;
+}
+
 function expenseRows(items, onDelete) {
   if (!items.length) return "";
-  const rows = items.map((e) => {
-    const c = catOf(e.category);
-    // Only call out the split when it isn't the default "both" — a "just for X"
-    // expense is worth flagging in the row.
-    const forTag = e.split && e.split !== "both" ? ` · for ${esc(nameFor(e.split))}` : "";
-    return `
-      <div class="exp-row" data-id="${esc(e.id)}">
-        <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
-        <span class="exp-row-main">
-          <span class="exp-row-top">
+
+  const list = el(`
+    <div class="panel exp-list">
+      <div class="exp-list-head">
+        <h2>All expenses</h2>
+        <button class="exp-clear" type="button" hidden>Clear filters</button>
+      </div>
+      ${filterBarHTML(items)}
+      <div class="exp-rows"></div>
+      <div class="exp-more"></div>
+    </div>`);
+  const body = list.querySelector(".exp-rows");
+  const moreWrap = list.querySelector(".exp-more");
+  const clearBtn = list.querySelector(".exp-clear");
+  const search = list.querySelector(".exp-search");
+
+  const render = () => {
+    const filtered = filterActive() ? items.filter(matchesFilter) : items;
+    clearBtn.hidden = !filterActive();
+
+    if (!filtered.length) {
+      body.innerHTML = `<p class="exp-empty">No expenses match — try a different search or filter.</p>`;
+      moreWrap.innerHTML = "";
+      return;
+    }
+
+    const shown = Math.min(expShown, filtered.length);
+    // Group into day sections (items already arrive sorted by date, newest
+    // first), dropping a subheading each time the date changes.
+    let html = "", curDay = null;
+    for (const e of filtered.slice(0, shown)) {
+      if (e.date !== curDay) {
+        curDay = e.date;
+        html += `<div class="exp-day">${esc(dayHeading(e.date))}</div>`;
+      }
+      const c = catOf(e.category);
+      // Only call out the split when it isn't the default "both" — a "just for
+      // X" expense is worth flagging in the row.
+      const forTag = e.split && e.split !== "both" ? ` · for ${esc(nameFor(e.split))}` : "";
+      html += `
+        <div class="exp-row" data-id="${esc(e.id)}">
+          <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
+          <span class="exp-row-main">
             <span class="exp-note">${esc(e.note || c.label)}</span>
-            <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
+            <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}</span>
           </span>
-          <span class="exp-row-sub">${esc(e.date || "")} · ${esc(nameFor(e.paidBy))}${forTag}</span>
-        </span>
-        <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
-      </div>`;
-  }).join("");
-  const list = el(`<div class="panel exp-list"><h2>All expenses</h2>${rows}</div>`);
-  list.querySelectorAll(".exp-del").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.closest(".exp-row").dataset.id;
-      if (confirm("Delete this expense?")) onDelete(id);
+          <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
+          <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
+        </div>`;
+    }
+    body.innerHTML = html;
+
+    const remaining = filtered.length - shown;
+    const countNote = filterActive() ? ` of ${items.length}` : "";
+    moreWrap.innerHTML = remaining > 0
+      ? `<button class="btn-more" type="button">Show ${Math.min(PAGE, remaining)} more<span class="exp-more-of"> · ${remaining} of ${filtered.length} hidden</span></button>`
+      : (filtered.length > PAGE || filterActive() ? `<div class="exp-count">${filtered.length}${countNote} expenses</div>` : "");
+
+    body.querySelectorAll(".exp-del").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.closest(".exp-row").dataset.id;
+        if (confirm("Delete this expense?")) onDelete(id);
+      });
     });
+    const more = moreWrap.querySelector(".btn-more");
+    if (more) more.addEventListener("click", () => { expShown += PAGE; render(); });
+  };
+
+  // Changing any filter restarts paging from the top of the new result set.
+  const onFilterChange = () => { expShown = PAGE; render(); };
+  search.addEventListener("input", () => { expFilter.q = search.value; onFilterChange(); });
+  list.querySelectorAll(".exp-fsel").forEach((sel) => {
+    sel.addEventListener("change", () => { expFilter[sel.name] = sel.value; onFilterChange(); });
   });
+  clearBtn.addEventListener("click", () => {
+    expFilter.q = ""; expFilter.category = ALL; expFilter.country = ALL; expFilter.paidBy = ALL;
+    search.value = "";
+    list.querySelectorAll(".exp-fsel").forEach((sel) => { sel.value = ALL; });
+    onFilterChange();
+  });
+
+  render();
   return list;
 }
 
@@ -761,6 +892,8 @@ function dashboard(user, items, actions) {
 /* ── Entry point ──────────────────────────────────────────────────────────── */
 export async function renderExpenses() {
   document.title = "Expenses · Trip Companion";
+  expShown = PAGE; // collapse the list back to the first page on a fresh open
+  expFilter.q = ""; expFilter.category = ALL; expFilter.country = ALL; expFilter.paidBy = ALL;
 
   if (!isConfigured()) return setupNeededScreen();
 
