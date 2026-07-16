@@ -1,6 +1,7 @@
 # Cloudflare Worker config for the Polarsteps proxy (see NEXTSTOP_SETUP.md).
-#   deploy:      npx wrangler deploy
-#   set secret:  npx wrangler secret put POLARSTEPS_REMEMBER_TOKEN
+#   deploy:       npx wrangler deploy
+#   set secrets:  npx wrangler secret put POLARSTEPS_REMEMBER_TOKEN
+#                 npx wrangler secret put PROXY_KEY
 name = "polarsteps-proxy"
 main = "worker.js"
 compatibility_date = "2026-07-01"

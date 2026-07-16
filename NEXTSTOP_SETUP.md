@@ -39,15 +39,20 @@ npx wrangler deploy
 Wrangler prints your Worker URL, e.g.
 `https://polarsteps-proxy.<your-subdomain>.workers.dev`.
 
-## 3. Set the token as a secret
+## 3. Set the two secrets
 
 ```bash
 npx wrangler secret put POLARSTEPS_REMEMBER_TOKEN
 # paste the cookie value when prompted
+
+npx wrangler secret put PROXY_KEY
+# invent a passphrase — anything long you can type on your phone once
 ```
 
-The token lives only in Cloudflare's secret store — never in git, never in
-the app bundle.
+Both live only in Cloudflare's secret store — never in git, never in the app
+bundle. The `PROXY_KEY` matters because the app (and so the Worker URL) is
+public: it's what stops anyone else from querying your live trip. The app
+asks for it once on first sync and keeps it in the phone's localStorage.
 
 ## 4. Point the app at the proxy
 
@@ -63,8 +68,9 @@ worker picks up changed files on its own schedule, or bump `CACHE` in
 
 ## 5. Check it
 
-Open the app → **🧭 Next Stop** → the status line should read
-"live from Polarsteps · N steps". Tap 📍 to add your GPS position.
+Open the app → **🧭 Next Stop** → type your `PROXY_KEY` passphrase into the
+unlock field (asked only once per device) → the status line should show your
+trip name and step count. Tap 📍 to add your GPS position.
 
 ## Notes
 

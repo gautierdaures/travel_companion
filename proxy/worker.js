@@ -12,7 +12,14 @@
 //
 // Secrets / vars (wrangler.toml + `wrangler secret put`):
 //   POLARSTEPS_REMEMBER_TOKEN  secret — the remember_token cookie value
+//   PROXY_KEY                  secret — passphrase the app must present
 //   POLARSTEPS_USERNAME        var    — your polarsteps.com username
+//
+// The app and its config are public (GitHub Pages), so the Worker URL is
+// public too — and trip steps are the traveler's live location. PROXY_KEY is
+// the actual gate: it is typed once into the app on the phone (stored in
+// localStorage, never committed) and checked here on every request. CORS is
+// just polite fencing for browsers; the key is what keeps strangers out.
 
 const UPSTREAM = "https://api.polarsteps.com";
 
@@ -29,7 +36,7 @@ const CACHE_SECONDS = 600;
 const corsHeaders = (origin) => ({
   "Access-Control-Allow-Origin": origin,
   "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, X-Proxy-Key",
   Vary: "Origin",
 });
 
@@ -104,6 +111,11 @@ export default {
 
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(allowed) });
     if (request.method !== "GET") return json({ error: "GET only" }, 405, allowed);
+
+    // The gate. Refuse everything — including cached answers — without the key.
+    if (!env.PROXY_KEY || request.headers.get("X-Proxy-Key") !== env.PROXY_KEY) {
+      return json({ error: "Wrong or missing proxy key." }, 401, allowed);
+    }
 
     const url = new URL(request.url);
     if (url.pathname !== "/trip") return json({ error: "Unknown route — use /trip" }, 404, allowed);

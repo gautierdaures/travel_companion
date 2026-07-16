@@ -35,6 +35,7 @@ const W = { season: 0.5, offSeason: -0.5, event: 0.35, eventAvoid: -0.6, directi
 /* ── storage ─────────────────────────────────────────────────────────────── */
 const LS_SYNC = "trip-next-sync"; // { at, trip:{name}, steps:[{name,lat,lon,t,cc}] }
 const LS_FIX = "trip-next-fix";   // { lat, lon, at }
+const LS_KEY = "trip-next-key";   // proxy passphrase — typed once, lives only on this device
 const read = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } };
 
@@ -82,9 +83,10 @@ const angleDiff = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 
 const norm = (s = "") => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
 
 /* ── Polarsteps sync ─────────────────────────────────────────────────────── */
-async function syncTrip() {
-  const res = await fetch(`${PROXY_URL}/trip`);
+async function syncTrip(key) {
+  const res = await fetch(`${PROXY_URL}/trip`, { headers: { "X-Proxy-Key": key || "" } });
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401) { const e = new Error(data.error || "Wrong proxy key."); e.badKey = true; throw e; }
   if (!res.ok || data.error) throw new Error(data.error || `Proxy answered ${res.status}`);
   const sync = { at: Date.now(), trip: data.trip, steps: data.steps || [] };
   write(LS_SYNC, sync);
@@ -223,6 +225,7 @@ export function renderNextStop() {
   // only while the screen is open.
   let sync = read(LS_SYNC);
   let fix = read(LS_FIX);
+  let key = read(LS_KEY); // the proxy gate — see NEXTSTOP_SETUP.md
   let syncNote = "";   // one-line outcome of the last fetch attempt
   let gpsNote = "";
 
@@ -255,11 +258,26 @@ export function renderNextStop() {
         ${gpsNote ? `<div class="next-note">${esc(gpsNote)}</div>` : ""}
         <div class="pd-actions">
           <button class="pd-btn next-gps">📍 Use my location</button>
-          ${isConfigured() ? `<button class="pd-btn next-sync">🔄 Sync Polarsteps</button>` : ""}
+          ${isConfigured() && key ? `<button class="pd-btn next-sync">🔄 Sync Polarsteps</button>` : ""}
         </div>
+        ${isConfigured() && !key ? `
+          <div class="next-keyform">
+            <input class="next-key" type="password" placeholder="Proxy key…"
+                   autocomplete="off" autocapitalize="off" spellcheck="false" />
+            <button class="pd-btn next-key-save">Unlock</button>
+          </div>
+          <p class="next-note">The passphrase you set with <code>wrangler secret put PROXY_KEY</code> — asked once, kept only on this phone.</p>` : ""}
         ${!isConfigured() ? `<p class="next-note">Live Polarsteps needs a one-time setup — see <code>NEXTSTOP_SETUP.md</code>. GPS works without it.</p>` : ""}
       </div>
     `);
+
+    status.querySelector(".next-key-save")?.addEventListener("click", () => {
+      const v = status.querySelector(".next-key").value.trim();
+      if (!v) return;
+      key = v;
+      write(LS_KEY, key);
+      doSync(true);
+    });
 
     status.querySelector(".next-gps").addEventListener("click", () => {
       gpsNote = "Getting a fix…";
@@ -321,17 +339,24 @@ export function renderNextStop() {
   }
 
   function doSync(manual) {
-    if (!isConfigured() || !navigator.onLine) {
-      if (manual) { syncNote = "Offline — using the last sync."; paint(); }
+    if (!isConfigured() || !key || !navigator.onLine) {
+      if (manual && isConfigured() && key) { syncNote = "Offline — using the last sync."; paint(); }
       return;
     }
     if (manual) { syncNote = "Syncing…"; paint(); }
-    syncTrip()
+    syncTrip(key)
       .then((s) => { sync = s; syncNote = ""; paint(); })
       .catch((e) => {
-        syncNote = sync
-          ? `Sync failed (${e.message}) — showing the last sync from ${ago(sync.at)}.`
-          : `Sync failed: ${e.message}`;
+        if (e.badKey) {
+          // Wrong passphrase — forget it so the unlock form comes back.
+          key = null;
+          localStorage.removeItem(LS_KEY);
+          syncNote = "The proxy rejected the key — try again.";
+        } else {
+          syncNote = sync
+            ? `Sync failed (${e.message}) — showing the last sync from ${ago(sync.at)}.`
+            : `Sync failed: ${e.message}`;
+        }
         paint();
       });
   }
