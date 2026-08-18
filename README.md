@@ -86,7 +86,7 @@ manifest.webmanifest    PWA manifest
 sw.js                   service worker (offline cache)
 nextstop.js             🧭 Next Stop — recommendation screen + scoring
 nextstop-config.js      Next Stop proxy URL (empty = feature dormant)
-proxy/                  Cloudflare Worker relaying Polarsteps (token stays there)
+proxy/                  Vercel function relaying Polarsteps (token stays there)
 serve.py                local preview server (Python)
 serve.mjs               local preview server (Node)
 icons/                  app icons (svg + png)
