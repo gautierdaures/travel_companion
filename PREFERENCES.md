@@ -21,6 +21,15 @@ content in this app. Read this before touching anything in `data/` — especiall
 - Anything crowded-for-its-own-sake when a richer, quieter alternative exists
   (e.g. prefer "Kyoto without the crush" over the crush).
 
+## Getting around
+
+- **No planes.** The traveler avoids flying — always prefer overland (train,
+  bus, bike, hike) or boat connections. When recommending a next destination,
+  treat "requires a flight" as a serious downside: a good closer option beats
+  a great one that can only be reached by air.
+- Favor routes and stops that chain together overland — think in terms of a
+  continuous line on the map, not a list of isolated highlights.
+
 ## How this maps to the data model
 
 Each entry in a country's `places` array has a `category`. Keep recommendations

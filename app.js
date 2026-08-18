@@ -91,7 +91,10 @@ function renderHome() {
     <header class="home-head">
       <div class="home-top">
         <h1>Trip Companion 🌍</h1>
-        <a class="exp-link" href="#/expenses" title="Private expense dashboard">💰 Expenses</a>
+        <div class="home-links">
+          <a class="exp-link" href="#/next" title="Where to go next">🧭 Next Stop</a>
+          <a class="exp-link" href="#/expenses" title="Private expense dashboard">💰 Expenses</a>
+        </div>
       </div>
       <p>${COUNTRIES.length} countries · tap a card for its ID card</p>
       <input class="search" type="search" placeholder="Search country or region…"
@@ -746,6 +749,10 @@ function route() {
   if (parts[0] === "expenses") {
     // Loaded on demand so Firebase never touches the offline country pages.
     return import("./expenses.js").then((m) => m.renderExpenses());
+  }
+  if (parts[0] === "next") {
+    // Next Stop — lazy like expenses; recommendations still work offline.
+    return import("./nextstop.js").then((m) => m.renderNextStop());
   }
   // #/<code>/place/<i> → a single place's full guide.
   if (parts[1] === "place" && parts[2] != null) {

@@ -10,6 +10,13 @@ An offline, installable **country ID-card** app for a worldwide trip. For each c
 
 It's a plain HTML/CSS/JS **PWA** — no build step, no dependencies. Once loaded on your iPhone it works **fully offline**, which is the whole point when you're abroad with patchy signal.
 
+There's a **🧭 Next Stop** screen that recommends where to go next, ranked
+from your GPS position, your live **Polarsteps** trip (places you've already
+stepped drop out), the season, and your tastes — overland connections first,
+no flying. The ranking is computed on the phone and works offline; the live
+Polarsteps link needs a one-time free proxy setup — see
+[`NEXTSTOP_SETUP.md`](NEXTSTOP_SETUP.md).
+
 There's also a private **💰 Expenses** dashboard — a shared expense tracker for you
 and one other person, gated behind Google sign-in so nobody else can see it even
 though the app is public. It's optional and off until you connect a free Firebase
@@ -77,6 +84,9 @@ styles.css              styling (mobile-first, dark)
 app.js                  router + rendering
 manifest.webmanifest    PWA manifest
 sw.js                   service worker (offline cache)
+nextstop.js             🧭 Next Stop — recommendation screen + scoring
+nextstop-config.js      Next Stop proxy URL (empty = feature dormant)
+proxy/                  Cloudflare Worker relaying Polarsteps (token stays there)
 serve.py                local preview server (Python)
 serve.mjs               local preview server (Node)
 icons/                  app icons (svg + png)
