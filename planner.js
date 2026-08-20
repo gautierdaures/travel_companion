@@ -303,6 +303,37 @@ function bookingBody(p) {
     ${cost ? `<span class="plan-cost">${esc(cost)}</span>` : ""}`;
 }
 
+// A tiny inline form to attach an expense to an EXISTING booking. Everything else
+// (category from type, country, date, who paid, note) comes from the booking, so
+// it only asks for the amount + currency (pre-filled from the booking's own cost
+// snapshot when it has one). On save it cross-links the two.
+function costLinkForm(plan, onSave, onCancel) {
+  const form = el(`
+    <form class="plan-linkform">
+      <input class="plan-linkform-amt" name="amount" type="number" inputmode="decimal" step="0.01" min="0"
+             required placeholder="0.00" value="${plan.amount > 0 ? esc(plan.amount) : ""}" />
+      <select class="plan-linkform-cur" name="currency">${currencyOptionsHTML(plan.currency || HOME_CURRENCY)}</select>
+      <button type="submit" class="plan-linkform-save">Add expense</button>
+      <button type="button" class="plan-linkform-cancel" aria-label="Cancel">✕</button>
+    </form>`);
+  form.querySelector(".plan-linkform-cancel").addEventListener("click", onCancel);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const amount = parseFloat(form.elements.amount.value);
+    if (!(amount > 0)) return;
+    const currency = (form.elements.currency.value || HOME_CURRENCY).toUpperCase().trim();
+    if (!isSupported(currency)) {
+      alert(`Can't use "${currency}" — no ${HOME_CURRENCY} conversion is available. Pick another currency.`);
+      return;
+    }
+    const btn = form.querySelector(".plan-linkform-save");
+    btn.disabled = true;
+    try { await onSave({ amount, currency }); }
+    catch (err) { alert("Couldn't save: " + (err?.message || err)); btn.disabled = false; }
+  });
+  return form;
+}
+
 // A Google-Calendar-style month view of the BOOKED items: a grid of days with a
 // thin coloured bar per booking (colour = type), multi-day stays spanning their
 // nights. Tap a day to see its bookings in the agenda below; the month arrows and
@@ -449,13 +480,27 @@ function bookedCalendar(items, actions) {
     const rows = dayEvs.map((p) => `
       <div class="plan-row booked" data-id="${esc(p.id)}">
         ${bookingBody(p)}
-        <button class="plan-del" title="Delete" aria-label="Delete">✕</button>
+        <span class="plan-actions">
+          ${p.linkedExpenseId ? "" : `<button class="plan-addexp" title="Add a linked expense">💰+</button>`}
+          <button class="plan-del" title="Delete" aria-label="Delete">✕</button>
+        </span>
       </div>`).join("");
     agenda.innerHTML = head + `<div class="plan-rows">${rows}</div>`;
     agenda.querySelectorAll(".plan-del").forEach((btn) => {
       btn.addEventListener("click", () => {
         const item = items.find((x) => x.id === btn.closest(".plan-row").dataset.id);
         if (item) actions.remove(item);
+      });
+    });
+    agenda.querySelectorAll(".plan-addexp").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = btn.closest(".plan-row");
+        const next = row.nextElementSibling;
+        if (next && next.classList.contains("plan-linkform")) { next.remove(); return; }
+        const item = items.find((x) => x.id === row.dataset.id);
+        if (!item) return;
+        const form = costLinkForm(item, (cost) => actions.linkExpense(item, cost), () => form.remove());
+        row.after(form);
       });
     });
   }
@@ -491,6 +536,7 @@ function todoList(items) {
       ${bookingBody(p)}
       <span class="plan-actions">
         <button class="plan-book" title="Mark booked">✓ Booked</button>
+        ${p.linkedExpenseId ? "" : `<button class="plan-addexp" title="Add a linked expense">💰+</button>`}
         <button class="plan-del" title="Delete" aria-label="Delete">✕</button>
       </span>
     </div>`).join("");
@@ -692,6 +738,17 @@ function dashboard(user, items, actions) {
       if (item) actions.markBooked(item);
     });
   });
+  todo.querySelectorAll(".plan-addexp").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest(".plan-row");
+      const next = row.nextElementSibling;
+      if (next && next.classList.contains("plan-linkform")) { next.remove(); return; }
+      const item = items.find((p) => p.id === row.dataset.id);
+      if (!item) return;
+      const form = costLinkForm(item, (cost) => actions.linkExpense(item, cost), () => form.remove());
+      row.after(form);
+    });
+  });
 
   screen(head, form, summary, todo, booked);
 }
@@ -765,6 +822,15 @@ export async function renderPlanner() {
           await f.deleteDoc(f.doc(f.db, "expenses", item.linkedExpenseId)).catch(() => {});
         } else if (!confirm("Delete this booking?")) return;
         return f.deleteDoc(f.doc(f.db, "plans", item.id)).catch((err) => alert("Couldn't delete: " + (err?.message || err)));
+      },
+      // Attach an expense to an existing booking (amount/currency from the form),
+      // keeping the booking's own cost snapshot in step and cross-linking both.
+      linkExpense: async (plan, cost) => {
+        const expRef = await addExpDoc({
+          ...expenseFromPlan(plan), amount: cost.amount, currency: cost.currency, linkedPlanId: plan.id,
+        });
+        return f.updateDoc(f.doc(f.db, "plans", plan.id),
+          { linkedExpenseId: expRef.id, amount: cost.amount, currency: cost.currency });
       },
       signOut: doSignOut,
     };

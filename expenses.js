@@ -664,7 +664,79 @@ function filterBarHTML(items) {
     </div>`;
 }
 
-function expenseRows(items, onDelete) {
+// A compact inline form to attach a booking to an EXISTING expense. It only asks
+// for the booking-specific fields — everything else (amount, currency, country,
+// date, who paid, note) is inherited from the expense. On save it builds the plan
+// payload and hands it to onSave, which cross-links the two.
+function bookingLinkForm(expense, onSave, onCancel) {
+  const form = el(`
+    <form class="exp-linkform">
+      <div class="exp-grid">
+        <label class="exp-field type">
+          <span>Type</span>
+          <select name="planType">${PLAN_TYPES.map((t) =>
+            `<option value="${t.id}"${CAT_TO_PLANTYPE[expense.category] === t.id ? " selected" : ""}>${esc(t.label)}</option>`).join("")}</select>
+        </label>
+        <label class="exp-field status">
+          <span>Status</span>
+          <select name="planStatus"><option value="booked">✅ Booked</option><option value="todo">📝 To do</option></select>
+        </label>
+        <label class="exp-field platform">
+          <span>Platform</span>
+          <input name="planPlatform" type="text" maxlength="40" list="exp-link-platforms" placeholder="Booking, Flixbus…" />
+          <datalist id="exp-link-platforms">${PLAN_PLATFORMS.map((p) => `<option value="${esc(p)}"></option>`).join("")}</datalist>
+        </label>
+        <label class="exp-field stime">
+          <span>Start time</span>
+          <input name="planStartTime" type="time" />
+        </label>
+        <label class="exp-field edate">
+          <span>End date</span>
+          <input name="planEndDate" type="date" />
+        </label>
+        <label class="exp-field etime">
+          <span>End time</span>
+          <input name="planEndTime" type="time" />
+        </label>
+      </div>
+      <div class="exp-linkform-actions">
+        <button type="button" class="btn-ghost small exp-linkform-cancel">Cancel</button>
+        <button type="submit" class="btn-add exp-linkform-save">Add booking</button>
+      </div>
+    </form>`);
+
+  form.querySelector(".exp-linkform-cancel").addEventListener("click", onCancel);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = form.elements;
+    const startTime = f.planStartTime.value || "";
+    const endDate = f.planEndDate.value || "";
+    const endTime = f.planEndTime.value || "";
+    if (endDate) {
+      const s = `${expense.date}T${startTime || "00:00"}`;
+      const en = `${endDate}T${endTime || (endDate === expense.date ? startTime || "00:00" : "23:59")}`;
+      if (en < s) { alert("The booking's end is before its start — check the dates."); return; }
+    }
+    const plan = {
+      type: f.planType.value,
+      title: expense.note || catOf(expense.category).label,
+      startDate: expense.date, startTime, endDate, endTime,
+      country: expense.country || "",
+      platform: f.planPlatform.value.trim(),
+      bookedBy: expense.paidBy,
+      status: f.planStatus.value,
+      ref: "", note: "",
+      amount: expense.amount, currency: expense.currency,
+    };
+    const btn = form.querySelector(".exp-linkform-save");
+    btn.disabled = true;
+    try { await onSave(plan); }
+    catch (err) { alert("Couldn't save: " + (err?.message || err)); btn.disabled = false; }
+  });
+  return form;
+}
+
+function expenseRows(items, actions) {
   if (!items.length) return "";
 
   const list = el(`
@@ -714,6 +786,7 @@ function expenseRows(items, onDelete) {
             <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}${bookedTag}</span>
           </span>
           <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
+          ${e.linkedPlanId ? "" : `<button class="exp-addbook" title="Add a linked booking" aria-label="Add booking">🗓️+</button>`}
           <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
         </div>`;
     }
@@ -729,7 +802,24 @@ function expenseRows(items, onDelete) {
       btn.addEventListener("click", () => {
         const id = btn.closest(".exp-row").dataset.id;
         const item = items.find((x) => x.id === id);
-        if (item) onDelete(item);
+        if (item) actions.remove(item);
+      });
+    });
+    // "Add booking" — toggle a small inline form under the row that links a fresh
+    // Planner booking to this existing expense.
+    body.querySelectorAll(".exp-addbook").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = btn.closest(".exp-row");
+        const existing = row.nextElementSibling;
+        if (existing && existing.classList.contains("exp-linkform")) { existing.remove(); return; }
+        const item = items.find((x) => x.id === row.dataset.id);
+        if (!item) return;
+        const form = bookingLinkForm(
+          item,
+          async (planData) => { await actions.linkPlan(item, planData); }, // snapshot re-render clears the form
+          () => form.remove(),
+        );
+        row.after(form);
       });
     });
     const more = moreWrap.querySelector(".btn-more");
@@ -988,7 +1078,7 @@ function dashboard(user, items, actions) {
   head.querySelector(".exp-out").addEventListener("click", actions.signOut);
 
   const summary = el(`<div>${budgetCard(items)}${countrySpendCard(items)}${summaryCards(items)}</div>`);
-  const rows = expenseRows(items, actions.remove);
+  const rows = expenseRows(items, actions);
   const form = addForm(user, actions.add);
 
   const nodes = [head, form, summary];
@@ -1066,6 +1156,14 @@ export async function renderExpenses() {
           await f.deleteDoc(f.doc(f.db, "plans", item.linkedPlanId)).catch(() => {});
         } else if (!confirm("Delete this expense?")) return;
         return f.deleteDoc(f.doc(f.db, "expenses", item.id));
+      },
+      // Attach a fresh Planner booking to an existing expense (both directions
+      // stay in sync via the cross-reference).
+      linkPlan: async (expense, planData) => {
+        const planRef = await f.addDoc(plansCol, {
+          ...planData, linkedExpenseId: expense.id, uid: user.uid, createdAt: f.serverTimestamp(),
+        });
+        return f.updateDoc(f.doc(f.db, "expenses", expense.id), { linkedPlanId: planRef.id });
       },
       signOut: doSignOut,
     };
