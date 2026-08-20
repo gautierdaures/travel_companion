@@ -93,6 +93,7 @@ function renderHome() {
         <h1>Trip Companion 🌍</h1>
         <div class="home-links">
           <a class="exp-link" href="#/next" title="Where to go next">🧭 Next Stop</a>
+          <a class="exp-link" href="#/planner" title="Bookings & schedule">🗓️ Planner</a>
           <a class="exp-link" href="#/expenses" title="Private expense dashboard">💰 Expenses</a>
         </div>
       </div>
@@ -753,6 +754,10 @@ function route() {
   if (parts[0] === "next") {
     // Next Stop — lazy like expenses; recommendations still work offline.
     return import("./nextstop.js").then((m) => m.renderNextStop());
+  }
+  if (parts[0] === "planner") {
+    // Planner — lazy like expenses; shares the same Firebase auth gate.
+    return import("./planner.js").then((m) => m.renderPlanner());
   }
   // #/<code>/place/<i> → a single place's full guide.
   if (parts[1] === "place" && parts[2] != null) {

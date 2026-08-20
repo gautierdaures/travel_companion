@@ -813,3 +813,57 @@ code {
   border-radius: 999px; outline: none;
 }
 .next-keyform .next-key:focus { border-color: var(--accent); }
+
+/* ── Planner / schedule ─────────────────────────────────────────────────── */
+/* "Also add to Planner" toggle on the expense form + booking-specific fields. */
+.plan-alsoexp {
+  display: flex; align-items: center; gap: 9px;
+  margin-top: 14px; font-size: 14px; color: var(--text-dim); cursor: pointer;
+}
+.plan-alsoexp input { width: 17px; height: 17px; accent-color: var(--accent); flex: 0 0 auto; }
+.exp-plan-extra { margin-top: 12px; }
+.exp-plan-extra[hidden] { display: none; }
+
+/* Summary strip: booked / to do / committed. */
+.plan-summary { display: flex; gap: 10px; text-align: center; }
+.plan-stat {
+  flex: 1 1 0; display: flex; flex-direction: column; gap: 2px;
+  background: var(--bg-elev-2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 8px;
+}
+.plan-stat .v { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.plan-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-dim); }
+
+/* Booking lists — reuse the expense day headings / rows look. */
+.plan-rows { display: flex; flex-direction: column; }
+.plan-todo .exp-list-head h2 { color: var(--accent-2); }
+.plan-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 0; border-top: 1px solid var(--border);
+}
+.plan-rows > .plan-row:first-child, .exp-day + .plan-row { border-top: none; }
+.plan-icon { font-size: 20px; flex: 0 0 auto; width: 26px; text-align: center; line-height: 1.4; }
+.plan-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.plan-title { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.plan-when { font-size: 12.5px; color: var(--text-dim); }
+.plan-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 1px; }
+.plan-chip {
+  font-size: 11.5px; padding: 2px 8px; border-radius: 999px;
+  background: var(--bg-elev-2); border: 1px solid var(--border); color: var(--text-dim);
+  white-space: nowrap;
+}
+.plan-chip.linked { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.plan-note { font-size: 12.5px; color: var(--text-dim); font-style: italic; }
+.plan-cost { font-weight: 650; font-variant-numeric: tabular-nums; flex: 0 0 auto; font-size: 14px; padding-top: 1px; }
+.plan-actions { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; }
+.plan-book {
+  background: transparent; border: 1px solid var(--border); border-radius: 999px;
+  color: var(--accent-2); font-size: 12px; font-weight: 600;
+  padding: 5px 10px; cursor: pointer; white-space: nowrap;
+}
+.plan-book:active { border-color: var(--accent-2); }
+.plan-del {
+  flex: 0 0 auto; background: transparent; border: none;
+  color: var(--text-dim); font-size: 15px; padding: 6px 4px; cursor: pointer;
+}
+.plan-del:active { color: var(--cat-food); }
