@@ -23,11 +23,11 @@ const SDK = "https://www.gstatic.com/firebasejs/10.12.2";
 // expenses.js) for the linked expense; `ranged` kinds default to showing an end
 // date/time (a train arrives, a hotel checks out) — a restaurant is one moment.
 const TYPES = [
-  { id: "transport",  label: "Transport",  icon: "🚆", cat: "transport", ranged: true  },
-  { id: "lodging",    label: "Lodging",    icon: "🏨", cat: "lodging",   ranged: true  },
-  { id: "restaurant", label: "Restaurant", icon: "🍽️", cat: "food",      ranged: false },
-  { id: "activity",   label: "Activity",   icon: "🎟️", cat: "activity",  ranged: false },
-  { id: "other",      label: "Other",      icon: "📌", cat: "other",     ranged: false },
+  { id: "transport",  label: "Transport",  icon: "🚆", cat: "transport", ranged: true,  color: "#6ea8fe" },
+  { id: "lodging",    label: "Lodging",    icon: "🏨", cat: "lodging",   ranged: true,  color: "#c792ea" },
+  { id: "restaurant", label: "Restaurant", icon: "🍽️", cat: "food",      ranged: false, color: "#ff8a8a" },
+  { id: "activity",   label: "Activity",   icon: "🎟️", cat: "activity",  ranged: false, color: "#ffd166" },
+  { id: "other",      label: "Other",      icon: "📌", cat: "other",     ranged: false, color: "#5ac8d8" },
 ];
 const typeOf = (id) => TYPES.find((t) => t.id === id) || TYPES[TYPES.length - 1];
 
@@ -120,6 +120,29 @@ function whenLabel(p) {
 
 // Sort key: start date then start time (chronological, soonest first).
 const whenKey = (p) => `${p.startDate || "9999"}T${p.startTime || "00:00"}`;
+
+// ── Calendar helpers ─────────────────────────────────────────────────────────
+// All date maths use LOCAL components (never toISOString, which would shift the
+// day across time zones). Week starts on Monday.
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const isoOf = (y, m, d) => `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+const partsOf = (iso) => { const [y, m, d] = iso.split("-").map(Number); return { y, m: m - 1, d }; };
+// The last day a booking occupies (its end, or its start when open-ended).
+const endOf = (p) => (p.endDate && p.endDate >= p.startDate ? p.endDate : p.startDate);
+
+// Which month + selected day the calendar is showing. Kept module-level so a
+// Firestore snapshot re-render doesn't reset your place; renderPlanner() clears
+// it on a fresh open so it re-centres on the next booking.
+let calState = null; // { y, m, sel }
+
+// Centre the calendar on the soonest upcoming booking (else the latest, else today).
+function initCalState(items) {
+  const today = todayISO();
+  const dates = items.filter((p) => p.status === "booked" && p.startDate).map((p) => p.startDate).sort();
+  const base = dates.find((d) => d >= today) || dates[dates.length - 1] || today;
+  const { y, m } = partsOf(base);
+  return { y, m, sel: base };
+}
 
 /* ── Firebase (lazy-loaded, only when this screen opens) ───────────────────── */
 let fb = null;
@@ -280,27 +303,184 @@ function bookingBody(p) {
     ${cost ? `<span class="plan-cost">${esc(cost)}</span>` : ""}`;
 }
 
-function bookedList(items) {
-  const booked = items.filter((p) => p.status === "booked").sort((a, b) => whenKey(a).localeCompare(whenKey(b)));
-  if (!booked.length) return `<div class="panel exp-empty">Nothing booked yet — add your first booking above.</div>`;
+// A Google-Calendar-style month view of the BOOKED items: a grid of days with a
+// thin coloured bar per booking (colour = type), multi-day stays spanning their
+// nights. Tap a day to see its bookings in the agenda below; the month arrows and
+// "Today" move around. Returns a live element that re-paints its own grid/agenda
+// on navigation (so the add form above never rebuilds), reading calState so a
+// Firestore snapshot keeps your place.
+function bookedCalendar(items, actions) {
+  const panel = el(`
+    <div class="panel plan-cal">
+      <div class="plan-cal-head">
+        <button type="button" class="plan-cal-nav prev" aria-label="Previous month">‹</button>
+        <div class="plan-cal-title"></div>
+        <button type="button" class="plan-cal-nav next" aria-label="Next month">›</button>
+      </div>
+      <div class="plan-cal-grid"></div>
+      <div class="plan-cal-legendrow">
+        <div class="plan-cal-legend">${TYPES.map((t) =>
+          `<span class="plan-cal-lg"><i style="background:${t.color}"></i>${esc(t.label)}</span>`).join("")}</div>
+        <button type="button" class="plan-cal-today">Today</button>
+      </div>
+      <div class="plan-cal-agenda"></div>
+    </div>`);
 
-  let html = "", curDay = null;
-  for (const p of booked) {
-    if (p.startDate !== curDay) {
-      curDay = p.startDate;
-      html += `<div class="exp-day">${esc(dayLabel(p.startDate) || "Undated")}</div>`;
+  const title = panel.querySelector(".plan-cal-title");
+  const grid = panel.querySelector(".plan-cal-grid");
+  const agenda = panel.querySelector(".plan-cal-agenda");
+
+  // Spread every booking across the days it occupies (start → end inclusive).
+  function coverage() {
+    const cover = new Map();
+    for (const p of items) {
+      if (p.status !== "booked" || !p.startDate) continue;
+      const s = partsOf(p.startDate), e = partsOf(endOf(p));
+      const cur = new Date(s.y, s.m, s.d), stop = new Date(e.y, e.m, e.d);
+      let guard = 0;
+      while (cur <= stop && guard++ < 400) {
+        const iso = isoOf(cur.getFullYear(), cur.getMonth(), cur.getDate());
+        (cover.get(iso) || cover.set(iso, []).get(iso)).push(p);
+        cur.setDate(cur.getDate() + 1);
+      }
     }
-    html += `
+    for (const arr of cover.values())
+      arr.sort((a, b) => whenKey(a).localeCompare(whenKey(b)) || String(a.id).localeCompare(String(b.id)));
+    return cover;
+  }
+
+  // Render the month as week rows. Each week is its own 7-column grid: a
+  // background cell per day (the click target / grid lines), the day numbers in
+  // the top row, then one or more "lanes" of event pills below. A booking that
+  // spans several days is ONE pill spanning those columns (grid-column
+  // start/end), so it draws as a single continuous bar; at a week boundary it
+  // splits into a per-week segment, with the outer ends rounded only where the
+  // booking actually begins/ends. Lanes are packed so overlapping bookings stack.
+  function paintGrid() {
+    const { y, m } = calState;
+    title.textContent = new Date(y, m, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7; // Mon = 0
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const numWeeks = Math.ceil((lead + daysInMonth) / 7);
+    const start = new Date(y, m, 1 - lead);
+    const today = todayISO();
+    const booked = items.filter((p) => p.status === "booked" && p.startDate);
+
+    let weeksHtml = "";
+    for (let w = 0; w < numWeeks; w++) {
+      const dates = [], iso = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + w * 7 + i);
+        dates.push(d);
+        iso.push(isoOf(d.getFullYear(), d.getMonth(), d.getDate()));
+      }
+      const w0 = iso[0], w6 = iso[6];
+
+      // Every booking that touches this week, clipped to it.
+      const segs = [];
+      for (const p of booked) {
+        const s = p.startDate, e = endOf(p);
+        if (e < w0 || s > w6) continue;
+        let sIdx = iso.indexOf(s); if (sIdx < 0) sIdx = 0;   // starts before this week
+        let eIdx = iso.indexOf(e); if (eIdx < 0) eIdx = 6;   // ends after this week
+        segs.push({ p, sIdx, eIdx, isStart: s >= w0, isEnd: e <= w6 });
+      }
+      // Longest / earliest first, then pack each into the lowest free lane.
+      segs.sort((a, b) => a.p.startDate.localeCompare(b.p.startDate) ||
+        (b.eIdx - b.sIdx) - (a.eIdx - a.sIdx) || whenKey(a.p).localeCompare(whenKey(b.p)));
+      const lanes = [];
+      for (const seg of segs) {
+        let li = lanes.findIndex((lane) => lane.every((r) => seg.eIdx < r[0] || seg.sIdx > r[1]));
+        if (li < 0) { li = lanes.length; lanes.push([]); }
+        lanes[li].push([seg.sIdx, seg.eIdx]);
+        seg.lane = li;
+      }
+
+      let bg = "", nums = "", pills = "";
+      for (let c = 0; c < 7; c++) {
+        const inMonth = dates[c].getMonth() === m;
+        const bgCls = ["plan-daybg"];
+        if (c === 0) bgCls.push("col0");
+        if (w === 0) bgCls.push("wk0");
+        if (!inMonth) bgCls.push("muted");
+        if (iso[c] === today) bgCls.push("today");
+        if (iso[c] === calState.sel) bgCls.push("sel");
+        bg += `<button type="button" class="${bgCls.join(" ")}" data-iso="${iso[c]}" data-y="${dates[c].getFullYear()}" data-m="${dates[c].getMonth()}" style="grid-column:${c + 1};grid-row:1/-1"></button>`;
+        const nCls = ["plan-daynum"];
+        if (!inMonth) nCls.push("muted");
+        if (iso[c] === today) nCls.push("today");
+        nums += `<span class="${nCls.join(" ")}" style="grid-column:${c + 1};grid-row:1">${dates[c].getDate()}</span>`;
+      }
+      for (const seg of segs) {
+        const t = typeOf(seg.p.type);
+        const time = seg.isStart && seg.p.startTime ? `${seg.p.startTime} ` : "";
+        const label = esc(time + (seg.p.title || t.label));
+        const cls = ["plan-seg"];
+        if (seg.isStart) cls.push("is-start");
+        if (seg.isEnd) cls.push("is-end");
+        pills += `<span class="${cls.join(" ")}" style="grid-column:${seg.sIdx + 1}/${seg.eIdx + 2};grid-row:${seg.lane + 2};background:${t.color}" title="${label}">${label}</span>`;
+      }
+      const maxLane = Math.max(lanes.length, 1);
+      weeksHtml += `<div class="plan-wk" style="grid-template-rows:auto repeat(${maxLane},17px)">${bg}${nums}${pills}</div>`;
+    }
+
+    grid.innerHTML =
+      `<div class="plan-cal-week">${WEEKDAYS.map((wd) => `<span class="plan-cal-wd">${wd}</span>`).join("")}</div>` +
+      weeksHtml;
+
+    grid.querySelectorAll(".plan-daybg").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        calState.sel = btn.dataset.iso;
+        calState.y = Number(btn.dataset.y);
+        calState.m = Number(btn.dataset.m);
+        paint();
+      });
+    });
+  }
+
+  function paintAgenda(cover) {
+    const dayEvs = cover.get(calState.sel) || [];
+    const head = `<div class="plan-cal-agenda-head">${esc(dayLabel(calState.sel) || "—")}</div>`;
+    if (!dayEvs.length) {
+      agenda.innerHTML = head + `<div class="plan-cal-empty">Nothing booked this day.</div>`;
+      return;
+    }
+    const rows = dayEvs.map((p) => `
       <div class="plan-row booked" data-id="${esc(p.id)}">
         ${bookingBody(p)}
         <button class="plan-del" title="Delete" aria-label="Delete">✕</button>
-      </div>`;
+      </div>`).join("");
+    agenda.innerHTML = head + `<div class="plan-rows">${rows}</div>`;
+    agenda.querySelectorAll(".plan-del").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const item = items.find((x) => x.id === btn.closest(".plan-row").dataset.id);
+        if (item) actions.remove(item);
+      });
+    });
   }
-  return `
-    <div class="panel plan-list">
-      <div class="exp-list-head"><h2>Booked</h2></div>
-      <div class="plan-rows">${html}</div>
-    </div>`;
+
+  function paint() {
+    if (!calState) calState = initCalState(items);
+    paintGrid();
+    paintAgenda(coverage());
+  }
+
+  panel.querySelector(".prev").addEventListener("click", () => {
+    const d = new Date(calState.y, calState.m - 1, 1);
+    calState.y = d.getFullYear(); calState.m = d.getMonth(); paint();
+  });
+  panel.querySelector(".next").addEventListener("click", () => {
+    const d = new Date(calState.y, calState.m + 1, 1);
+    calState.y = d.getFullYear(); calState.m = d.getMonth(); paint();
+  });
+  panel.querySelector(".plan-cal-today").addEventListener("click", () => {
+    const t = todayISO(), { y, m } = partsOf(t);
+    calState.y = y; calState.m = m; calState.sel = t; paint();
+  });
+
+  paint();
+  return panel;
 }
 
 function todoList(items) {
@@ -496,27 +676,22 @@ function dashboard(user, items, actions) {
   const form = addForm(user, actions.add);
   const summary = el(`<div>${summaryCard(items)}</div>`);
   const todo = el(`<div>${todoList(items)}</div>`);
-  const booked = el(`<div>${bookedList(items)}</div>`);
+  const booked = bookedCalendar(items, actions); // a live element — self-wires
 
-  // Wire row buttons (delete / mark-booked) for both lists.
-  const wire = (scope) => {
-    scope.querySelectorAll(".plan-del").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = btn.closest(".plan-row").dataset.id;
-        const item = items.find((p) => p.id === id);
-        if (item) actions.remove(item);
-      });
+  // Wire the To-do list's row buttons (delete / mark-booked). The calendar wires
+  // its own agenda buttons internally.
+  todo.querySelectorAll(".plan-del").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = items.find((p) => p.id === btn.closest(".plan-row").dataset.id);
+      if (item) actions.remove(item);
     });
-    scope.querySelectorAll(".plan-book").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = btn.closest(".plan-row").dataset.id;
-        const item = items.find((p) => p.id === id);
-        if (item) actions.markBooked(item);
-      });
+  });
+  todo.querySelectorAll(".plan-book").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = items.find((p) => p.id === btn.closest(".plan-row").dataset.id);
+      if (item) actions.markBooked(item);
     });
-  };
-  wire(todo);
-  wire(booked);
+  });
 
   screen(head, form, summary, todo, booked);
 }
@@ -524,6 +699,7 @@ function dashboard(user, items, actions) {
 /* ── Entry point ───────────────────────────────────────────────────────────── */
 export async function renderPlanner() {
   document.title = "Planner · Trip Companion";
+  calState = null; // re-centre the calendar on the next booking on a fresh open
 
   if (!isConfigured()) return setupNeededScreen();
 
