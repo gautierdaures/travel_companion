@@ -27,6 +27,11 @@ service cloud.firestore {
       allow read, write: if isApproved();
     }
 
+    // Bookings / schedule — same two accounts as the expenses (see planner.js).
+    match /plans/{planId} {
+      allow read, write: if isApproved();
+    }
+
     // Everything else is denied by default.
   }
 }

@@ -27,6 +27,29 @@ const CATEGORIES = [
 ];
 const catOf = (id) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORIES.length - 1];
 
+// ── Planner link ─────────────────────────────────────────────────────────────
+// An expense can also spawn a booking in the Planner (see planner.js). These
+// mirror planner.js's TYPES/PLATFORMS so the two stay in step. Only a few
+// booking-specific fields are asked for here — the rest (amount, currency,
+// country, date, who paid, note) come straight from the expense.
+const PLAN_TYPES = [
+  { id: "transport",  label: "🚆 Transport"  },
+  { id: "lodging",    label: "🏨 Lodging"    },
+  { id: "restaurant", label: "🍽️ Restaurant" },
+  { id: "activity",   label: "🎟️ Activity"   },
+  { id: "other",      label: "📌 Other"      },
+];
+// Expense category → default booking type (best guess; user can change it).
+const CAT_TO_PLANTYPE = {
+  transport: "transport", lodging: "lodging", food: "restaurant",
+  activity: "activity", shopping: "other", other: "other",
+};
+const PLAN_PLATFORMS = [
+  "Booking.com", "Airbnb", "Agoda", "Hostelworld", "Expedia",
+  "Trainline", "Omio", "12Go", "Flixbus", "Trip.com", "Skyscanner",
+  "Kiwi.com", "GetYourGuide", "Direct",
+];
+
 // Currency picker: the full catalogue is fetched from the FX API (see fx.js) and
 // cached here once loaded. These trip currencies float to the top for quick
 // access; the rest follow alphabetically.
@@ -131,6 +154,7 @@ async function loadFirebase() {
     orderBy: store.orderBy,
     onSnapshot: store.onSnapshot,
     addDoc: store.addDoc,
+    updateDoc: store.updateDoc,
     deleteDoc: store.deleteDoc,
     doc: store.doc,
     serverTimestamp: store.serverTimestamp,
@@ -681,12 +705,13 @@ function expenseRows(items, onDelete) {
       // Only call out the split when it isn't the default "both" — a "just for
       // X" expense is worth flagging in the row.
       const forTag = e.split && e.split !== "both" ? ` · for ${esc(nameFor(e.split))}` : "";
+      const bookedTag = e.linkedPlanId ? ` · 🗓️ booked` : "";
       html += `
         <div class="exp-row" data-id="${esc(e.id)}">
           <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
           <span class="exp-row-main">
             <span class="exp-note">${esc(e.note || c.label)}</span>
-            <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}</span>
+            <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}${bookedTag}</span>
           </span>
           <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
           <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
@@ -703,7 +728,8 @@ function expenseRows(items, onDelete) {
     body.querySelectorAll(".exp-del").forEach((btn) => {
       btn.addEventListener("click", () => {
         const id = btn.closest(".exp-row").dataset.id;
-        if (confirm("Delete this expense?")) onDelete(id);
+        const item = items.find((x) => x.id === id);
+        if (item) onDelete(item);
       });
     });
     const more = moreWrap.querySelector(".btn-more");
@@ -828,8 +854,57 @@ function addForm(user, onAdd) {
           <input name="note" type="text" maxlength="80" placeholder="e.g. dinner in Hanoi" />
         </label>
       </div>
+      <label class="plan-alsoexp">
+        <input name="alsoPlan" type="checkbox" />
+        <span>Also add this to the Planner as a booking</span>
+      </label>
+      <div class="exp-plan-extra" hidden>
+        <div class="exp-grid">
+          <label class="exp-field type">
+            <span>Type</span>
+            <select name="planType">${PLAN_TYPES.map((t) => `<option value="${t.id}">${esc(t.label)}</option>`).join("")}</select>
+          </label>
+          <label class="exp-field status">
+            <span>Status</span>
+            <select name="planStatus">
+              <option value="booked">✅ Booked</option>
+              <option value="todo">📝 To do</option>
+            </select>
+          </label>
+          <label class="exp-field platform">
+            <span>Platform</span>
+            <input name="planPlatform" type="text" maxlength="40" list="exp-plan-platforms" placeholder="Booking, Flixbus…" />
+            <datalist id="exp-plan-platforms">${PLAN_PLATFORMS.map((p) => `<option value="${esc(p)}"></option>`).join("")}</datalist>
+          </label>
+          <label class="exp-field stime">
+            <span>Start time</span>
+            <input name="planStartTime" type="time" />
+          </label>
+          <label class="exp-field edate">
+            <span>End date</span>
+            <input name="planEndDate" type="date" />
+          </label>
+          <label class="exp-field etime">
+            <span>End time</span>
+            <input name="planEndTime" type="time" />
+          </label>
+        </div>
+      </div>
       <button class="btn-add" type="submit">Add expense</button>
     </form>`);
+
+  // Reveal the booking fields only when "also add to Planner" is ticked, and
+  // default the booking type from the chosen expense category.
+  const alsoPlan = form.elements.alsoPlan;
+  const planExtra = form.querySelector(".exp-plan-extra");
+  const planType = form.elements.planType;
+  alsoPlan.addEventListener("change", () => {
+    planExtra.hidden = !alsoPlan.checked;
+    if (alsoPlan.checked) planType.value = CAT_TO_PLANTYPE[form.elements.category.value] || "other";
+  });
+  form.elements.category.addEventListener("change", () => {
+    if (alsoPlan.checked) planType.value = CAT_TO_PLANTYPE[form.elements.category.value] || "other";
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -843,6 +918,35 @@ function addForm(user, onAdd) {
       alert(`Can't use "${currency}" — no ${HOME_CURRENCY} conversion is available for it. Pick another currency.`);
       return;
     }
+    const date = f.date.value || todayISO();
+    const note = f.note.value.trim();
+
+    // Optional: also spin up a linked booking in the Planner. The booking reuses
+    // the expense's amount/currency/country/date/payer/note; only the type,
+    // platform, status and (optional) end date/time are booking-specific.
+    let planExtra = null;
+    if (f.alsoPlan.checked) {
+      const endDate = f.planEndDate.value || "";
+      const startTime = f.planStartTime.value || "";
+      const endTime = f.planEndTime.value || "";
+      if (endDate) {
+        const s = `${date}T${startTime || "00:00"}`;
+        const en = `${endDate}T${endTime || (endDate === date ? startTime || "00:00" : "23:59")}`;
+        if (en < s) { alert("The booking's end is before its start — check the dates."); return; }
+      }
+      planExtra = {
+        type: f.planType.value,
+        title: note || catOf(f.category.value).label,
+        startDate: date, startTime, endDate, endTime,
+        country: f.country.value,
+        platform: f.planPlatform.value.trim(),
+        bookedBy: f.paidBy.value,
+        status: f.planStatus.value,
+        ref: "", note: "",
+        amount, currency,
+      };
+    }
+
     const btn = form.querySelector(".btn-add");
     btn.disabled = true;
     try {
@@ -853,12 +957,15 @@ function addForm(user, onAdd) {
         country: f.country.value,
         paidBy: f.paidBy.value,
         split: f.split.value,
-        date: f.date.value || todayISO(),
-        note: f.note.value.trim(),
-      });
+        date,
+        note,
+      }, planExtra);
       writeLast({ currency, country: f.country.value }); // default the next entry here
       f.amount.value = "";
       f.note.value = "";
+      f.alsoPlan.checked = false;
+      planExtra = null;
+      form.querySelector(".exp-plan-extra").hidden = true;
       f.amount.focus();
     } catch (err) {
       alert("Couldn't save: " + (err?.message || err));
@@ -939,10 +1046,27 @@ export async function renderExpenses() {
     if (!ALLOWED_EMAILS.includes(user.email)) return notAllowedScreen(user.email, doSignOut);
 
     const col = f.collection(f.db, "expenses");
+    const plansCol = f.collection(f.db, "plans");
     const q = f.query(col, f.orderBy("date", "desc"));
+    const addExp = (data) => f.addDoc(col, { ...data, uid: user.uid, createdAt: f.serverTimestamp() });
     const actions = {
-      add: (data) => f.addDoc(col, { ...data, uid: user.uid, createdAt: f.serverTimestamp() }),
-      remove: (id) => f.deleteDoc(f.doc(f.db, "expenses", id)),
+      // Add an expense, optionally cross-linked to a fresh Planner booking.
+      add: async (data, planExtra) => {
+        if (!planExtra) return addExp(data);
+        const expRef = await addExp({ ...data, linkedPlanId: null });
+        const planRef = await f.addDoc(plansCol, {
+          ...planExtra, linkedExpenseId: expRef.id, uid: user.uid, createdAt: f.serverTimestamp(),
+        });
+        return f.updateDoc(f.doc(f.db, "expenses", expRef.id), { linkedPlanId: planRef.id });
+      },
+      // Delete an expense; if it's linked to a booking, offer to remove that too.
+      remove: async (item) => {
+        if (item.linkedPlanId) {
+          if (!confirm("Delete this expense? Its linked booking will also be removed.")) return;
+          await f.deleteDoc(f.doc(f.db, "plans", item.linkedPlanId)).catch(() => {});
+        } else if (!confirm("Delete this expense?")) return;
+        return f.deleteDoc(f.doc(f.db, "expenses", item.id));
+      },
       signOut: doSignOut,
     };
 
