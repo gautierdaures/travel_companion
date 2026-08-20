@@ -786,6 +786,7 @@ function expenseRows(items, actions) {
             <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}${bookedTag}</span>
           </span>
           <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
+          <button class="exp-edit" title="Edit" aria-label="Edit">✎</button>
           ${e.linkedPlanId ? "" : `<button class="exp-addbook" title="Add a linked booking" aria-label="Add booking">🗓️+</button>`}
           <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
         </div>`;
@@ -803,6 +804,23 @@ function expenseRows(items, actions) {
         const id = btn.closest(".exp-row").dataset.id;
         const item = items.find((x) => x.id === id);
         if (item) actions.remove(item);
+      });
+    });
+    // "Edit" — toggle an inline form under the row to change the expense in place.
+    body.querySelectorAll(".exp-edit").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = btn.closest(".exp-row");
+        const next = row.nextElementSibling;
+        if (next && next.classList.contains("exp-editform")) { next.remove(); return; }
+        if (next && next.classList.contains("exp-linkform")) next.remove(); // don't stack the two
+        const item = items.find((x) => x.id === row.dataset.id);
+        if (!item) return;
+        const form = editExpenseForm(
+          item,
+          async (patch) => { await actions.update(item, patch); }, // snapshot re-render clears the form
+          () => form.remove(),
+        );
+        row.after(form);
       });
     });
     // "Add booking" — toggle a small inline form under the row that links a fresh
@@ -888,18 +906,32 @@ function countryOptionsHTML(selected) {
     </optgroup>` : ""}`;
 }
 
-function addForm(user, onAdd) {
-  const peopleOpts = ALLOWED_EMAILS
-    .map((em) => `<option value="${esc(em)}"${em === user.email ? " selected" : ""}>${esc(nameFor(em))}</option>`)
+// Shared <option> builders for the category / payer / split selects, so the add
+// form and the inline edit form (below) stay in step.
+function categoryOptionsHTML(selected) {
+  return CATEGORIES
+    .map((c) => `<option value="${c.id}"${c.id === selected ? " selected" : ""}>${c.icon} ${esc(c.label)}</option>`)
+    .join("");
+}
+function payerOptionsHTML(selected) {
+  return ALLOWED_EMAILS
+    .map((em) => `<option value="${esc(em)}"${em === selected ? " selected" : ""}>${esc(nameFor(em))}</option>`)
     .join("") +
-    `<option value="${esc(COMMON_ACCOUNT)}">🤝 ${esc(nameFor(COMMON_ACCOUNT))} (shared)</option>`;
-  const catOpts = CATEGORIES.map((c) => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join("");
+    `<option value="${esc(COMMON_ACCOUNT)}"${COMMON_ACCOUNT === selected ? " selected" : ""}>🤝 ${esc(nameFor(COMMON_ACCOUNT))} (shared)</option>`;
+}
+// "For whom" — who the cost is split between. Defaults to both of you (the usual
+// case); pick one person for something only they benefit from (a solo gift, a
+// personal purchase) so it doesn't land on the other's half.
+function splitOptionsHTML(selected) {
+  const sel = selected || "both";
+  return `<option value="both"${sel === "both" ? " selected" : ""}>👫 Both of us</option>` +
+    ALLOWED_EMAILS.map((em) => `<option value="${esc(em)}"${em === sel ? " selected" : ""}>${esc(nameFor(em))} only</option>`).join("");
+}
 
-  // "For whom" — who the cost is split between. Defaults to both of you (the
-  // usual case); pick one person for something only they benefit from (a solo
-  // gift, a personal purchase) so it doesn't land on the other's half.
-  const splitOpts = `<option value="both">👫 Both of us</option>` +
-    ALLOWED_EMAILS.map((em) => `<option value="${esc(em)}">${esc(nameFor(em))} only</option>`).join("");
+function addForm(user, onAdd) {
+  const peopleOpts = payerOptionsHTML(user.email);
+  const catOpts = categoryOptionsHTML();
+  const splitOpts = splitOptionsHTML();
 
   // Default the currency/country to whatever was used last (falling back to the
   // home currency and the first trip country) so repeat entries are quick.
@@ -1066,6 +1098,83 @@ function addForm(user, onAdd) {
   return form;
 }
 
+// A compact inline form to EDIT an existing expense in place — the same core
+// fields as the add form, pre-filled from the row. On save it hands a patch to
+// actions.update; the Firestore snapshot then re-renders the list (clearing the
+// form). Editing is deliberately kept to the expense's own fields — its linked
+// booking, if any, isn't reshaped here beyond the cost snapshot (see update()).
+function editExpenseForm(item, onSave, onCancel) {
+  const form = el(`
+    <form class="exp-editform">
+      <div class="exp-grid">
+        <label class="exp-field amt">
+          <span>Amount</span>
+          <input name="amount" type="number" inputmode="decimal" step="0.01" min="0" required value="${esc(item.amount)}" />
+        </label>
+        <label class="exp-field cur">
+          <span>Currency</span>
+          <select name="currency" required>${currencyOptionsHTML(item.currency || HOME_CURRENCY)}</select>
+        </label>
+        <label class="exp-field cat">
+          <span>Category</span>
+          <select name="category">${categoryOptionsHTML(item.category)}</select>
+        </label>
+        <label class="exp-field country">
+          <span>Country</span>
+          <select name="country">${countryOptionsHTML(item.country || "")}</select>
+        </label>
+        <label class="exp-field who">
+          <span>Paid by</span>
+          <select name="paidBy">${payerOptionsHTML(item.paidBy)}</select>
+        </label>
+        <label class="exp-field forwhom">
+          <span>For</span>
+          <select name="split">${splitOptionsHTML(item.split)}</select>
+        </label>
+        <label class="exp-field date">
+          <span>Date</span>
+          <input name="date" type="date" value="${esc(item.date || todayISO())}" required />
+        </label>
+        <label class="exp-field note">
+          <span>Note</span>
+          <input name="note" type="text" maxlength="80" value="${esc(item.note || "")}" placeholder="e.g. dinner in Hanoi" />
+        </label>
+      </div>
+      <div class="exp-linkform-actions">
+        <button type="button" class="btn-ghost small exp-editform-cancel">Cancel</button>
+        <button type="submit" class="btn-add exp-editform-save">Save changes</button>
+      </div>
+    </form>`);
+
+  form.querySelector(".exp-editform-cancel").addEventListener("click", onCancel);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = form.elements;
+    const amount = parseFloat(f.amount.value);
+    if (!(amount > 0)) return;
+    const currency = (f.currency.value || HOME_CURRENCY).toUpperCase().trim();
+    if (!isSupported(currency)) {
+      alert(`Can't use "${currency}" — no ${HOME_CURRENCY} conversion is available for it. Pick another currency.`);
+      return;
+    }
+    const patch = {
+      amount,
+      currency,
+      category: f.category.value,
+      country: f.country.value,
+      paidBy: f.paidBy.value,
+      split: f.split.value,
+      date: f.date.value || todayISO(),
+      note: f.note.value.trim(),
+    };
+    const btn = form.querySelector(".exp-editform-save");
+    btn.disabled = true;
+    try { await onSave(patch); }
+    catch (err) { alert("Couldn't save: " + (err?.message || err)); btn.disabled = false; }
+  });
+  return form;
+}
+
 function dashboard(user, items, actions) {
   const head = el(`
     <div class="exp-hero exp-hero-live">
@@ -1148,6 +1257,15 @@ export async function renderExpenses() {
           ...planExtra, linkedExpenseId: expRef.id, uid: user.uid, createdAt: f.serverTimestamp(),
         });
         return f.updateDoc(f.doc(f.db, "expenses", expRef.id), { linkedPlanId: planRef.id });
+      },
+      // Edit an expense in place. If it's linked to a booking, keep that
+      // booking's display-only cost snapshot (amount/currency) in step.
+      update: async (item, patch) => {
+        await f.updateDoc(f.doc(f.db, "expenses", item.id), patch);
+        if (item.linkedPlanId) {
+          await f.updateDoc(f.doc(f.db, "plans", item.linkedPlanId),
+            { amount: patch.amount, currency: patch.currency }).catch(() => {});
+        }
       },
       // Delete an expense; if it's linked to a booking, offer to remove that too.
       remove: async (item) => {
