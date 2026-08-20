@@ -481,6 +481,7 @@ function bookedCalendar(items, actions) {
       <div class="plan-row booked" data-id="${esc(p.id)}">
         ${bookingBody(p)}
         <span class="plan-actions">
+          <button class="plan-edit" title="Edit" aria-label="Edit">✎</button>
           ${p.linkedExpenseId ? "" : `<button class="plan-addexp" title="Add a linked expense">💰+</button>`}
           <button class="plan-del" title="Delete" aria-label="Delete">✕</button>
         </span>
@@ -492,11 +493,18 @@ function bookedCalendar(items, actions) {
         if (item) actions.remove(item);
       });
     });
+    agenda.querySelectorAll(".plan-edit").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = btn.closest(".plan-row");
+        toggleEditForm(row, items.find((x) => x.id === row.dataset.id), actions);
+      });
+    });
     agenda.querySelectorAll(".plan-addexp").forEach((btn) => {
       btn.addEventListener("click", () => {
         const row = btn.closest(".plan-row");
         const next = row.nextElementSibling;
         if (next && next.classList.contains("plan-linkform")) { next.remove(); return; }
+        if (next && next.classList.contains("plan-editform")) next.remove(); // don't stack the two
         const item = items.find((x) => x.id === row.dataset.id);
         if (!item) return;
         const form = costLinkForm(item, (cost) => actions.linkExpense(item, cost), () => form.remove());
@@ -536,6 +544,7 @@ function todoList(items) {
       ${bookingBody(p)}
       <span class="plan-actions">
         <button class="plan-book" title="Mark booked">✓ Booked</button>
+        <button class="plan-edit" title="Edit" aria-label="Edit">✎</button>
         ${p.linkedExpenseId ? "" : `<button class="plan-addexp" title="Add a linked expense">💰+</button>`}
         <button class="plan-del" title="Delete" aria-label="Delete">✕</button>
       </span>
@@ -561,12 +570,29 @@ function expenseFromPlan(p) {
   };
 }
 
+// Shared <option> builders for the type / booked-by / status selects, so the add
+// form and the inline edit form (below) stay in step.
+function typeOptionsHTML(selected) {
+  return TYPES
+    .map((t) => `<option value="${t.id}"${t.id === selected ? " selected" : ""}>${t.icon} ${esc(t.label)}</option>`)
+    .join("");
+}
+function bookedByOptionsHTML(selected) {
+  return ALLOWED_EMAILS
+    .map((em) => `<option value="${esc(em)}"${em === selected ? " selected" : ""}>${esc(nameFor(em))}</option>`)
+    .join("") +
+    `<option value="${esc(COMMON_ACCOUNT)}"${COMMON_ACCOUNT === selected ? " selected" : ""}>🤝 ${esc(nameFor(COMMON_ACCOUNT))} (shared)</option>`;
+}
+function statusOptionsHTML(selected) {
+  return `<option value="booked"${selected === "booked" ? " selected" : ""}>✅ Booked</option>` +
+    `<option value="todo"${selected !== "booked" ? " selected" : ""}>📝 To do</option>`;
+}
+const platformListHTML = () => PLATFORMS.map((p) => `<option value="${esc(p)}"></option>`).join("");
+
 function addForm(user, onAdd) {
-  const typeOpts = TYPES.map((t) => `<option value="${t.id}">${t.icon} ${t.label}</option>`).join("");
-  const peopleOpts = ALLOWED_EMAILS
-    .map((em) => `<option value="${esc(em)}"${em === user.email ? " selected" : ""}>${esc(nameFor(em))}</option>`)
-    .join("") + `<option value="${esc(COMMON_ACCOUNT)}">🤝 ${esc(nameFor(COMMON_ACCOUNT))} (shared)</option>`;
-  const platformList = PLATFORMS.map((p) => `<option value="${esc(p)}"></option>`).join("");
+  const typeOpts = typeOptionsHTML();
+  const peopleOpts = bookedByOptionsHTML(user.email);
+  const platformList = platformListHTML();
 
   const last = readLast();
   const defaultCur = last.currency || HOME_CURRENCY;
@@ -707,6 +733,144 @@ function addForm(user, onAdd) {
   return form;
 }
 
+// A compact inline form to EDIT an existing booking in place — the same fields
+// as the add form, pre-filled from the row. On save it hands a patch to
+// actions.update; the Firestore snapshot then re-renders (clearing the form).
+function editBookingForm(item, onSave, onCancel) {
+  const form = el(`
+    <form class="plan-editform">
+      <div class="exp-grid">
+        <label class="exp-field type">
+          <span>Type</span>
+          <select name="type">${typeOptionsHTML(item.type)}</select>
+        </label>
+        <label class="exp-field title">
+          <span>What</span>
+          <input name="title" type="text" maxlength="80" required value="${esc(item.title || "")}" />
+        </label>
+        <label class="exp-field sdate">
+          <span>Start date</span>
+          <input name="startDate" type="date" value="${esc(item.startDate || todayISO())}" required />
+        </label>
+        <label class="exp-field stime">
+          <span>Start time</span>
+          <input name="startTime" type="time" value="${esc(item.startTime || "")}" />
+        </label>
+        <label class="exp-field edate">
+          <span>End date</span>
+          <input name="endDate" type="date" value="${esc(item.endDate || "")}" />
+        </label>
+        <label class="exp-field etime">
+          <span>End time</span>
+          <input name="endTime" type="time" value="${esc(item.endTime || "")}" />
+        </label>
+        <label class="exp-field country">
+          <span>Country</span>
+          <select name="country">${countryOptionsHTML(item.country || "")}</select>
+        </label>
+        <label class="exp-field platform">
+          <span>Platform</span>
+          <input name="platform" type="text" maxlength="40" list="plan-edit-platforms"
+                 placeholder="Booking, Flixbus…" value="${esc(item.platform || "")}" />
+          <datalist id="plan-edit-platforms">${platformListHTML()}</datalist>
+        </label>
+        <label class="exp-field who">
+          <span>Booked by</span>
+          <select name="bookedBy">${bookedByOptionsHTML(item.bookedBy)}</select>
+        </label>
+        <label class="exp-field status">
+          <span>Status</span>
+          <select name="status">${statusOptionsHTML(item.status)}</select>
+        </label>
+        <label class="exp-field amt">
+          <span>Cost <small>(optional)</small></span>
+          <input name="amount" type="number" inputmode="decimal" step="0.01" min="0"
+                 placeholder="0.00" value="${item.amount > 0 ? esc(item.amount) : ""}" />
+        </label>
+        <label class="exp-field cur">
+          <span>Currency</span>
+          <select name="currency">${currencyOptionsHTML(item.currency || HOME_CURRENCY)}</select>
+        </label>
+        <label class="exp-field ref">
+          <span>Reference <small>(optional)</small></span>
+          <input name="ref" type="text" maxlength="40" placeholder="Confirmation #" value="${esc(item.ref || "")}" />
+        </label>
+        <label class="exp-field note">
+          <span>Note <small>(optional)</small></span>
+          <input name="note" type="text" maxlength="120" placeholder="Seat 14A, breakfast incl…" value="${esc(item.note || "")}" />
+        </label>
+      </div>
+      <div class="exp-linkform-actions">
+        <button type="button" class="btn-ghost small plan-editform-cancel">Cancel</button>
+        <button type="submit" class="btn-add plan-editform-save">Save changes</button>
+      </div>
+    </form>`);
+
+  form.querySelector(".plan-editform-cancel").addEventListener("click", onCancel);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = form.elements;
+    const title = f.title.value.trim();
+    if (!title) return;
+    const startDate = f.startDate.value;
+    if (!startDate) { alert("Pick a start date."); return; }
+
+    const startTime = f.startTime.value || "";
+    const endDate = f.endDate.value || "";
+    const endTime = f.endTime.value || "";
+    if (endDate) {
+      const s = `${startDate}T${startTime || "00:00"}`;
+      const en = `${endDate}T${endTime || (endDate === startDate ? startTime || "00:00" : "23:59")}`;
+      if (en < s) { alert("The end is before the start — check the dates."); return; }
+    } else if (endTime && startTime && endTime < startTime) {
+      alert("The end time is before the start time.");
+      return;
+    }
+
+    const amount = parseFloat(f.amount.value);
+    const hasCost = amount > 0;
+    const currency = (f.currency.value || HOME_CURRENCY).toUpperCase().trim();
+    if (hasCost && !isSupported(currency)) {
+      alert(`Can't use "${currency}" — no ${HOME_CURRENCY} conversion is available. Pick another currency.`);
+      return;
+    }
+
+    const patch = {
+      type: f.type.value,
+      title,
+      startDate, startTime, endDate, endTime,
+      country: f.country.value,
+      platform: f.platform.value.trim(),
+      bookedBy: f.bookedBy.value,
+      status: f.status.value,
+      ref: f.ref.value.trim(),
+      note: f.note.value.trim(),
+      amount: hasCost ? amount : null,
+      currency: hasCost ? currency : null,
+    };
+    const btn = form.querySelector(".plan-editform-save");
+    btn.disabled = true;
+    try { await onSave(patch); }
+    catch (err) { alert("Couldn't save: " + (err?.message || err)); btn.disabled = false; }
+  });
+  return form;
+}
+
+// Toggle an inline edit form under a booking row (shared by the to-do list and
+// the calendar agenda). `row` is the .plan-row; `find` resolves its item.
+function toggleEditForm(row, item, actions) {
+  const next = row.nextElementSibling;
+  if (next && next.classList.contains("plan-editform")) { next.remove(); return; }
+  if (next && next.classList.contains("plan-linkform")) next.remove(); // don't stack the two
+  if (!item) return;
+  const form = editBookingForm(
+    item,
+    (patch) => actions.update(item, patch), // snapshot re-render clears the form
+    () => form.remove(),
+  );
+  row.after(form);
+}
+
 /* ── Dashboard ─────────────────────────────────────────────────────────────── */
 function dashboard(user, items, actions) {
   const head = el(`
@@ -738,11 +902,18 @@ function dashboard(user, items, actions) {
       if (item) actions.markBooked(item);
     });
   });
+  todo.querySelectorAll(".plan-edit").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest(".plan-row");
+      toggleEditForm(row, items.find((p) => p.id === row.dataset.id), actions);
+    });
+  });
   todo.querySelectorAll(".plan-addexp").forEach((btn) => {
     btn.addEventListener("click", () => {
       const row = btn.closest(".plan-row");
       const next = row.nextElementSibling;
       if (next && next.classList.contains("plan-linkform")) { next.remove(); return; }
+      if (next && next.classList.contains("plan-editform")) next.remove(); // don't stack the two
       const item = items.find((p) => p.id === row.dataset.id);
       if (!item) return;
       const form = costLinkForm(item, (cost) => actions.linkExpense(item, cost), () => form.remove());
@@ -814,6 +985,18 @@ export async function renderPlanner() {
           patch.linkedExpenseId = expRef.id;
         }
         return f.updateDoc(f.doc(f.db, "plans", item.id), patch).catch((err) => alert("Couldn't update: " + (err?.message || err)));
+      },
+      // Edit a booking in place. If it's linked to an expense, keep that
+      // expense's amount/currency in step — the expense is what counts toward
+      // the budget, and the plan's own cost is just a snapshot of it. Only sync
+      // when the edited booking still carries a cost (clearing it here shouldn't
+      // silently zero out the linked expense).
+      update: async (item, patch) => {
+        await f.updateDoc(f.doc(f.db, "plans", item.id), patch);
+        if (item.linkedExpenseId && patch.amount > 0) {
+          await f.updateDoc(f.doc(f.db, "expenses", item.linkedExpenseId),
+            { amount: patch.amount, currency: patch.currency }).catch(() => {});
+        }
       },
       // Delete a booking; if it's linked, offer to remove the expense too.
       remove: async (item) => {

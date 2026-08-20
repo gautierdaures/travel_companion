@@ -930,6 +930,23 @@ code {
 }
 .plan-del:active { color: var(--cat-food); }
 
+/* ── Edit an entry in place ───────────────────────────────────────────────── */
+/* Pencil button on an expense / booking row. */
+.exp-edit, .plan-edit {
+  flex: 0 0 auto; background: transparent; border: none;
+  color: var(--text-dim); font-size: 14px; padding: 6px 4px; cursor: pointer;
+}
+.exp-edit:active, .plan-edit:active { color: var(--accent); }
+
+/* The inline edit form dropped under a row — reuses the add-form grid inside a
+   nested card, like the link forms below. */
+.exp-editform, .plan-editform {
+  background: var(--bg-elev-2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px; margin: 4px 0 8px;
+}
+.exp-editform .exp-field input, .exp-editform .exp-field select,
+.plan-editform .exp-field input, .plan-editform .exp-field select { background: var(--bg-elev); }
+
 /* ── Link an existing item to its counterpart ─────────────────────────────── */
 /* Small "＋ booking" (on an expense row) / "＋ expense" (on a booking row). */
 .exp-addbook, .plan-addexp {
