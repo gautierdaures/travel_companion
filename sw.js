@@ -1,6 +1,6 @@
 // Service worker — offline caching for Trip Companion.
 // Bump CACHE version whenever you change app files or add a country.
-const CACHE = "trip-companion-v15";
+const CACHE = "trip-companion-v16";
 
 // Every country data file must be listed here so it is available offline.
 const DATA_FILES = [
@@ -29,8 +29,6 @@ const APP_SHELL = [
   "./wiki.js",
   "./expenses.js",
   "./planner.js",
-  "./nextstop.js",
-  "./nextstop-config.js",
   "./fx.js",
   "./countries.js",
   "./firebase-config.js",
