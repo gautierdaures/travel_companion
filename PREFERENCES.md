@@ -24,9 +24,8 @@ content in this app. Read this before touching anything in `data/` — especiall
 ## Getting around
 
 - **No planes.** The traveler avoids flying — always prefer overland (train,
-  bus, bike, hike) or boat connections. When recommending a next destination,
-  treat "requires a flight" as a serious downside: a good closer option beats
-  a great one that can only be reached by air.
+  bus, bike, hike) or boat connections. Treat "requires a flight" as a serious
+  downside when weighing where to go.
 - Favor routes and stops that chain together overland — think in terms of a
   continuous line on the map, not a list of isolated highlights.
 
