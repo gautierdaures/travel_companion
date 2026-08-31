@@ -65,7 +65,7 @@ Content lives in `data/`. To add a country:
 2. **Register** it in `data/index.js` — add an `import` and drop it in the `COUNTRIES` array.
 3. **Cache** it offline — add the filename to `DATA_FILES` in [`sw.js`](sw.js) and bump `CACHE`.
 
-Place categories (`architecture`, `history`, `nature`, `food`, `offbeat`) drive the colored tags on the country page — keep recommendations matched to your taste.
+Categories are defined once in [`categories.js`](categories.js) — `history`, `cities`, `food`, `nature`, `trek`, `beach`, `diving`, `slow-travel`, plus `offbeat` for places alone. They give a country its `tags` and each place its coloured tag and icon; keep recommendations matched to your taste.
 
 ---
 
@@ -75,6 +75,7 @@ Place categories (`architecture`, `history`, `nature`, `food`, `offbeat`) drive 
 index.html              app shell
 styles.css              styling (mobile-first, dark)
 app.js                  router + rendering
+categories.js           the nine categories — label, colour, icon
 manifest.webmanifest    PWA manifest
 sw.js                   service worker (offline cache)
 serve.py                local preview server (Python)

@@ -5,7 +5,7 @@ export default {
   flag: "🇲🇳",
   region: "Central / East Asia",
   tagline: "The land of blue sky and Genghis Khan — endless steppe, the Gobi, and the world's last great nomads.",
-  tags: ["nature", "nomads", "history", "trek", "wildlife", "slow travel"],
+  tags: ["nature", "history", "trek", "slow-travel"],
 
   languages: {
     name: "Mongolian",

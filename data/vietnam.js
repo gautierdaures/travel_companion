@@ -5,7 +5,7 @@ export default {
   flag: "🇻🇳",
   region: "Southeast Asia",
   tagline: "Limestone bays, terraced rice, and the best street food on earth.",
-  tags: ["nature", "food", "history", "trek", "beach", "motorbiking"],
+  tags: ["nature", "food", "history", "trek", "beach"],
 
   languages: {
     name: "Vietnamese",
@@ -171,7 +171,7 @@ export default {
       ],
     },
     {
-      name: "Mekong Delta", category: "nature", coords: [10.0452, 105.7469], region: "the south",
+      name: "Mekong Delta", category: "slow-travel", coords: [10.0452, 105.7469], region: "the south",
       description: "A watery maze of floating markets, fruit orchards, and stilt houses — explore by boat from Cần Thơ at dawn.",
       wiki: "Mekong Delta",
       long:
@@ -190,7 +190,7 @@ export default {
       ],
     },
     {
-      name: "Sa Pa rice terraces", category: "nature", coords: [22.3364, 103.8438], region: "Lào Cai",
+      name: "Sa Pa rice terraces", category: "trek", coords: [22.3364, 103.8438], region: "Lào Cai",
       description: "Staircase valleys of green-and-gold paddies farmed by Hmong and Dao communities; trek village-to-village.",
       wiki: "Sa Pa",
       long:
@@ -228,7 +228,7 @@ export default {
       ],
     },
     {
-      name: "Temple of Literature", category: "architecture", coords: [21.0293, 105.8355], region: "Hanoi",
+      name: "Temple of Literature", category: "history", coords: [21.0293, 105.8355], region: "Hanoi",
       description: "Vietnam's first university, a serene Confucian temple of walled courtyards and stelae on stone tortoises.",
       wiki: "Temple of Literature, Hanoi",
       long:
@@ -304,7 +304,7 @@ export default {
       ],
     },
     {
-      name: "Đà Lạt", category: "architecture", coords: [11.9404, 108.4583], region: "central highlands",
+      name: "Đà Lạt", category: "cities", coords: [11.9404, 108.4583], region: "central highlands",
       description: "A cool-climate hill town of French villas, pine forest, flower farms, and eccentric architecture.",
       wiki: "Da Lat",
       long:

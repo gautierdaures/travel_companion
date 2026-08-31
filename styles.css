@@ -10,11 +10,15 @@
   --accent-2: #5ac8b8;    /* teal */
   --radius: 16px;
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-  --cat-architecture: #b98cff;
-  --cat-history: #f2a65a;
-  --cat-nature: #5ac88a;
   --cat-food: #ff8a8a;
+  --cat-history: #f2a65a;
+  --cat-beach: #ffd479;
+  --cat-trek: #b6cf5e;
+  --cat-nature: #5ac88a;
   --cat-offbeat: #5ac8d8;
+  --cat-diving: #6aa9ff;
+  --cat-slow-travel: #b98cff;
+  --cat-cities: #e78bc8;
   --ev-go: #5ac88a;
   --ev-avoid: #ff7a7a;
   --ev-note: #f2a65a;
@@ -80,22 +84,34 @@ h1, h2, h3 { line-height: 1.2; margin: 0; }
 .card .name { font-weight: 650; font-size: 18px; margin-top: 10px; }
 .card .region { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
 
-/* "What can I do here" tags — emoji chips on the home cards and country hero. */
-.ctags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+/* Category icons — one line-drawn set, tinted by the surrounding text colour. */
+.cat-ico {
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+  display: block;
+}
+
+/* "What can I do here" chips — icon + label, on the home cards and country hero. */
+.ctags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 11px; }
 .ctag {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-dim);
   background: var(--bg-elev-2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 999px;
 }
-.ctag-emoji { font-size: 18px; line-height: 1; }
-.hero .ctags { margin-top: 14px; gap: 8px; }
-.hero .ctag { width: 40px; height: 40px; border-radius: 12px; }
-.hero .ctag-emoji { font-size: 21px; }
+.ctag .cat-ico { width: 13px; height: 13px; color: var(--ctag-color, var(--text-dim)); }
+.ctag-label { white-space: nowrap; }
+.hero .ctags { margin-top: 14px; gap: 8px; justify-content: center; }
+.hero .ctag { font-size: 12.5px; padding: 6px 12px 6px 9px; }
+.hero .ctag .cat-ico { width: 16px; height: 16px; }
 
 .empty { color: var(--text-dim); text-align: center; padding: 40px 0; }
 
@@ -218,6 +234,9 @@ section.block > h2 {
 .place .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .place .t { font-weight: 620; font-size: 16px; }
 .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -227,6 +246,7 @@ section.block > h2 {
   color: #0f1720;
   white-space: nowrap;
 }
+.tag .cat-ico { width: 12px; height: 12px; stroke-width: 2; }
 .place .region { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
 .place .d { font-size: 14px; margin-top: 5px; }
 .place .more {
@@ -258,13 +278,14 @@ section.block > h2 {
   object-fit: cover;
   display: block;
 }
-.place-thumb-ph { font-size: 30px; opacity: 0.35; }
+.place-thumb-ph { display: flex; opacity: 0.4; }
+.place-thumb-ph .cat-ico { width: 32px; height: 32px; }
 .place-thumb.has-img .place-thumb-ph { display: none; }
 
 /* ── Place detail (full guide) ─────────────────────────────────────────── */
 .place-detail { padding: 4px 0 0; }
 .pd-hero { padding: 4px 4px 12px; }
-.pd-hero .tag { display: inline-block; }
+.pd-hero .tag { display: inline-flex; }
 .pd-hero h1 { font-size: 28px; letter-spacing: -0.4px; margin-top: 10px; line-height: 1.2; }
 .pd-hero .region { color: var(--text-dim); font-size: 14px; margin-top: 6px; }
 .pd-gallery {

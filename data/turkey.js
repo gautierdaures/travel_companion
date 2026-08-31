@@ -5,7 +5,7 @@ export default {
   flag: "🇹🇷",
   region: "Anatolia & the Eastern Mediterranean",
   tagline: "Where Europe meets Asia — Byzantine domes, Ottoman bazaars, and lunar valleys.",
-  tags: ["history", "architecture", "food", "nature", "ruins", "bazaars", "slow travel"],
+  tags: ["history", "cities", "food", "nature", "slow-travel"],
 
   languages: {
     name: "Turkish",
@@ -78,7 +78,7 @@ export default {
 
   places: [
     {
-      name: "Hagia Sophia & Sultanahmet", category: "architecture", coords: [41.0086, 28.9802], region: "Istanbul",
+      name: "Hagia Sophia & Sultanahmet", category: "history", coords: [41.0086, 28.9802], region: "Istanbul",
       description: "Byzantine dome, Ottoman minarets, and the great mosques of the old city crowded onto one peninsula.",
       wiki: "Hagia Sophia",
       long:
@@ -154,7 +154,7 @@ export default {
       ],
     },
     {
-      name: "Lycian coast & the Kaş–Kekova shore", category: "nature", coords: [36.2021, 29.6386], region: "Mediterranean coast",
+      name: "Lycian coast & the Kaş–Kekova shore", category: "beach", coords: [36.2021, 29.6386], region: "Mediterranean coast",
       description: "Turquoise water over sunken cities, cliff-hung tombs, and the long Lycian Way coastal trek.",
       wiki: "Kaş",
       long:
@@ -192,7 +192,7 @@ export default {
       ],
     },
     {
-      name: "Mardin & the Tur Abdin", category: "architecture", coords: [37.3126, 40.7351], region: "Southeastern Anatolia",
+      name: "Mardin & the Tur Abdin", category: "history", coords: [37.3126, 40.7351], region: "Southeastern Anatolia",
       description: "A honey-stone city cascading down a hill above the Mesopotamian plain, with ancient Syriac monasteries nearby.",
       wiki: "Mardin",
       long:
@@ -230,7 +230,7 @@ export default {
       ],
     },
     {
-      name: "Safranbolu", category: "architecture", coords: [41.2500, 32.6944], region: "Black Sea hinterland",
+      name: "Safranbolu", category: "history", coords: [41.2500, 32.6944], region: "Black Sea hinterland",
       description: "A perfectly preserved Ottoman town of timber-framed mansions, cobbled lanes and a caravanserai.",
       wiki: "Safranbolu",
       long:

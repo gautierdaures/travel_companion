@@ -5,7 +5,7 @@ export default {
   flag: "🇱🇦",
   region: "Southeast Asia",
   tagline: "The Mekong's unhurried heart — gilded temples and jungle-clad mountains.",
-  tags: ["nature", "trek", "history", "river life", "temples", "slow travel"],
+  tags: ["nature", "trek", "history", "slow-travel"],
 
   languages: {
     name: "Lao",
@@ -153,7 +153,7 @@ export default {
       ],
     },
     {
-      name: "4,000 Islands (Si Phan Don)", category: "nature", coords: [14.0, 105.93], region: "far south",
+      name: "4,000 Islands (Si Phan Don)", category: "slow-travel", coords: [14.0, 105.93], region: "far south",
       description: "Where the Mekong braids into countless islets — hammocks, Irrawaddy dolphins, and river life at its slowest.",
       wiki: "Don Det",
       long:
@@ -172,7 +172,7 @@ export default {
       ],
     },
     {
-      name: "Nam Ha Protected Area", category: "nature", coords: [20.95, 101.4], region: "Luang Namtha",
+      name: "Nam Ha Protected Area", category: "trek", coords: [20.95, 101.4], region: "Luang Namtha",
       description: "Trek and homestay through dense forest and hill-tribe villages in the far northern highlands.",
       wiki: "Nam Ha National Protected Area",
       long:
@@ -248,7 +248,7 @@ export default {
       ],
     },
     {
-      name: "Pha That Luang", category: "architecture", coords: [17.9757, 102.6330], region: "Vientiane",
+      name: "Pha That Luang", category: "history", coords: [17.9757, 102.6330], region: "Vientiane",
       description: "The great golden stupa that is the national symbol of Laos, glowing above the capital.",
       wiki: "Pha That Luang",
       long:
@@ -267,7 +267,7 @@ export default {
       ],
     },
     {
-      name: "Wat Xieng Thong", category: "architecture", coords: [19.8950, 102.1400], region: "Luang Prabang",
+      name: "Wat Xieng Thong", category: "history", coords: [19.8950, 102.1400], region: "Luang Prabang",
       description: "The most beautiful temple in Luang Prabang — sweeping roofs and a glittering 'tree of life' mosaic.",
       wiki: "Wat Xieng Thong",
       long:

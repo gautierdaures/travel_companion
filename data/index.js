@@ -14,12 +14,12 @@
 //    region: "East Asia",
 //    tagline: "one evocative line",
 //    tags: ["history", "nature", "trek", "beach", …],  // what you can do here;
-//                                         // rendered as emoji chips on the home
-//                                         // card and country hero (the word is
-//                                         // the hover title). app.js maps each
-//                                         // word → emoji in TAG_EMOJI; add a
-//                                         // mapping there for any new tag, else
-//                                         // it falls back to a generic 🏷️.
+//                                         // rendered as icon + label chips on
+//                                         // the home card and country hero.
+//                                         // Pick 4–6 from the eight country
+//                                         // categories in ../categories.js:
+//                                         // history · cities · food · nature ·
+//                                         // trek · beach · diving · slow-travel
 //
 //    languages: {
 //      name: "Japanese",
@@ -65,7 +65,11 @@
 //
 //    places: [ { name, category, region, description, long?, practical?,
 //                stay?, tips?, wiki?, coords? }, ... ]
-//      category ∈ "architecture" | "history" | "nature" | "food" | "offbeat"
+//      category ∈ the eight country categories above — "history" | "cities" |
+//                 "food" | "nature" | "trek" | "beach" | "diving" |
+//                 "slow-travel" — plus "offbeat" for the ones that fit none.
+//                 They're defined once in ../categories.js (label, colour,
+//                 icon); nothing else needs touching to add a place.
 //      description = one succinct line, shown in the Places list
 //      long        = the full guide (1–3 short paragraphs) on the place's
 //                    own page at #/<code>/place/<i>; separate paragraphs

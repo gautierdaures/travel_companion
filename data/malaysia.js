@@ -5,7 +5,7 @@ export default {
   flag: "🇲🇾",
   region: "Southeast Asia",
   tagline: "Three cuisines on one plate, rainforest older than the Amazon, and time-warp trading towns.",
-  tags: ["food", "nature", "history", "architecture", "diving", "slow travel"],
+  tags: ["food", "nature", "history", "cities", "diving", "slow-travel"],
 
   languages: {
     name: "Malay (Bahasa Malaysia)",
@@ -135,7 +135,7 @@ export default {
       ],
     },
     {
-      name: "Mount Kinabalu", category: "nature", coords: [6.0753, 116.5586], region: "Sabah (Borneo)",
+      name: "Mount Kinabalu", category: "trek", coords: [6.0753, 116.5586], region: "Sabah (Borneo)",
       description: "Southeast Asia's iconic granite peak — a two-day climb to a jagged 4,095 m summit above the clouds.",
       wiki: "Mount Kinabalu",
       long:
@@ -173,7 +173,7 @@ export default {
       ],
     },
     {
-      name: "Perhentian Islands", category: "nature", coords: [5.9130, 102.7440], region: "Terengganu (east coast)",
+      name: "Perhentian Islands", category: "diving", coords: [5.9130, 102.7440], region: "Terengganu (east coast)",
       description: "Clear turquoise water, coral reefs and turtles off two small, car-free jungle islands.",
       wiki: "Perhentian Islands",
       long:
@@ -192,7 +192,7 @@ export default {
       ],
     },
     {
-      name: "Kuala Lumpur: Kampung Baru, Batu Caves & the old core", category: "architecture", coords: [3.1478, 101.6953], region: "Kuala Lumpur",
+      name: "Kuala Lumpur: Kampung Baru, Batu Caves & the old core", category: "cities", coords: [3.1478, 101.6953], region: "Kuala Lumpur",
       description: "Colonial and Islamic architecture, a hilltop cave temple, and old wooden Malay houses under the towers.",
       wiki: "Kuala Lumpur",
       long:

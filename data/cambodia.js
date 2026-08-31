@@ -5,7 +5,7 @@ export default {
   flag: "🇰🇭",
   region: "Southeast Asia",
   tagline: "Angkor's temple-mountains rising from the jungle, and a nation reborn.",
-  tags: ["temples", "history", "beach", "nature", "food", "diving"],
+  tags: ["history", "beach", "nature", "food", "diving"],
 
   languages: {
     name: "Khmer",
@@ -113,7 +113,7 @@ export default {
       ],
     },
     {
-      name: "Bayon", category: "architecture", coords: [13.4413, 103.859], region: "Angkor Thom",
+      name: "Bayon", category: "history", coords: [13.4413, 103.859], region: "Angkor Thom",
       description: "A temple of over 200 giant serene stone faces gazing in every direction from its towers.",
       wiki: "Bayon",
       long:
@@ -150,7 +150,7 @@ export default {
       ],
     },
     {
-      name: "Koh Rong Samloem", category: "nature", coords: [10.606, 103.302], region: "Gulf of Thailand",
+      name: "Koh Rong Samloem", category: "beach", coords: [10.606, 103.302], region: "Gulf of Thailand",
       description: "A quiet island of white sand and bioluminescent plankton after dark — the mellow antidote to the temples.",
       wiki: "Koh Rong Sanloem",
       long:
@@ -226,7 +226,7 @@ export default {
       ],
     },
     {
-      name: "Banteay Srei", category: "architecture", coords: [13.5990, 103.9630], region: "near Angkor",
+      name: "Banteay Srei", category: "history", coords: [13.5990, 103.9630], region: "near Angkor",
       description: "A miniature 10th-century temple in rose-pink sandstone, covered in the finest carving at Angkor.",
       wiki: "Banteay Srei",
       long:
@@ -321,7 +321,7 @@ export default {
       ],
     },
     {
-      name: "Royal Palace & Silver Pagoda", category: "architecture", coords: [11.5640, 104.9310], region: "Phnom Penh",
+      name: "Royal Palace & Silver Pagoda", category: "history", coords: [11.5640, 104.9310], region: "Phnom Penh",
       description: "The gilded, still-royal heart of the capital, with a temple floored in solid silver tiles.",
       wiki: "Royal Palace, Phnom Penh",
       long:
