@@ -5,7 +5,7 @@ export default {
   flag: "🇨🇳",
   region: "East Asia",
   tagline: "Five thousand years of empire, from terracotta armies to neon megacities.",
-  tags: ["history", "architecture", "trek", "nature", "food", "cities"],
+  tags: ["history", "cities", "trek", "nature", "food"],
 
   languages: {
     name: "Mandarin Chinese",
@@ -129,7 +129,7 @@ export default {
       ],
     },
     {
-      name: "Forbidden City", category: "architecture", coords: [39.9163, 116.3972], region: "Beijing",
+      name: "Forbidden City", category: "history", coords: [39.9163, 116.3972], region: "Beijing",
       description: "The vast imperial palace of the Ming and Qing emperors — 900 buildings behind vermilion walls at the city's heart.",
       wiki: "Forbidden City",
       long:
@@ -205,7 +205,7 @@ export default {
       ],
     },
     {
-      name: "Bund & French Concession", category: "architecture", coords: [31.2304, 121.4737], region: "Shanghai",
+      name: "Bund & French Concession", category: "cities", coords: [31.2304, 121.4737], region: "Shanghai",
       description: "Colonial-era waterfront facing a futurist skyline, and leafy plane-tree streets behind — old and new Shanghai in one walk.",
       wiki: "The Bund",
       long:
@@ -262,7 +262,7 @@ export default {
       ],
     },
     {
-      name: "Potala Palace", category: "architecture", coords: [29.6558, 91.1170], region: "Lhasa, Tibet",
+      name: "Potala Palace", category: "history", coords: [29.6558, 91.1170], region: "Lhasa, Tibet",
       description: "The towering winter palace of the Dalai Lamas, rising white and red above Lhasa on its sacred hill.",
       wiki: "Potala Palace",
       long:
@@ -281,7 +281,7 @@ export default {
       ],
     },
     {
-      name: "Pingyao", category: "architecture", coords: [37.1917, 112.1750], region: "Shanxi",
+      name: "Pingyao", category: "history", coords: [37.1917, 112.1750], region: "Shanxi",
       description: "A completely walled Ming-and-Qing city of grey-brick courtyard houses, banks, and temples — old China intact.",
       wiki: "Pingyao",
       long:
@@ -319,7 +319,7 @@ export default {
       ],
     },
     {
-      name: "Hongcun", category: "architecture", coords: [29.9800, 117.9800], region: "Anhui",
+      name: "Hongcun", category: "history", coords: [29.9800, 117.9800], region: "Anhui",
       description: "A postcard Huizhou village of white walls and black tiles mirrored in a lotus-fringed pond.",
       wiki: "Hongcun",
       long:
@@ -338,7 +338,7 @@ export default {
       ],
     },
     {
-      name: "Huangshan (Yellow Mountain)", category: "nature", coords: [30.1333, 118.1667], region: "Anhui",
+      name: "Huangshan (Yellow Mountain)", category: "trek", coords: [30.1333, 118.1667], region: "Anhui",
       description: "Granite peaks, twisted pines, and seas of cloud — the mountain that shaped Chinese landscape painting.",
       wiki: "Huangshan",
       long:

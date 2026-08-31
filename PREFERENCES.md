@@ -34,13 +34,20 @@ content in this app. Read this before touching anything in `data/` — especiall
 Each entry in a country's `places` array has a `category`. Keep recommendations
 weighted toward the loved themes above:
 
-| category       | use for                                             |
-| -------------- | --------------------------------------------------- |
-| `architecture` | buildings, old towns, distinctive design            |
-| `history`      | ruins, monuments, historically significant places   |
-| `nature`       | hikes, parks, landscapes, wildlife                  |
-| `food`         | markets, food streets, culinary destinations        |
-| `offbeat`      | hidden gems, local-favorite, low-tourist spots      |
+| category      | use for                                                  |
+| ------------- | -------------------------------------------------------- |
+| `history`     | ruins, monuments, temples, old towns, museums            |
+| `cities`      | living cities worth walking — districts, markets, design |
+| `food`        | markets, food streets, culinary destinations             |
+| `nature`      | parks, lakes, landscapes, wildlife                       |
+| `trek`        | hikes, mountains, multi-day walks                        |
+| `beach`       | coast, islands, sand and swimming                        |
+| `diving`      | reefs, dive sites, snorkelling                           |
+| `slow-travel` | stay-a-while places: river life, homestays, slow rail    |
+| `offbeat`     | hidden gems, local-favorite, low-tourist spots           |
+
+The same eight non-`offbeat` words are a country's `tags` — what you can do
+there. They live in [`categories.js`](categories.js) (label, colour, icon).
 
 When in doubt, pick the option a curious independent traveler would love and a
 tour bus would skip.

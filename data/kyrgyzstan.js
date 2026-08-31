@@ -5,7 +5,7 @@ export default {
   flag: "🇰🇬",
   region: "Central Asia",
   tagline: "The Switzerland of Central Asia — alpine lakes, summer yurt camps, and horses on high pastures.",
-  tags: ["nature", "trek", "nomads", "history", "slow travel", "wildlife"],
+  tags: ["nature", "trek", "history", "slow-travel"],
 
   languages: {
     name: "Kyrgyz & Russian",
@@ -78,7 +78,7 @@ export default {
 
   places: [
     {
-      name: "Song-Köl", category: "nature", coords: [41.8333, 75.1333], region: "central Tian Shan",
+      name: "Song-Köl", category: "slow-travel", coords: [41.8333, 75.1333], region: "central Tian Shan",
       description: "A vast, treeless alpine lake ringed by summer pastures and yurt camps — the essence of nomadic Kyrgyzstan.",
       wiki: "Song Kol",
       long:
@@ -97,7 +97,7 @@ export default {
       ],
     },
     {
-      name: "Karakol & the Karakol / Ala-Köl trek", category: "nature", coords: [42.4900, 78.3900], region: "east of Issyk-Kul",
+      name: "Karakol & the Karakol / Ala-Köl trek", category: "trek", coords: [42.4900, 78.3900], region: "east of Issyk-Kul",
       description: "A trekking hub beneath glaciated peaks — hot springs, a wooden mosque, and a classic pass-and-lake hike.",
       wiki: "Karakol",
       long:

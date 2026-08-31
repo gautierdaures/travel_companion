@@ -1,16 +1,9 @@
 import { COUNTRIES, byCode } from "./data/index.js";
 import { GEO } from "./data/geo.js";
 import { wikiInfo, wikiThumb } from "./wiki.js";
+import { catOf } from "./categories.js";
 
 const app = document.getElementById("app");
-
-const CATS = {
-  architecture: { label: "Architecture", color: "var(--cat-architecture)", icon: "🏛️" },
-  history:      { label: "History",      color: "var(--cat-history)",      icon: "🏰" },
-  nature:       { label: "Nature",       color: "var(--cat-nature)",       icon: "⛰️" },
-  food:         { label: "Food",         color: "var(--cat-food)",         icon: "🍜" },
-  offbeat:      { label: "Off-beat",     color: "var(--cat-offbeat)",      icon: "🧭" },
-};
 
 // Kinds of dated events, and how they read on the page.
 const EVENT_KINDS = {
@@ -45,40 +38,20 @@ function el(html) {
   return t.content.firstElementChild;
 }
 
-// Each free-form country tag renders as an emoji (with the word kept as a
-// hover title for accessibility). Unmapped tags fall back to a generic label.
-const TAG_EMOJI = {
-  history:        "🏰",
-  architecture:   "🏛️",
-  nature:         "⛰️",
-  food:           "🍜",
-  trek:           "🥾",
-  beach:          "🏖️",
-  diving:         "🤿",
-  temples:        "🛕",
-  "river life":   "🛶",
-  "slow travel":  "🐌",
-  rail:           "🚂",
-  winter:         "❄️",
-  cities:         "🏙️",
-  motorbiking:    "🏍️",
-  ruins:          "🏺",
-  bazaars:        "🛍️",
-  nomads:         "🐎",
-  wildlife:       "🐾",
-};
-
-// A country's "what can I do here" tags (nature, history, trek, beach…),
-// shown as emojis on the home cards and the country hero. Empty when none set.
+// A country's "what can I do here" categories (nature, history, trek, beach…),
+// shown as an icon + its label on the home cards and the country hero — the
+// same vocabulary the places use. Empty when none are set.
 function countryTags(c, { limit = 0 } = {}) {
   let tags = c.tags || [];
   if (limit > 0) tags = tags.slice(0, limit);
   if (!tags.length) return "";
   return `<div class="ctags">${tags
-    .map(
-      (t) =>
-        `<span class="ctag" title="${esc(t)}"><span class="ctag-emoji">${TAG_EMOJI[t] || "🏷️"}</span></span>`
-    )
+    .map((t) => {
+      const cat = catOf(t);
+      return `<span class="ctag" style="--ctag-color:${cat.color}">${cat.icon}<span class="ctag-label">${esc(
+        cat.label
+      )}</span></span>`;
+    })
     .join("")}</div>`;
 }
 
@@ -219,17 +192,17 @@ function placesBlock(c) {
       <div class="panel">
         ${c.places
           .map((p, i) => {
-            const cat = CATS[p.category] || { label: p.category, color: "var(--text-dim)", icon: "📍" };
+            const cat = catOf(p.category);
             return `
           <a class="place" id="place-${c.code}-${i}" href="#/${c.code}/place/${i}">
             <div class="place-thumb" ${p.wiki ? `data-wiki="${esc(p.wiki)}"` : ""}>
-              <span class="place-thumb-ph">${cat.icon}</span>
+              <span class="place-thumb-ph" style="color:${cat.color}">${cat.icon}</span>
             </div>
             <div class="place-body">
               <div class="head">
                 ${p.coords ? `<span class="num" data-i="${i}" title="Show on map">${i + 1}</span>` : ""}
                 <span class="t">${esc(p.name)}</span>
-                <span class="tag" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
+                <span class="tag" style="background:${cat.color}">${cat.icon}${cat.label}</span>
               </div>
               ${p.region ? `<div class="region">${esc(p.region)}</div>` : ""}
               <div class="d">${esc(p.description)}</div>
@@ -488,7 +461,7 @@ function mapBlock(c) {
     if (!p.coords) return;
     const [lat, lng] = p.coords;
     const [x, y] = toXY(lng, lat);
-    nodes.push({ i, x, y, cat: CATS[p.category] || { color: "var(--text-dim)" } });
+    nodes.push({ i, x, y, cat: catOf(p.category) });
   });
   declutter(nodes, 64);
   const pins = nodes
@@ -668,7 +641,7 @@ function renderPlaceDetail(code, i) {
     location.hash = c ? `#/${code}` : "#/";
     return;
   }
-  const cat = CATS[p.category] || { label: p.category, color: "var(--text-dim)", icon: "📍" };
+  const cat = catOf(p.category);
   document.title = `${p.name} · ${c.name}`;
   app.innerHTML = "";
 
@@ -685,7 +658,7 @@ function renderPlaceDetail(code, i) {
   const view = el(`
     <article class="place-detail">
       <div class="pd-hero">
-        <span class="tag" style="background:${cat.color}">${cat.icon} ${cat.label}</span>
+        <span class="tag" style="background:${cat.color}">${cat.icon}${cat.label}</span>
         <h1>${esc(p.name)}</h1>
         ${p.region ? `<div class="region">📍 ${esc(p.region)}</div>` : ""}
       </div>

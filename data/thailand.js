@@ -5,7 +5,7 @@ export default {
   flag: "🇹🇭",
   region: "Southeast Asia",
   tagline: "Golden temples and green mountains, street-food heaven and slow island time.",
-  tags: ["food", "temples", "nature", "beach", "history", "slow travel"],
+  tags: ["food", "history", "nature", "beach", "slow-travel"],
 
   languages: {
     name: "Thai",
@@ -78,7 +78,7 @@ export default {
 
   places: [
     {
-      name: "Chiang Mai & the old city temples", category: "architecture", coords: [18.7883, 98.9853], region: "Northern Thailand",
+      name: "Chiang Mai & the old city temples", category: "history", coords: [18.7883, 98.9853], region: "Northern Thailand",
       description: "A moated old town of teak temples and lanes, gateway to the northern mountains and the best food in the country.",
       wiki: "Chiang Mai",
       long:
@@ -154,7 +154,7 @@ export default {
       ],
     },
     {
-      name: "Railay & the Krabi coast", category: "nature", coords: [8.0110, 98.8377], region: "Andaman coast (south)",
+      name: "Railay & the Krabi coast", category: "beach", coords: [8.0110, 98.8377], region: "Andaman coast (south)",
       description: "Towering limestone karsts over turquoise water — rock-climbing, hidden lagoons, and boat-only beaches.",
       wiki: "Railay",
       long:
@@ -192,7 +192,7 @@ export default {
       ],
     },
     {
-      name: "Ko Tao & the Gulf islands", category: "nature", coords: [10.0956, 99.8403], region: "Gulf of Thailand",
+      name: "Ko Tao & the Gulf islands", category: "diving", coords: [10.0956, 99.8403], region: "Gulf of Thailand",
       description: "Clear warm water and cheap, world-famous diving on a small, laid-back island off the eastern coast.",
       wiki: "Ko Tao",
       long:

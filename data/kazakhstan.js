@@ -5,7 +5,7 @@ export default {
   flag: "🇰🇿",
   region: "Central Asia",
   tagline: "The great steppe — golden grasslands, marble cities, and canyons on the edge of nowhere.",
-  tags: ["nature", "history", "trek", "cities", "nomads", "slow travel"],
+  tags: ["nature", "history", "trek", "cities", "slow-travel"],
 
   languages: {
     name: "Kazakh & Russian",
@@ -135,7 +135,7 @@ export default {
       ],
     },
     {
-      name: "Turkestan & the Mausoleum of Khoja Ahmed Yasawi", category: "architecture", coords: [43.2972, 68.2711], region: "South Kazakhstan",
+      name: "Turkestan & the Mausoleum of Khoja Ahmed Yasawi", category: "history", coords: [43.2972, 68.2711], region: "South Kazakhstan",
       description: "A soaring, unfinished Timurid masterpiece — Kazakhstan's holiest shrine and greatest medieval building.",
       wiki: "Mausoleum of Khoja Ahmed Yasawi",
       long:
@@ -154,7 +154,7 @@ export default {
       ],
     },
     {
-      name: "Astana (Nur-Sultan)", category: "architecture", coords: [51.1694, 71.4491], region: "North-central steppe",
+      name: "Astana (Nur-Sultan)", category: "cities", coords: [51.1694, 71.4491], region: "North-central steppe",
       description: "A futuristic capital of glass, marble and bold architecture raised from the bare northern steppe.",
       wiki: "Astana",
       long:

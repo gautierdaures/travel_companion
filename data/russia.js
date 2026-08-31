@@ -5,7 +5,7 @@ export default {
   flag: "🇷🇺",
   region: "Eurasia",
   tagline: "Onion domes, birch forests, and a continent's worth of railway.",
-  tags: ["history", "architecture", "trek", "nature", "rail", "winter"],
+  tags: ["history", "cities", "trek", "nature", "slow-travel"],
 
   languages: {
     name: "Russian",
@@ -110,7 +110,7 @@ export default {
 
   places: [
     {
-      name: "Red Square & St. Basil's", category: "architecture", coords: [55.7525, 37.6231], region: "Moscow",
+      name: "Red Square & St. Basil's", category: "history", coords: [55.7525, 37.6231], region: "Moscow",
       description: "The swirling candy-colored domes of St. Basil's over the vast square at the heart of the capital — go at night when it's floodlit.",
       wiki: "Saint Basil's Cathedral",
       long:
@@ -129,7 +129,7 @@ export default {
       ],
     },
     {
-      name: "Hermitage Museum", category: "architecture", coords: [59.9398, 30.3146], region: "St. Petersburg",
+      name: "Hermitage Museum", category: "history", coords: [59.9398, 30.3146], region: "St. Petersburg",
       description: "Catherine the Great's Winter Palace, now one of the world's greatest art museums; give it a full day and still miss most of it.",
       wiki: "Hermitage Museum",
       long:
@@ -167,7 +167,7 @@ export default {
       ],
     },
     {
-      name: "Trans-Siberian Railway", category: "offbeat", coords: [56.009, 92.8526], region: "Moscow to Vladivostok",
+      name: "Trans-Siberian Railway", category: "slow-travel", coords: [56.009, 92.8526], region: "Moscow to Vladivostok",
       description: "Six days and 9,000 km across the continent; the dining car and platform babushkas selling smoked fish are the real journey.",
       wiki: "Trans-Siberian Railway",
       long:
@@ -243,7 +243,7 @@ export default {
       ],
     },
     {
-      name: "Church of the Savior on Blood", category: "architecture", coords: [59.9400, 30.3289], region: "St. Petersburg",
+      name: "Church of the Savior on Blood", category: "history", coords: [59.9400, 30.3289], region: "St. Petersburg",
       description: "A riot of mosaic and onion domes built on the spot where Tsar Alexander II was assassinated.",
       wiki: "Church of the Savior on Blood",
       long:
@@ -262,7 +262,7 @@ export default {
       ],
     },
     {
-      name: "Peterhof", category: "architecture", coords: [59.8833, 29.9000], region: "near St. Petersburg",
+      name: "Peterhof", category: "history", coords: [59.8833, 29.9000], region: "near St. Petersburg",
       description: "Peter the Great's seaside palace and its Grand Cascade of gilded, gravity-fed fountains — 'the Russian Versailles'.",
       wiki: "Peterhof Palace",
       long:
@@ -281,7 +281,7 @@ export default {
       ],
     },
     {
-      name: "Kazan Kremlin", category: "architecture", coords: [55.7989, 49.1064], region: "Kazan, Tatarstan",
+      name: "Kazan Kremlin", category: "history", coords: [55.7989, 49.1064], region: "Kazan, Tatarstan",
       description: "A white-walled citadel where an Orthodox cathedral and a great mosque stand side by side.",
       wiki: "Kazan Kremlin",
       long:
@@ -338,7 +338,7 @@ export default {
       ],
     },
     {
-      name: "Curonian Spit", category: "nature", coords: [55.2800, 20.9600], region: "Kaliningrad, Baltic coast",
+      name: "Curonian Spit", category: "beach", coords: [55.2800, 20.9600], region: "Kaliningrad, Baltic coast",
       description: "A narrow ribbon of towering sand dunes and pine forest between lagoon and Baltic Sea.",
       wiki: "Curonian Spit",
       long:
@@ -357,7 +357,7 @@ export default {
       ],
     },
     {
-      name: "Altai Mountains", category: "nature", coords: [50.7000, 86.2000], region: "southern Siberia",
+      name: "Altai Mountains", category: "trek", coords: [50.7000, 86.2000], region: "southern Siberia",
       description: "Turquoise rivers, glaciated peaks, and nomad valleys where Russia meets Mongolia and Kazakhstan.",
       wiki: "Altai Mountains",
       long:
@@ -376,7 +376,7 @@ export default {
       ],
     },
     {
-      name: "Mount Elbrus", category: "nature", coords: [43.3550, 42.4392], region: "Caucasus",
+      name: "Mount Elbrus", category: "trek", coords: [43.3550, 42.4392], region: "Caucasus",
       description: "The highest peak in Europe, a twin-coned dormant volcano rising above the Caucasus.",
       wiki: "Mount Elbrus",
       long:

@@ -5,7 +5,7 @@ export default {
   flag: "🇳🇿",
   region: "Oceania / South Pacific",
   tagline: "Aotearoa — glacier-carved mountains, wild coasts, and the great walks of the south.",
-  tags: ["nature", "trek", "history", "wildlife", "slow travel", "cities"],
+  tags: ["nature", "trek", "history", "slow-travel", "cities"],
 
   languages: {
     name: "English & te reo Māori",
@@ -111,7 +111,7 @@ export default {
       ],
     },
     {
-      name: "Aoraki / Mount Cook & the Southern Alps", category: "nature", coords: [-43.7340, 170.0960], region: "Canterbury, South Island",
+      name: "Aoraki / Mount Cook & the Southern Alps", category: "trek", coords: [-43.7340, 170.0960], region: "Canterbury, South Island",
       description: "New Zealand's highest peak above a glacial valley of turquoise lakes and star-filled night skies.",
       wiki: "Aoraki / Mount Cook",
       long:
@@ -149,7 +149,7 @@ export default {
       ],
     },
     {
-      name: "Tongariro Alpine Crossing", category: "nature", coords: [-39.1333, 175.6500], region: "Central Plateau, North Island",
+      name: "Tongariro Alpine Crossing", category: "trek", coords: [-39.1333, 175.6500], region: "Central Plateau, North Island",
       description: "A one-day trek across a live volcanic landscape of craters, lava and emerald lakes — the country's finest day walk.",
       wiki: "Tongariro Alpine Crossing",
       long:
@@ -168,7 +168,7 @@ export default {
       ],
     },
     {
-      name: "Abel Tasman & the Marlborough Sounds", category: "nature", coords: [-40.9970, 173.0000], region: "Top of the South Island",
+      name: "Abel Tasman & the Marlborough Sounds", category: "beach", coords: [-40.9970, 173.0000], region: "Top of the South Island",
       description: "Golden beaches, clear water and forested coastal trails — the sunniest, gentlest corner of the country.",
       wiki: "Abel Tasman National Park",
       long:
@@ -206,7 +206,7 @@ export default {
       ],
     },
     {
-      name: "Wellington", category: "architecture", coords: [-41.2865, 174.7762], region: "Lower North Island",
+      name: "Wellington", category: "cities", coords: [-41.2865, 174.7762], region: "Lower North Island",
       description: "The compact, creative capital — a superb national museum, café culture, and a windswept harbour setting.",
       wiki: "Wellington",
       long:

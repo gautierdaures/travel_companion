@@ -5,7 +5,7 @@ export default {
   flag: "🇮🇩",
   region: "Southeast Asia / Oceania",
   tagline: "Seventeen thousand islands of volcanoes, temples and dragons — the world's greatest archipelago.",
-  tags: ["nature", "temples", "diving", "beach", "history", "slow travel"],
+  tags: ["nature", "history", "diving", "beach", "slow-travel"],
 
   languages: {
     name: "Indonesian (Bahasa Indonesia)",
@@ -116,7 +116,7 @@ export default {
       ],
     },
     {
-      name: "Mount Bromo & the Tengger caldera", category: "nature", coords: [-7.9425, 112.9530], region: "East Java",
+      name: "Mount Bromo & the Tengger caldera", category: "trek", coords: [-7.9425, 112.9530], region: "East Java",
       description: "A smoking cinder cone in a vast sand-sea caldera, unforgettable at sunrise from the crater rim.",
       wiki: "Mount Bromo",
       long:
@@ -154,7 +154,7 @@ export default {
       ],
     },
     {
-      name: "Prambanan", category: "architecture", coords: [-7.7520, 110.4915], region: "Central Java",
+      name: "Prambanan", category: "history", coords: [-7.7520, 110.4915], region: "Central Java",
       description: "A soaring cluster of 9th-century Hindu temple spires, the finest in Indonesia, near Yogyakarta.",
       wiki: "Prambanan",
       long:
@@ -211,7 +211,7 @@ export default {
       ],
     },
     {
-      name: "Raja Ampat", category: "nature", coords: [-0.5000, 130.5000], region: "West Papua",
+      name: "Raja Ampat", category: "diving", coords: [-0.5000, 130.5000], region: "West Papua",
       description: "The most biodiverse marine realm on earth — karst islets, empty lagoons, and reefs beyond compare.",
       wiki: "Raja Ampat",
       long:
