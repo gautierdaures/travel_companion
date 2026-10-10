@@ -7,30 +7,38 @@ const app = document.getElementById("app");
 
 // Kinds of dated events, and how they read on the page.
 const EVENT_KINDS = {
-  go:    { label: "Worth timing", color: "var(--ev-go)",    icon: "🎉" },
-  avoid: { label: "Avoid",        color: "var(--ev-avoid)", icon: "🚫" },
-  note:  { label: "Heads-up",     color: "var(--ev-note)",  icon: "⚠️" },
+  go:    { label: "À ne pas manquer", color: "var(--ev-go)",    icon: "🎉" },
+  avoid: { label: "À éviter",         color: "var(--ev-avoid)", icon: "🚫" },
+  note:  { label: "Bon à savoir",     color: "var(--ev-note)",  icon: "⚠️" },
 };
 
 // Places and Map lead; the reference material follows.
 const SECTIONS = [
-  { id: "places", label: "Places" },
-  { id: "map", label: "Map" },
-  { id: "languages", label: "Language" },
-  { id: "history", label: "History" },
-  { id: "climate", label: "When to go" },
-  { id: "events", label: "Events" },
-  { id: "books", label: "Books" },
-  { id: "meals", label: "Food" },
+  { id: "places", label: "Lieux" },
+  { id: "map", label: "Carte" },
+  { id: "languages", label: "Langue" },
+  { id: "history", label: "Histoire" },
+  { id: "climate", label: "Quand partir" },
+  { id: "events", label: "Événements" },
+  { id: "books", label: "Livres" },
+  { id: "meals", label: "Cuisine" },
 ];
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS = ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
+
+// Lower-case, accent-free form for searching ("Viêt" matches "viet").
+const fold = (s = "") => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 /* ── tiny helpers ──────────────────────────────────────────────────────── */
+// Also keeps French punctuation attached to its word: a no-break space before
+// ? ! : ; » and after «, so a line never starts with a lone "?" or "»".
 const esc = (s = "") =>
-  String(s).replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
-  );
+  String(s)
+    .replace(/\s+([?!:;»])/g, "\u00a0$1")
+    .replace(/«\s+/g, "«\u00a0")
+    .replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
 
 function el(html) {
   const t = document.createElement("template");
@@ -57,32 +65,32 @@ function countryTags(c, { limit = 0 } = {}) {
 
 /* ── Home view ─────────────────────────────────────────────────────────── */
 function renderHome() {
-  document.title = "Trip Companion";
+  document.title = "Compagnon de voyage";
   app.innerHTML = "";
 
   const head = el(`
     <header class="home-head">
       <div class="home-top">
-        <h1>Trip Companion 🌍</h1>
+        <h1>Compagnon de voyage 🌍</h1>
         <div class="home-links">
-          <a class="exp-link" href="#/planner" title="Bookings & schedule">🗓️ Planner</a>
-          <a class="exp-link" href="#/expenses" title="Private expense dashboard">💰 Expenses</a>
+          <a class="exp-link" href="#/planner" title="Réservations et calendrier">🗓️ Planning</a>
+          <a class="exp-link" href="#/expenses" title="Tableau de bord privé des dépenses">💰 Dépenses</a>
         </div>
       </div>
-      <p>${COUNTRIES.length} countries · tap a card for its ID card</p>
-      <input class="search" type="search" placeholder="Search country or region…"
+      <p>${COUNTRIES.length} pays · touchez une carte pour ouvrir sa fiche</p>
+      <input class="search" type="search" placeholder="Rechercher un pays ou une région…"
              autocomplete="off" autocorrect="off" spellcheck="false" />
     </header>
   `);
   const grid = el(`<div class="grid"></div>`);
 
   function paint(q = "") {
-    const term = q.trim().toLowerCase();
+    const term = fold(q.trim());
     const list = COUNTRIES.filter(
       (c) =>
         !term ||
-        c.name.toLowerCase().includes(term) ||
-        c.region.toLowerCase().includes(term)
+        fold(c.name).includes(term) ||
+        fold(c.region).includes(term)
     );
     grid.innerHTML = list.length
       ? list
@@ -96,7 +104,7 @@ function renderHome() {
         </a>`
           )
           .join("")
-      : `<div class="empty" style="grid-column:1/-1">No match for “${esc(q)}”.</div>`;
+      : `<div class="empty" style="grid-column:1/-1">Aucun résultat pour «&nbsp;${esc(q)}&nbsp;».</div>`;
   }
 
   head.querySelector(".search").addEventListener("input", (e) => paint(e.target.value));
@@ -109,14 +117,14 @@ function languagesBlock(c) {
   const L = c.languages;
   return `
     <section class="block" id="sec-languages">
-      <h2>Language · ${esc(L.name)}</h2>
+      <h2>Langue · ${esc(L.name)}</h2>
       <div class="panel">
         ${L.note ? `<p class="note">${esc(L.note)}</p>` : ""}
         ${L.phrases
           .map(
             (p) => `
           <div class="phrase">
-            <span class="en">${esc(p.en)}</span>
+            <span class="fr">${esc(p.fr)}</span>
             <span class="right">
               <span class="local">${esc(p.local)}</span>
               ${p.pron ? `<div class="pron">${esc(p.pron)}</div>` : ""}
@@ -132,7 +140,7 @@ function historyBlock(c) {
   const H = c.history;
   return `
     <section class="block" id="sec-history">
-      <h2>History</h2>
+      <h2>Histoire</h2>
       <div class="panel">
         <p class="prose">${esc(H.summary)}</p>
         <ul class="timeline">
@@ -150,7 +158,7 @@ function historyBlock(c) {
 function booksBlock(c) {
   return `
     <section class="block" id="sec-books">
-      <h2>Books to read</h2>
+      <h2>Livres à lire</h2>
       <div class="panel">
         ${c.books
           .map(
@@ -169,7 +177,7 @@ function booksBlock(c) {
 function mealsBlock(c) {
   return `
     <section class="block" id="sec-meals">
-      <h2>Typical meals</h2>
+      <h2>Plats typiques</h2>
       <div class="panel">
         ${c.meals
           .map(
@@ -188,7 +196,7 @@ function mealsBlock(c) {
 function placesBlock(c) {
   return `
     <section class="block" id="sec-places">
-      <h2>Places to visit</h2>
+      <h2>Lieux à visiter</h2>
       <div class="panel">
         ${c.places
           .map((p, i) => {
@@ -200,13 +208,13 @@ function placesBlock(c) {
             </div>
             <div class="place-body">
               <div class="head">
-                ${p.coords ? `<span class="num" data-i="${i}" title="Show on map">${i + 1}</span>` : ""}
+                ${p.coords ? `<span class="num" data-i="${i}" title="Voir sur la carte">${i + 1}</span>` : ""}
                 <span class="t">${esc(p.name)}</span>
                 <span class="tag" style="background:${cat.color}">${cat.icon}${cat.label}</span>
               </div>
               ${p.region ? `<div class="region">${esc(p.region)}</div>` : ""}
               <div class="d">${esc(p.description)}</div>
-              <span class="more">Full guide →</span>
+              <span class="more">Guide complet →</span>
             </div>
           </a>`;
           })
@@ -249,9 +257,9 @@ function loadThumbs(scope) {
 // A month is rated by how good it is to visit, not by how hot it is:
 //   best → green, acceptable → orange, avoid → red.
 const RATINGS = {
-  best:   { color: "#3fbf6a", tint: "rgba(63,191,106,0.15)",  label: "Best" },
-  ok:     { color: "#f2a53c", tint: "rgba(242,165,60,0.15)",  label: "Acceptable" },
-  avoid:  { color: "#ec5a5a", tint: "rgba(236,90,90,0.15)",   label: "Avoid" },
+  best:   { color: "#3fbf6a", tint: "rgba(63,191,106,0.15)",  label: "Idéal" },
+  ok:     { color: "#f2a53c", tint: "rgba(242,165,60,0.15)",  label: "Correct" },
+  avoid:  { color: "#ec5a5a", tint: "rgba(236,90,90,0.15)",   label: "À éviter" },
 };
 
 // Look up a month's rating (1–12). Anything not flagged best/avoid is acceptable.
@@ -261,11 +269,11 @@ function monthRating(cl, month) {
   return "ok";
 }
 
-// Turn [11,12,1,2] into "Nov–Feb"; handles wrap-around and gaps.
+// Turn [11,12,1,2] into "Nov–Févr"; handles wrap-around and gaps.
 function bestMonthsLabel(best = []) {
   const set = new Set(best);
   if (set.size === 0) return "";
-  if (set.size === 12) return "Year-round";
+  if (set.size === 12) return "Toute l’année";
   const on = MONTHS.map((_, i) => set.has(i + 1));
   const runs = [];
   for (let i = 0; i < 12; i++) {
@@ -298,7 +306,7 @@ function regionChart(r, rainMax) {
     return `
       <div class="month-cell" style="--r:${rt.color};background:${rt.tint}">
         <div class="mc-name">${MONTHS[i]}</div>
-        <div class="mc-temp"><span class="mc-avg">avg</span>${Math.round(m.mean)}°</div>
+        <div class="mc-temp"><span class="mc-avg">moy.</span>${Math.round(m.mean)}°</div>
         ${m.rain != null ? `<div class="mc-rain"><span class="mc-drop" style="opacity:${op}">💧</span>${m.rain}</div>` : ""}
       </div>`;
   }).join("");
@@ -308,7 +316,7 @@ function regionChart(r, rainMax) {
   return `
     <div class="climate-region">
       ${r.name ? `<h3 class="region-name">📍 ${esc(r.name)}</h3>` : ""}
-      ${bestLabel ? `<div class="best-line">☀️ Best months: <strong>${esc(bestLabel)}</strong></div>` : ""}
+      ${bestLabel ? `<div class="best-line">☀️ Meilleurs mois&nbsp;: <strong>${esc(bestLabel)}</strong></div>` : ""}
       <div class="month-grid">${cells}</div>
       ${r.note ? `<p class="note region-note">${esc(r.note)}</p>` : ""}
     </div>`;
@@ -335,14 +343,14 @@ function climateBlock(c) {
 
   return `
     <section class="block" id="sec-climate">
-      <h2>When to go · weather</h2>
+      <h2>Quand partir · météo</h2>
       <div class="panel climate-panel${valid.length > 1 ? " multi" : ""}">
         <div class="climate-legend legend-key">
           <span><i class="sw" style="background:${RATINGS.best.color}"></i> ${RATINGS.best.label}</span>
           <span><i class="sw" style="background:${RATINGS.ok.color}"></i> ${RATINGS.ok.label}</span>
           <span><i class="sw" style="background:${RATINGS.avoid.color}"></i> ${RATINGS.avoid.label}</span>
-          ${rainMax > 0 ? `<span><span class="rain-key">💧</span> Rainfall (mm)</span>` : ""}
-          <span class="unit">avg temp ${esc(unit)} · rain mm</span>
+          ${rainMax > 0 ? `<span><span class="rain-key">💧</span> Pluie (mm)</span>` : ""}
+          <span class="unit">temp. moy. ${esc(unit)} · pluie mm</span>
         </div>
         ${charts}
         ${cl.note ? `<p class="note climate-note">${esc(cl.note)}</p>` : ""}
@@ -355,7 +363,7 @@ function eventsBlock(c) {
   if (!c.events || !c.events.length) return "";
   return `
     <section class="block" id="sec-events">
-      <h2>Events · festivals &amp; timing</h2>
+      <h2>Événements · fêtes et calendrier</h2>
       <div class="panel">
         ${c.events
           .map((ev) => {
@@ -476,14 +484,14 @@ function mapBlock(c) {
 
   return `
     <section class="block" id="sec-map">
-      <h2>Map · where the places are</h2>
+      <h2>Carte · où se trouvent les lieux</h2>
       <div class="panel map-panel">
         <svg class="map-svg" viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}"
              preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
           <path class="map-land" d="${land}"></path>
           ${pins}
         </svg>
-        <p class="map-hint">Tap a numbered pin to jump to that place ↓</p>
+        <p class="map-hint">Touchez un repère numéroté pour aller au lieu ↓</p>
       </div>
     </section>`;
 }
@@ -504,11 +512,11 @@ function renderCountry(code) {
     location.hash = "#/";
     return;
   }
-  document.title = `${c.name} · Trip Companion`;
+  document.title = `${c.name} · Compagnon de voyage`;
   app.innerHTML = "";
 
   const topbar = el(`
-    <div class="topbar"><span class="back">← All countries</span></div>
+    <div class="topbar"><span class="back">← Tous les pays</span></div>
   `);
   topbar.querySelector(".back").addEventListener("click", () => (location.hash = "#/"));
 
@@ -546,7 +554,7 @@ function renderCountry(code) {
     ${eventsBlock(c)}
     ${booksBlock(c)}
     ${mealsBlock(c)}
-    <div class="footer">Offline ID card · edit content in the <code>data/</code> folder</div>
+    <div class="footer">Fiche hors ligne · contenu modifiable dans le dossier <code>data/</code></div>
   </div>`);
 
   // Pin → scroll to place card. Card number → scroll to map, flash the pin.
@@ -595,7 +603,7 @@ function practicalBlock(p) {
   if (!rows.length) return "";
   return `
     <section class="pd-facts">
-      <h3>🧭 Plan your visit</h3>
+      <h3>🧭 Préparer la visite</h3>
       <dl class="fact-list">
         ${rows
           .map(
@@ -627,7 +635,7 @@ function stayBlock(p) {
     : "";
   return `
     <section class="pd-stay">
-      <h3>🛖 Stay &amp; slow travel</h3>
+      <h3>🛖 Séjourner et prendre son temps</h3>
       ${paras ? `<div class="pd-prose">${paras}</div>` : ""}
       ${tipList}
     </section>`;
@@ -667,10 +675,10 @@ function renderPlaceDetail(code, i) {
       ${practicalBlock(p)}
       ${stayBlock(p)}
       <div class="pd-actions">
-        ${p.coords ? `<button class="pd-btn pd-map">🗺️ Show on map</button>` : ""}
-        <a class="pd-btn pd-wiki" hidden target="_blank" rel="noopener">📖 Read more on Wikipedia ↗</a>
+        ${p.coords ? `<button class="pd-btn pd-map">🗺️ Voir sur la carte</button>` : ""}
+        <a class="pd-btn pd-wiki" hidden target="_blank" rel="noopener">📖 En savoir plus sur Wikipédia ↗</a>
       </div>
-      <div class="footer">Photos via Wikipedia · prices &amp; hours are rough guides — confirm locally</div>
+      <div class="footer">Photos : Wikipédia · prix et horaires indicatifs — à vérifier sur place</div>
     </article>
   `);
 

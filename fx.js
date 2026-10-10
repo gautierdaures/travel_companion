@@ -100,10 +100,22 @@ const LS_NAMES = "trip-fx-names";
 // A small built-in list so the picker still works offline before anything has
 // been fetched. The full ~160-currency catalogue replaces it on first load.
 const FALLBACK_NAMES = {
-  EUR: "Euro", USD: "US Dollar", GBP: "British Pound", JPY: "Japanese Yen",
-  RUB: "Russian Ruble", CNY: "Chinese Yuan", VND: "Vietnamese Dong",
-  LAK: "Lao Kip", KHR: "Cambodian Riel", THB: "Thai Baht",
+  EUR: "Euro", USD: "Dollar des États-Unis", GBP: "Livre sterling", JPY: "Yen japonais",
+  RUB: "Rouble russe", CNY: "Yuan renminbi chinois", VND: "Dông vietnamien",
+  LAK: "Kip laotien", KHR: "Riel cambodgien", THB: "Baht thaïlandais",
 };
+
+// The fetched catalogue names currencies in English; show them in French via the
+// browser's own locale data (offline, no extra request), keeping the English name
+// for anything it doesn't know (crypto, metals…).
+const FR_NAMES = (() => {
+  try { return new Intl.DisplayNames(["fr"], { type: "currency", fallback: "none" }); } catch { return null; }
+})();
+function frName(code, fallback) {
+  let n = null;
+  try { n = FR_NAMES && FR_NAMES.of(code); } catch { /* not a valid code */ }
+  return n ? n.charAt(0).toUpperCase() + n.slice(1) : fallback;
+}
 
 let names = null; // { "EUR": "Euro", … } upper-cased, once loaded
 
@@ -141,10 +153,10 @@ export async function ensureCurrencies() {
   const seen = new Set();
   for (const code in src) {
     if (haveRates() && !(code in rates)) continue; // only convertible codes
-    out.push({ code, name: src[code] });
+    out.push({ code, name: frName(code, src[code]) });
     seen.add(code);
   }
-  if (!seen.has(HOME_CURRENCY)) out.push({ code: HOME_CURRENCY, name: src[HOME_CURRENCY] || HOME_CURRENCY });
+  if (!seen.has(HOME_CURRENCY)) out.push({ code: HOME_CURRENCY, name: frName(HOME_CURRENCY, src[HOME_CURRENCY] || HOME_CURRENCY) });
   out.sort((a, b) => a.code.localeCompare(b.code));
   return out;
 }

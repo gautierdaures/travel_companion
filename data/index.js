@@ -4,15 +4,17 @@
 //  ⚑ Before writing `places` (or any recommendations), read ../PREFERENCES.md
 //    for the traveler's tastes: architecture, history, food, nature, and
 //    off-the-beaten-path — and NO tourist traps.
+//  ⚑ All displayed text is written in FRENCH (the app is French-only). Only
+//    `wiki` stays an English Wikipedia title (see below).
 // ─────────────────────────────────────────────────────────────────────────
 //  Each country is one file (e.g. data/japan.js) with a default export:
 //
 //  {
 //    code: "jp",              // short unique id, used in the URL (#/jp)
-//    name: "Japan",
+//    name: "Japon",
 //    flag: "🇯🇵",             // emoji flag
-//    region: "East Asia",
-//    tagline: "one evocative line",
+//    region: "Asie de l’Est",
+//    tagline: "une ligne évocatrice",
 //    tags: ["history", "nature", "trek", "beach", …],  // what you can do here;
 //                                         // rendered as icon + label chips on
 //                                         // the home card and country hero.
@@ -22,9 +24,12 @@
 //                                         // trek · beach · diving · slow-travel
 //
 //    languages: {
-//      name: "Japanese",
+//      name: "Japonais",
 //      note: "pronunciation / etiquette note",
-//      phrases: [ { en, local, pron }, ... ]   // 8–11 useful phrases
+//      phrases: [ { fr, local, pron }, ... ]   // 8–11 useful phrases:
+//                                         //   fr = the meaning, local = the
+//                                         //   phrase, pron = how a French
+//                                         //   speaker would say it ("ou", "ch"…)
 //    },
 //
 //    history: {
@@ -57,7 +62,7 @@
 //      //   rainfall (blue) so the colour of each month makes sense at a glance.
 //
 //    events: [ { name, when, months, kind, description }, ... ]
-//      when   = human label, e.g. "Late Jan – mid Feb"
+//      when   = human label, e.g. "Fin janv. – mi-févr."
 //      months = month numbers it falls in, e.g. [1, 2]
 //      kind ∈ "go"    — worth timing your trip for
 //           | "avoid" — crowds / closures / heat; steer around it
@@ -88,7 +93,8 @@
 //      tips        = [ "…", … ] — short, hands-on tips shown as bullets under
 //                    the stay panel (go at dawn, bring cash, book ahead…).
 //      wiki        = English Wikipedia article title (e.g. "Hạ Long Bay").
-//                    Drives the place's photos and the "Read more" link,
+//                    Drives the place's photos and the "Read more" link
+//                    (which jumps to the French article when there is one),
 //                    pulled at runtime by wiki.js. Fails soft — offline the
 //                    hand-written guide above still shows in full.
 //      coords      = [lat, lng] — optional, drops a numbered pin on the map
@@ -118,6 +124,6 @@ export const COUNTRIES = [
   russia, china, vietnam, laos, cambodia,
   turkey, kazakhstan, kyrgyzstan, mongolia,
   thailand, malaysia, indonesia, newzealand,
-].sort((a, b) => a.name.localeCompare(b.name));
+].sort((a, b) => a.name.localeCompare(b.name, "fr"));
 
 export const byCode = (code) => COUNTRIES.find((c) => c.code === code);

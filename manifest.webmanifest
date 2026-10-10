@@ -1,7 +1,8 @@
 {
-  "name": "Trip Companion",
-  "short_name": "Trip",
-  "description": "Offline country ID cards for a worldwide trip.",
+  "name": "Compagnon de voyage",
+  "short_name": "Voyage",
+  "description": "Fiches pays hors ligne pour un tour du monde.",
+  "lang": "fr",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
