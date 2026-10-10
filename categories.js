@@ -17,20 +17,20 @@ const svg = (paths) =>
 
 export const CATEGORIES = {
   history: {
-    label: "History",
+    label: "Histoire",
     color: "var(--cat-history)",
     icon: svg(`<path d="M3 9.5 12 4.5l9 5"/><path d="M4.5 12h15"/>
                <path d="M6 20v-8M10 20v-8M14 20v-8M18 20v-8"/><path d="M4 20h16"/>`),
   },
   cities: {
-    label: "Cities",
+    label: "Villes",
     color: "var(--cat-cities)",
     icon: svg(`<path d="M3 20.5h18"/><path d="M5 20.5V10l5.5-3.5v14"/>
                <path d="M14 20.5V4.5l5 3.5v12.5"/>
                <path d="M7.3 11.5v1.2M7.3 15.2v1.2M16.4 10.5v1.2M16.4 14.2v1.2"/>`),
   },
   food: {
-    label: "Food",
+    label: "Cuisine",
     color: "var(--cat-food)",
     icon: svg(`<path d="M3.5 11.5h17c0 4.7-3.8 8.5-8.5 8.5s-8.5-3.8-8.5-8.5Z"/>
                <path d="M9 8.6c0-1.2 1.2-1.6 1.2-2.8S9 3.6 9 3.6"/>
@@ -43,13 +43,13 @@ export const CATEGORIES = {
                <path d="M4.5 19.5 12.5 11.5"/>`),
   },
   trek: {
-    label: "Trek",
+    label: "Randonnée",
     color: "var(--cat-trek)",
     icon: svg(`<path d="M2.5 19.5 9 7l4.2 7.4L15.6 11l5.9 8.5Z"/>
                <path d="m7.1 11.2 1.9 1.3 1.6-1.1"/>`),
   },
   beach: {
-    label: "Beach",
+    label: "Plage",
     color: "var(--cat-beach)",
     icon: svg(`<path d="M3 11a9 9 0 0 1 18 0"/>
                <path d="M3 11q2.25 2.7 4.5 0 2.25 2.7 4.5 0 2.25 2.7 4.5 0 2.25 2.7 4.5 0"/>
@@ -57,13 +57,13 @@ export const CATEGORIES = {
                <path d="M5 20.6q7-1.8 14 0"/>`),
   },
   diving: {
-    label: "Diving",
+    label: "Plongée",
     color: "var(--cat-diving)",
     icon: svg(`<path d="M16.5 12c0 3.1-3.1 5.6-7 5.6S2.5 15.1 2.5 12s3.1-5.6 7-5.6 7 2.5 7 5.6Z"/>
                <path d="m16.5 12 5-3.2v6.4Z"/><path d="M6.6 10.6h.01"/>`),
   },
   "slow-travel": {
-    label: "Slow travel",
+    label: "Voyage lent",
     color: "var(--cat-slow-travel)",
     icon: svg(`<circle cx="14.2" cy="11.2" r="5"/>
                <path d="M14.2 8.4a2.8 2.8 0 1 0 2.8 2.8"/>
@@ -71,7 +71,7 @@ export const CATEGORIES = {
                <path d="m4.6 16.8-.6-2.2M7 16.4l.4-2.2"/>`),
   },
   offbeat: {
-    label: "Off-beat",
+    label: "Hors des sentiers",
     color: "var(--cat-offbeat)",
     icon: svg(`<circle cx="12" cy="12" r="8.5"/>
                <path d="m15.6 8.4-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1Z"/>`),
@@ -98,7 +98,7 @@ const ALIASES = {
 };
 
 const FALLBACK = {
-  label: "Place",
+  label: "Lieu",
   color: "var(--text-dim)",
   icon: svg(`<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/>`),
 };
@@ -116,5 +116,5 @@ export function catKey(raw) {
 export function catOf(raw) {
   const key = catKey(raw);
   if (key) return { key, ...CATEGORIES[key] };
-  return { key: null, ...FALLBACK, label: String(raw || "Place") };
+  return { key: null, ...FALLBACK, label: String(raw || "Lieu") };
 }

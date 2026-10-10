@@ -18,12 +18,12 @@ import { COUNTRIES, byCode } from "./data/index.js";
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2";
 
 const CATEGORIES = [
-  { id: "food",      label: "Food",       icon: "🍜" },
-  { id: "lodging",   label: "Lodging",    icon: "🏨" },
-  { id: "transport", label: "Transport",  icon: "🚆" },
-  { id: "activity",  label: "Activities", icon: "🎟️" },
-  { id: "shopping",  label: "Shopping",   icon: "🛍️" },
-  { id: "other",     label: "Other",      icon: "•"  },
+  { id: "food",      label: "Repas",       icon: "🍜" },
+  { id: "lodging",   label: "Logement",    icon: "🏨" },
+  { id: "transport", label: "Transport",   icon: "🚆" },
+  { id: "activity",  label: "Activités",   icon: "🎟️" },
+  { id: "shopping",  label: "Achats",      icon: "🛍️" },
+  { id: "other",     label: "Autre",       icon: "•"  },
 ];
 const catOf = (id) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORIES.length - 1];
 
@@ -33,11 +33,11 @@ const catOf = (id) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORI
 // booking-specific fields are asked for here — the rest (amount, currency,
 // country, date, who paid, note) come straight from the expense.
 const PLAN_TYPES = [
-  { id: "transport",  label: "🚆 Transport"  },
-  { id: "lodging",    label: "🏨 Lodging"    },
-  { id: "restaurant", label: "🍽️ Restaurant" },
-  { id: "activity",   label: "🎟️ Activity"   },
-  { id: "other",      label: "📌 Other"      },
+  { id: "transport",  label: "🚆 Transport"   },
+  { id: "lodging",    label: "🏨 Logement"    },
+  { id: "restaurant", label: "🍽️ Restaurant"  },
+  { id: "activity",   label: "🎟️ Activité"    },
+  { id: "other",      label: "📌 Autre"       },
 ];
 // Expense category → default booking type (best guess; user can change it).
 const CAT_TO_PLANTYPE = {
@@ -47,7 +47,7 @@ const CAT_TO_PLANTYPE = {
 const PLAN_PLATFORMS = [
   "Booking.com", "Airbnb", "Agoda", "Hostelworld", "Expedia",
   "Trainline", "Omio", "12Go", "Flixbus", "Trip.com", "Skyscanner",
-  "Kiwi.com", "GetYourGuide", "Direct",
+  "Kiwi.com", "GetYourGuide", "En direct",
 ];
 
 // Currency picker: the full catalogue is fetched from the FX API (see fx.js) and
@@ -62,7 +62,7 @@ let CURRENCIES = null; // [{ code, name }] once ensureCurrencies() resolves
 // might pay in USD in Japan, so the picker offers EVERY country, not just the
 // trip ones. These colours are assigned to the pie slices / legend.
 const COUNTRY_COLORS = ["#6ea8fe", "#ffd166", "#06d6a0", "#ef476f", "#c792ea", "#f78c6b", "#78c6d0"];
-const UNASSIGNED = { code: "", name: "Unassigned", flag: "🌍", color: "#8a97a5" };
+const UNASSIGNED = { code: "", name: "Non attribué", flag: "🌍", color: "#8a97a5" };
 
 // The full country catalogue, fetched from an API (see countries.js) and cached
 // here once it resolves. null until then — the picker shows the trip countries
@@ -107,13 +107,13 @@ function el(html) {
 }
 
 const fmt = (n, cur) =>
-  new Intl.NumberFormat(undefined, { style: "currency", currency: cur || "EUR" }).format(n);
+  new Intl.NumberFormat("fr-FR", { style: "currency", currency: cur || "EUR" }).format(n);
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
 // A back-to-home top bar, reused across every state below.
 function topbar() {
-  const bar = el(`<div class="topbar"><span class="back">← All countries</span></div>`);
+  const bar = el(`<div class="topbar"><span class="back">← Tous les pays</span></div>`);
   bar.querySelector(".back").addEventListener("click", () => (location.hash = "#/"));
   return bar;
 }
@@ -174,15 +174,15 @@ function setupNeededScreen() {
   screen(el(`
     <div class="exp-hero">
       <div class="exp-emoji">💰</div>
-      <h1>Expenses</h1>
-      <p class="exp-sub">Not connected yet</p>
+      <h1>Dépenses</h1>
+      <p class="exp-sub">Pas encore connecté</p>
     </div>`), el(`
     <div class="panel exp-notice">
-      <p>The expense dashboard needs a free Firebase project. It takes a few
-      minutes to set up once.</p>
-      <p>Follow the steps in <code>EXPENSES_SETUP.md</code>, paste your project's
-      config into <code>firebase-config.js</code>, and this screen turns into a
-      working shared tracker.</p>
+      <p>Le tableau de bord des dépenses a besoin d’un projet Firebase gratuit.
+      Quelques minutes suffisent pour le configurer, une fois pour toutes.</p>
+      <p>Suivez les étapes de <code>EXPENSES_SETUP.md</code>, collez la configuration
+      de votre projet dans <code>firebase-config.js</code>, et cet écran devient un
+      vrai suivi partagé.</p>
     </div>`));
 }
 
@@ -190,16 +190,16 @@ function signInScreen(onSignIn, note) {
   const hero = el(`
     <div class="exp-hero">
       <div class="exp-emoji">💰</div>
-      <h1>Expenses</h1>
-      <p class="exp-sub">Private to you and your wife</p>
+      <h1>Dépenses</h1>
+      <p class="exp-sub">Privé, rien que pour vous deux</p>
     </div>`);
   const panel = el(`
     <div class="panel exp-signin">
       ${note ? `<p class="exp-warn">${esc(note)}</p>` : ""}
       <button class="btn-google" type="button">
-        <span class="g">G</span> Sign in with Google
+        <span class="g">G</span> Se connecter avec Google
       </button>
-      <p class="exp-fine">Only approved Google accounts can see the data.</p>
+      <p class="exp-fine">Seuls les comptes Google autorisés peuvent voir les données.</p>
     </div>`);
   panel.querySelector(".btn-google").addEventListener("click", onSignIn);
   screen(hero, panel);
@@ -208,13 +208,13 @@ function signInScreen(onSignIn, note) {
 function notAllowedScreen(email, onSignOut) {
   const panel = el(`
     <div class="panel exp-signin">
-      <p class="exp-warn">The account <strong>${esc(email)}</strong> isn't
-      authorized to view these expenses.</p>
-      <button class="btn-ghost" type="button">Sign out &amp; try another account</button>
+      <p class="exp-warn">Le compte <strong>${esc(email)}</strong> n’est pas
+      autorisé à voir ces dépenses.</p>
+      <button class="btn-ghost" type="button">Se déconnecter et essayer un autre compte</button>
     </div>`);
   panel.querySelector("button").addEventListener("click", onSignOut);
   screen(el(`
-    <div class="exp-hero"><div class="exp-emoji">🔒</div><h1>Expenses</h1></div>`), panel);
+    <div class="exp-hero"><div class="exp-emoji">🔒</div><h1>Dépenses</h1></div>`), panel);
 }
 
 /* ── Dashboard ────────────────────────────────────────────────────────────── */
@@ -266,9 +266,9 @@ function settleHTML(items) {
   const ranked = ALLOWED_EMAILS.map((p) => [p, bal[p]]).sort((a, b) => b[1] - a[1]);
   const [creditor, owed] = ranked[0];
   const debtor = ranked[ranked.length - 1][0];
-  if (owed < 0.01) return `<div class="exp-settle even">✓ You're even</div>`;
-  return `<div class="exp-settle">${esc(nameFor(debtor))} owes ${esc(nameFor(creditor))}
-    <strong>${esc(fmt(owed, HOME_CURRENCY))}</strong> to even up</div>`;
+  if (owed < 0.01) return `<div class="exp-settle even">✓ Vous êtes quittes</div>`;
+  return `<div class="exp-settle">${esc(nameFor(debtor))} doit
+    <strong>${esc(fmt(owed, HOME_CURRENCY))}</strong> à ${esc(nameFor(creditor))} pour équilibrer</div>`;
 }
 
 // A single combined total in the home currency, using live FX rates. Shown
@@ -282,15 +282,15 @@ function homeSummaryCard(items) {
   if (info.source === "none") {
     return `<div class="panel exp-summary exp-home">
       <div class="exp-total"><span class="exp-total-num">${esc(HOME_CURRENCY)}</span>
-      <span class="exp-total-lbl">converting…</span></div></div>`;
+      <span class="exp-total-lbl">conversion…</span></div></div>`;
   }
   if (info.source === "unavailable") {
     // Offline and rates were never fetched — don't invent a number. The
     // per-currency totals below are exact; this fills in once back online.
     return `<div class="panel exp-summary exp-home">
-      <div class="exp-rate-note pending">💱 Combined ${esc(HOME_CURRENCY)} total is pending —
-      you're offline and rates haven't been fetched yet. It'll appear automatically
-      once you're back online.</div></div>`;
+      <div class="exp-rate-note pending">💱 Le total combiné en ${esc(HOME_CURRENCY)} est en attente —
+      vous êtes hors ligne et les taux n’ont pas encore été récupérés. Il s’affichera
+      automatiquement dès votre retour en ligne.</div></div>`;
   }
 
   let total = 0;
@@ -307,14 +307,14 @@ function homeSummaryCard(items) {
   const settle = settleHTML(items);
 
   const note = info.stale
-    ? `≈ last fetched rates${info.date ? " · " + esc(info.date) : ""} (offline)`
-    : `live rates${info.date ? " · " + esc(info.date) : ""}`;
+    ? `≈ derniers taux récupérés${info.date ? " · " + esc(info.date) : ""} (hors ligne)`
+    : `taux en direct${info.date ? " · " + esc(info.date) : ""}`;
 
   return `
     <div class="panel exp-summary exp-home">
       <div class="exp-total">
         <span class="exp-total-num">${esc(fmt(total, HOME_CURRENCY))}</span>
-        <span class="exp-total-lbl">all in ${esc(HOME_CURRENCY)}</span>
+        <span class="exp-total-lbl">tout en ${esc(HOME_CURRENCY)}</span>
       </div>
       <div class="exp-people">
         ${people.map(([who, amt]) => `
@@ -325,7 +325,7 @@ function homeSummaryCard(items) {
       </div>
       ${settle}
       <div class="exp-rate-note">${note}</div>
-      ${unknown.size ? `<div class="exp-rate-note warn">⚠ no rate for ${esc([...unknown].join(", "))} — excluded from this total</div>` : ""}
+      ${unknown.size ? `<div class="exp-rate-note warn">⚠ pas de taux pour ${esc([...unknown].join(", "))} — exclu de ce total</div>` : ""}
     </div>`;
 }
 
@@ -349,7 +349,7 @@ function spendByCountry(items) {
     .sort((a, b) =>
       tier(a.code) - tier(b.code) ||
       tripRank(a.code) - tripRank(b.code) ||
-      a.name.localeCompare(b.name))
+      a.name.localeCompare(b.name, "fr"))
     .map((g, i) => ({ ...g, color: g.code === "" ? UNASSIGNED.color : COUNTRY_COLORS[i % COUNTRY_COLORS.length] }));
   const total = groups.reduce((s, g) => s + g.total, 0);
   return { groups, total, unconvertible };
@@ -385,7 +385,7 @@ function pieSVG(groups, total) {
     }).join("");
   }
   return `
-    <svg class="exp-pie" viewBox="0 0 240 240" role="img" aria-label="Spend by country">
+    <svg class="exp-pie" viewBox="0 0 240 240" role="img" aria-label="Dépenses par pays">
       ${slices}
       <text x="${cx}" y="${cy - 4}" class="exp-pie-total" text-anchor="middle">${esc(fmt(total, HOME_CURRENCY))}</text>
       <text x="${cx}" y="${cy + 16}" class="exp-pie-sub" text-anchor="middle">total</text>
@@ -398,34 +398,34 @@ function countrySpendCard(items) {
   const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
   const info = ratesInfo();
   if (hasForeign && info.source === "none")
-    return `<div class="panel exp-country"><h2>By country</h2>
-      <p class="exp-rate-note pending">💱 converting…</p></div>`;
+    return `<div class="panel exp-country"><h2>Par pays</h2>
+      <p class="exp-rate-note pending">💱 conversion…</p></div>`;
   if (hasForeign && info.source === "unavailable")
-    return `<div class="panel exp-country"><h2>By country</h2>
-      <p class="exp-rate-note pending">💱 The by-country breakdown needs exchange rates —
-      you're offline and they haven't been fetched yet. It'll appear once you're back online.</p></div>`;
+    return `<div class="panel exp-country"><h2>Par pays</h2>
+      <p class="exp-rate-note pending">💱 La répartition par pays a besoin des taux de change —
+      vous êtes hors ligne et ils n’ont pas encore été récupérés. Elle s’affichera dès votre retour en ligne.</p></div>`;
 
   const { groups, total, unconvertible } = spendByCountry(items);
   if (total <= 0)
-    return `<div class="panel exp-country"><h2>By country</h2>
-      <p class="exp-empty">No convertible spend yet.</p></div>`;
+    return `<div class="panel exp-country"><h2>Par pays</h2>
+      <p class="exp-empty">Aucune dépense convertible pour l’instant.</p></div>`;
 
   const legend = groups.map((g) => `
     <div class="exp-legend-row">
       <span class="sw" style="background:${g.color}"></span>
       <span class="lg-name">${g.flag} ${esc(g.name)}</span>
       <span class="lg-amt">${esc(fmt(g.total, HOME_CURRENCY))}</span>
-      <span class="lg-pct">${(g.total / total * 100).toFixed(0)}%</span>
+      <span class="lg-pct">${(g.total / total * 100).toFixed(0)}\u00a0%</span>
     </div>`).join("");
 
   return `
     <div class="panel exp-country">
-      <h2>By country</h2>
+      <h2>Par pays</h2>
       <div class="exp-country-body">
         ${pieSVG(groups, total)}
         <div class="exp-legend">${legend}</div>
       </div>
-      ${unconvertible ? `<div class="exp-rate-note warn">⚠ ${unconvertible} expense${unconvertible > 1 ? "s" : ""} in a currency with no rate — excluded</div>` : ""}
+      ${unconvertible ? `<div class="exp-rate-note warn">⚠ ${unconvertible} dépense${unconvertible > 1 ? "s" : ""} dans une devise sans taux — exclue${unconvertible > 1 ? "s" : ""}</div>` : ""}
     </div>`;
 }
 
@@ -467,16 +467,16 @@ function personBudgetBlock(name, spent, budget, elapsed, phase) {
     if (phase === "pre") {
       // Pre-trip: pace hasn't started, but anything already spent (e.g. train
       // tickets booked ahead) still counts and shows as pre-booked.
-      verdict = "Not started"; vClass = "ok";
-      if (spent > 0) note = `${esc(fmt(spent, HOME_CURRENCY))} pre-booked`;
+      verdict = "Pas commencé"; vClass = "ok";
+      if (spent > 0) note = `${esc(fmt(spent, HOME_CURRENCY))} réservés à l’avance`;
     } else {
-      if (spent > budget) { verdict = "Over budget"; vClass = "over"; }
-      else if (spent <= expected * 1.05) { verdict = "On track"; vClass = "ok"; }
-      else { verdict = "Ahead of pace"; vClass = "warn"; }
+      if (spent > budget) { verdict = "Budget dépassé"; vClass = "over"; }
+      else if (spent <= expected * 1.05) { verdict = "Dans les clous"; vClass = "ok"; }
+      else { verdict = "En avance sur le rythme"; vClass = "warn"; }
 
-      const bits = [`expected by today ≈ <strong>${esc(fmt(expected, HOME_CURRENCY))}</strong>`];
+      const bits = [`prévu à ce jour ≈ <strong>${esc(fmt(expected, HOME_CURRENCY))}</strong>`];
       if (elapsed > 0 && elapsed < 1)
-        bits.push(`projected total <strong>${esc(fmt(spent / elapsed, HOME_CURRENCY))}</strong>`);
+        bits.push(`total projeté <strong>${esc(fmt(spent / elapsed, HOME_CURRENCY))}</strong>`);
       note = bits.join(" · ");
     }
   }
@@ -488,8 +488,8 @@ function personBudgetBlock(name, spent, budget, elapsed, phase) {
         ${verdict ? `<span class="exp-verdict ${vClass}">${esc(verdict)}</span>` : ""}
       </div>
       <div class="exp-budget-nums">
-        <div><span class="k">Spent</span><span class="v">${esc(fmt(spent, HOME_CURRENCY))}</span></div>
-        <div><span class="k">${remaining >= 0 ? "Remaining" : "Over by"}</span>
+        <div><span class="k">Dépensé</span><span class="v">${esc(fmt(spent, HOME_CURRENCY))}</span></div>
+        <div><span class="k">${remaining >= 0 ? "Restant" : "Dépassement"}</span>
              <span class="v${remaining < 0 ? " over" : ""}">${esc(fmt(Math.abs(remaining), HOME_CURRENCY))}</span></div>
         <div><span class="k">Budget</span><span class="v">${esc(fmt(budget, HOME_CURRENCY))}</span></div>
       </div>
@@ -520,11 +520,11 @@ function budgetCard(items) {
     if (now < start) {
       phase = "pre";
       const d = Math.max(0, Math.ceil((start - now) / 86400000));
-      paceNote = `trip starts in ${d} day${d === 1 ? "" : "s"}`;
+      paceNote = `départ dans ${d} jour${d > 1 ? "s" : ""}`;
     } else {
       phase = "during";
       const d = Math.max(0, Math.ceil((end - now) / 86400000));
-      if (now < end) paceNote = `${d} day${d === 1 ? "" : "s"} left`;
+      if (now < end) paceNote = `${d} jour${d > 1 ? "s" : ""} restant${d > 1 ? "s" : ""}`;
     }
   }
 
@@ -536,17 +536,17 @@ function budgetCard(items) {
     <div class="panel exp-budget">
       <div class="exp-budget-head">
         <h2>Budget</h2>
-        <span class="exp-budget-sub">${esc(fmt(perBudget, HOME_CURRENCY))} each${paceNote ? ` · ${esc(paceNote)}` : ""}</span>
+        <span class="exp-budget-sub">${esc(fmt(perBudget, HOME_CURRENCY))} chacun${paceNote ? ` · ${esc(paceNote)}` : ""}</span>
       </div>
       ${blocks}
-      ${pending ? `<div class="exp-rate-note warn">⚠ some foreign expenses aren't converted yet — spend is understated until rates load</div>` : ""}
+      ${pending ? `<div class="exp-rate-note warn">⚠ certaines dépenses en devises ne sont pas encore converties — le total est sous-estimé jusqu’au chargement des taux</div>` : ""}
     </div>`;
 }
 
 function summaryCards(items) {
   const groups = totalsByCurrency(items);
   const curs = Object.keys(groups).sort();
-  if (!curs.length) return `<div class="panel exp-empty">No expenses yet — add the first one below.</div>`;
+  if (!curs.length) return `<div class="panel exp-empty">Aucune dépense pour l’instant — ajoutez la première ci-dessus.</div>`;
 
   const perCurrency = curs.map((cur) => {
     const g = groups[cur];
@@ -607,10 +607,11 @@ const filterActive = () =>
   expFilter.q.trim() !== "" || expFilter.category !== ALL ||
   expFilter.country !== ALL || expFilter.paidBy !== ALL;
 
-const norm = (s) => String(s || "").toLowerCase();
+// Lower-case and accent-free, so "repas", "viet" or "chloe" match "Repas", "Viêt Nam", "Chloé".
+const norm = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 // Does one expense pass the current filter? Text search spans the note plus the
-// category, country and payer labels so "food", "vietnam" or a name all work.
+// category, country and payer labels so "repas", "vietnam" or a name all work.
 function matchesFilter(e) {
   if (expFilter.category !== ALL && e.category !== expFilter.category) return false;
   if (expFilter.paidBy !== ALL && e.paidBy !== expFilter.paidBy) return false;
@@ -624,11 +625,11 @@ function matchesFilter(e) {
   return true;
 }
 
-// Pretty day header from an ISO date ("2026-07-10" → "Wed 10 Jul 2026").
+// Pretty day header from an ISO date ("2026-07-10" → "ven. 10 juil. 2026").
 function dayHeading(iso) {
   const d = new Date(`${iso}T00:00:00`);
-  if (!iso || Number.isNaN(d.getTime())) return "Undated";
-  return d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+  if (!iso || Number.isNaN(d.getTime())) return "Sans date";
+  return d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 }
 
 // The filter bar: a search box plus category / country / payer dropdowns. The
@@ -638,28 +639,28 @@ function filterBarHTML(items) {
     .map(([val, label]) => `<option value="${esc(val)}"${val === sel ? " selected" : ""}>${esc(label)}</option>`)
     .join("");
 
-  const catOpts = [[ALL, "All categories"],
+  const catOpts = [[ALL, "Toutes catégories"],
     ...CATEGORIES.map((c) => [c.id, `${c.icon} ${c.label}`])];
 
   const tier = (code) => (code === "" ? 3 : tripRank(code) < 99 ? 1 : 2);
   const countries = [...new Set(items.map((e) => e.country || ""))]
     .map((code) => { const c = countryOf(code); return { code, name: c.name, flag: c.flag }; })
-    .sort((a, b) => tier(a.code) - tier(b.code) || tripRank(a.code) - tripRank(b.code) || a.name.localeCompare(b.name));
-  const countryOpts = [[ALL, "All countries"],
+    .sort((a, b) => tier(a.code) - tier(b.code) || tripRank(a.code) - tripRank(b.code) || a.name.localeCompare(b.name, "fr"));
+  const countryOpts = [[ALL, "Tous les pays"],
     ...countries.map((c) => [c.code, `${c.flag} ${c.name}`])];
 
   const people = [...new Set(items.map((e) => e.paidBy))];
-  const paidByOpts = [[ALL, "Anyone"],
+  const paidByOpts = [[ALL, "Tout le monde"],
     ...people.map((p) => [p, nameFor(p)])];
 
   return `
     <div class="exp-filter">
-      <input class="exp-search" type="search" name="q" placeholder="Search expenses…"
-             autocomplete="off" value="${esc(expFilter.q)}" aria-label="Search expenses" />
+      <input class="exp-search" type="search" name="q" placeholder="Rechercher une dépense…"
+             autocomplete="off" value="${esc(expFilter.q)}" aria-label="Rechercher une dépense" />
       <div class="exp-filter-row">
-        <select class="exp-fsel" name="category" aria-label="Filter by category">${optsFor(catOpts, expFilter.category)}</select>
-        <select class="exp-fsel" name="country" aria-label="Filter by country">${optsFor(countryOpts, expFilter.country)}</select>
-        <select class="exp-fsel" name="paidBy" aria-label="Filter by who paid">${optsFor(paidByOpts, expFilter.paidBy)}</select>
+        <select class="exp-fsel" name="category" aria-label="Filtrer par catégorie">${optsFor(catOpts, expFilter.category)}</select>
+        <select class="exp-fsel" name="country" aria-label="Filtrer par pays">${optsFor(countryOpts, expFilter.country)}</select>
+        <select class="exp-fsel" name="paidBy" aria-label="Filtrer par payeur">${optsFor(paidByOpts, expFilter.paidBy)}</select>
       </div>
     </div>`;
 }
@@ -678,30 +679,30 @@ function bookingLinkForm(expense, onSave, onCancel) {
             `<option value="${t.id}"${CAT_TO_PLANTYPE[expense.category] === t.id ? " selected" : ""}>${esc(t.label)}</option>`).join("")}</select>
         </label>
         <label class="exp-field status">
-          <span>Status</span>
-          <select name="planStatus"><option value="booked">✅ Booked</option><option value="todo">📝 To do</option></select>
+          <span>Statut</span>
+          <select name="planStatus"><option value="booked">✅ Réservé</option><option value="todo">📝 À faire</option></select>
         </label>
         <label class="exp-field platform">
-          <span>Platform</span>
+          <span>Plateforme</span>
           <input name="planPlatform" type="text" maxlength="40" list="exp-link-platforms" placeholder="Booking, Flixbus…" />
           <datalist id="exp-link-platforms">${PLAN_PLATFORMS.map((p) => `<option value="${esc(p)}"></option>`).join("")}</datalist>
         </label>
         <label class="exp-field stime">
-          <span>Start time</span>
+          <span>Heure de début</span>
           <input name="planStartTime" type="time" />
         </label>
         <label class="exp-field edate">
-          <span>End date</span>
+          <span>Date de fin</span>
           <input name="planEndDate" type="date" />
         </label>
         <label class="exp-field etime">
-          <span>End time</span>
+          <span>Heure de fin</span>
           <input name="planEndTime" type="time" />
         </label>
       </div>
       <div class="exp-linkform-actions">
-        <button type="button" class="btn-ghost small exp-linkform-cancel">Cancel</button>
-        <button type="submit" class="btn-add exp-linkform-save">Add booking</button>
+        <button type="button" class="btn-ghost small exp-linkform-cancel">Annuler</button>
+        <button type="submit" class="btn-add exp-linkform-save">Ajouter la réservation</button>
       </div>
     </form>`);
 
@@ -715,7 +716,7 @@ function bookingLinkForm(expense, onSave, onCancel) {
     if (endDate) {
       const s = `${expense.date}T${startTime || "00:00"}`;
       const en = `${endDate}T${endTime || (endDate === expense.date ? startTime || "00:00" : "23:59")}`;
-      if (en < s) { alert("The booking's end is before its start — check the dates."); return; }
+      if (en < s) { alert("La fin de la réservation est avant son début — vérifiez les dates."); return; }
     }
     const plan = {
       type: f.planType.value,
@@ -731,7 +732,7 @@ function bookingLinkForm(expense, onSave, onCancel) {
     const btn = form.querySelector(".exp-linkform-save");
     btn.disabled = true;
     try { await onSave(plan); }
-    catch (err) { alert("Couldn't save: " + (err?.message || err)); btn.disabled = false; }
+    catch (err) { alert("Enregistrement impossible : " + (err?.message || err)); btn.disabled = false; }
   });
   return form;
 }
@@ -742,8 +743,8 @@ function expenseRows(items, actions) {
   const list = el(`
     <div class="panel exp-list">
       <div class="exp-list-head">
-        <h2>All expenses</h2>
-        <button class="exp-clear" type="button" hidden>Clear filters</button>
+        <h2>Toutes les dépenses</h2>
+        <button class="exp-clear" type="button" hidden>Effacer les filtres</button>
       </div>
       ${filterBarHTML(items)}
       <div class="exp-rows"></div>
@@ -759,7 +760,7 @@ function expenseRows(items, actions) {
     clearBtn.hidden = !filterActive();
 
     if (!filtered.length) {
-      body.innerHTML = `<p class="exp-empty">No expenses match — try a different search or filter.</p>`;
+      body.innerHTML = `<p class="exp-empty">Aucune dépense ne correspond — essayez une autre recherche ou un autre filtre.</p>`;
       moreWrap.innerHTML = "";
       return;
     }
@@ -776,8 +777,8 @@ function expenseRows(items, actions) {
       const c = catOf(e.category);
       // Only call out the split when it isn't the default "both" — a "just for
       // X" expense is worth flagging in the row.
-      const forTag = e.split && e.split !== "both" ? ` · for ${esc(nameFor(e.split))}` : "";
-      const bookedTag = e.linkedPlanId ? ` · 🗓️ booked` : "";
+      const forTag = e.split && e.split !== "both" ? ` · pour ${esc(nameFor(e.split))}` : "";
+      const bookedTag = e.linkedPlanId ? ` · 🗓️ réservé` : "";
       html += `
         <div class="exp-row" data-id="${esc(e.id)}">
           <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
@@ -786,18 +787,18 @@ function expenseRows(items, actions) {
             <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}${bookedTag}</span>
           </span>
           <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
-          <button class="exp-edit" title="Edit" aria-label="Edit">✎</button>
-          ${e.linkedPlanId ? "" : `<button class="exp-addbook" title="Add a linked booking" aria-label="Add booking">🗓️+</button>`}
-          <button class="exp-del" title="Delete" aria-label="Delete">✕</button>
+          <button class="exp-edit" title="Modifier" aria-label="Modifier">✎</button>
+          ${e.linkedPlanId ? "" : `<button class="exp-addbook" title="Ajouter une réservation liée" aria-label="Ajouter une réservation">🗓️+</button>`}
+          <button class="exp-del" title="Supprimer" aria-label="Supprimer">✕</button>
         </div>`;
     }
     body.innerHTML = html;
 
     const remaining = filtered.length - shown;
-    const countNote = filterActive() ? ` of ${items.length}` : "";
+    const countNote = filterActive() ? ` sur ${items.length}` : "";
     moreWrap.innerHTML = remaining > 0
-      ? `<button class="btn-more" type="button">Show ${Math.min(PAGE, remaining)} more<span class="exp-more-of"> · ${remaining} of ${filtered.length} hidden</span></button>`
-      : (filtered.length > PAGE || filterActive() ? `<div class="exp-count">${filtered.length}${countNote} expenses</div>` : "");
+      ? `<button class="btn-more" type="button">Afficher ${Math.min(PAGE, remaining)} de plus<span class="exp-more-of"> · ${remaining} sur ${filtered.length} masquées</span></button>`
+      : (filtered.length > PAGE || filterActive() ? `<div class="exp-count">${filtered.length}${countNote} dépense${filtered.length > 1 ? "s" : ""}</div>` : "");
 
     body.querySelectorAll(".exp-del").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -879,10 +880,10 @@ function currencyOptionsHTML(selected) {
   const label = (x) => `${x.code} — ${x.name}`;
 
   return `
-    <optgroup label="Common">
+    <optgroup label="Courantes">
       ${common.map((c) => opt(c, label(byCode.get(c)))).join("")}
     </optgroup>
-    <optgroup label="All currencies">
+    <optgroup label="Toutes les devises">
       ${rest.map((x) => opt(x.code, label(x))).join("")}
     </optgroup>`;
 }
@@ -897,11 +898,11 @@ function countryOptionsHTML(selected) {
   const tripCodes = new Set(COUNTRIES.map((c) => c.code));
   const others = (COUNTRIES_ALL || []).filter((c) => !tripCodes.has(c.code));
   return `
-    <optgroup label="Trip">
+    <optgroup label="Voyage">
       ${COUNTRIES.map((c) => opt(c.code, `${c.flag} ${c.name}`)).join("")}
     </optgroup>
-    ${opt("", "🌍 Other / unassigned")}
-    ${others.length ? `<optgroup label="All countries">
+    ${opt("", "🌍 Autre / non attribué")}
+    ${others.length ? `<optgroup label="Tous les pays">
       ${others.map((c) => opt(c.code, `${flagOf(c.code)} ${c.name}`)).join("")}
     </optgroup>` : ""}`;
 }
@@ -917,15 +918,15 @@ function payerOptionsHTML(selected) {
   return ALLOWED_EMAILS
     .map((em) => `<option value="${esc(em)}"${em === selected ? " selected" : ""}>${esc(nameFor(em))}</option>`)
     .join("") +
-    `<option value="${esc(COMMON_ACCOUNT)}"${COMMON_ACCOUNT === selected ? " selected" : ""}>🤝 ${esc(nameFor(COMMON_ACCOUNT))} (shared)</option>`;
+    `<option value="${esc(COMMON_ACCOUNT)}"${COMMON_ACCOUNT === selected ? " selected" : ""}>🤝 ${esc(nameFor(COMMON_ACCOUNT))} (partagé)</option>`;
 }
 // "For whom" — who the cost is split between. Defaults to both of you (the usual
 // case); pick one person for something only they benefit from (a solo gift, a
 // personal purchase) so it doesn't land on the other's half.
 function splitOptionsHTML(selected) {
   const sel = selected || "both";
-  return `<option value="both"${sel === "both" ? " selected" : ""}>👫 Both of us</option>` +
-    ALLOWED_EMAILS.map((em) => `<option value="${esc(em)}"${em === sel ? " selected" : ""}>${esc(nameFor(em))} only</option>`).join("");
+  return `<option value="both"${sel === "both" ? " selected" : ""}>👫 Nous deux</option>` +
+    ALLOWED_EMAILS.map((em) => `<option value="${esc(em)}"${em === sel ? " selected" : ""}>${esc(nameFor(em))} uniquement</option>`).join("");
 }
 
 function addForm(user, onAdd) {
@@ -941,30 +942,30 @@ function addForm(user, onAdd) {
 
   const form = el(`
     <form class="panel exp-form">
-      <h2>Add an expense</h2>
+      <h2>Ajouter une dépense</h2>
       <div class="exp-grid">
         <label class="exp-field amt">
-          <span>Amount</span>
-          <input name="amount" type="number" inputmode="decimal" step="0.01" min="0" required placeholder="0.00" />
+          <span>Montant</span>
+          <input name="amount" type="number" inputmode="decimal" step="0.01" min="0" required placeholder="0,00" />
         </label>
         <label class="exp-field cur">
-          <span>Currency</span>
+          <span>Devise</span>
           <select name="currency" required>${currencyOptionsHTML(defaultCur)}</select>
         </label>
         <label class="exp-field cat">
-          <span>Category</span>
+          <span>Catégorie</span>
           <select name="category">${catOpts}</select>
         </label>
         <label class="exp-field country">
-          <span>Country</span>
+          <span>Pays</span>
           <select name="country">${countryOptionsHTML(defaultCountry)}</select>
         </label>
         <label class="exp-field who">
-          <span>Paid by</span>
+          <span>Payé par</span>
           <select name="paidBy">${peopleOpts}</select>
         </label>
         <label class="exp-field forwhom">
-          <span>For</span>
+          <span>Pour</span>
           <select name="split">${splitOpts}</select>
         </label>
         <label class="exp-field date">
@@ -973,12 +974,12 @@ function addForm(user, onAdd) {
         </label>
         <label class="exp-field note">
           <span>Note</span>
-          <input name="note" type="text" maxlength="80" placeholder="e.g. dinner in Hanoi" />
+          <input name="note" type="text" maxlength="80" placeholder="ex. dîner à Hanoï" />
         </label>
       </div>
       <label class="plan-alsoexp">
         <input name="alsoPlan" type="checkbox" />
-        <span>Also add this to the Planner as a booking</span>
+        <span>Ajouter aussi au Planning comme réservation</span>
       </label>
       <div class="exp-plan-extra" hidden>
         <div class="exp-grid">
@@ -987,32 +988,32 @@ function addForm(user, onAdd) {
             <select name="planType">${PLAN_TYPES.map((t) => `<option value="${t.id}">${esc(t.label)}</option>`).join("")}</select>
           </label>
           <label class="exp-field status">
-            <span>Status</span>
+            <span>Statut</span>
             <select name="planStatus">
-              <option value="booked">✅ Booked</option>
-              <option value="todo">📝 To do</option>
+              <option value="booked">✅ Réservé</option>
+              <option value="todo">📝 À faire</option>
             </select>
           </label>
           <label class="exp-field platform">
-            <span>Platform</span>
+            <span>Plateforme</span>
             <input name="planPlatform" type="text" maxlength="40" list="exp-plan-platforms" placeholder="Booking, Flixbus…" />
             <datalist id="exp-plan-platforms">${PLAN_PLATFORMS.map((p) => `<option value="${esc(p)}"></option>`).join("")}</datalist>
           </label>
           <label class="exp-field stime">
-            <span>Start time</span>
+            <span>Heure de début</span>
             <input name="planStartTime" type="time" />
           </label>
           <label class="exp-field edate">
-            <span>End date</span>
+            <span>Date de fin</span>
             <input name="planEndDate" type="date" />
           </label>
           <label class="exp-field etime">
-            <span>End time</span>
+            <span>Heure de fin</span>
             <input name="planEndTime" type="time" />
           </label>
         </div>
       </div>
-      <button class="btn-add" type="submit">Add expense</button>
+      <button class="btn-add" type="submit">Ajouter la dépense</button>
     </form>`);
 
   // Reveal the booking fields only when "also add to Planner" is ticked, and
@@ -1037,7 +1038,7 @@ function addForm(user, onAdd) {
     // Safety net: the picker only offers convertible codes, but never store one
     // we couldn't later turn into euros.
     if (!isSupported(currency)) {
-      alert(`Can't use "${currency}" — no ${HOME_CURRENCY} conversion is available for it. Pick another currency.`);
+      alert(`Impossible d’utiliser « ${currency} » — aucune conversion en ${HOME_CURRENCY} n’est disponible. Choisissez une autre devise.`);
       return;
     }
     const date = f.date.value || todayISO();
@@ -1054,7 +1055,7 @@ function addForm(user, onAdd) {
       if (endDate) {
         const s = `${date}T${startTime || "00:00"}`;
         const en = `${endDate}T${endTime || (endDate === date ? startTime || "00:00" : "23:59")}`;
-        if (en < s) { alert("The booking's end is before its start — check the dates."); return; }
+        if (en < s) { alert("La fin de la réservation est avant son début — vérifiez les dates."); return; }
       }
       planExtra = {
         type: f.planType.value,
@@ -1090,7 +1091,7 @@ function addForm(user, onAdd) {
       form.querySelector(".exp-plan-extra").hidden = true;
       f.amount.focus();
     } catch (err) {
-      alert("Couldn't save: " + (err?.message || err));
+      alert("Enregistrement impossible : " + (err?.message || err));
     } finally {
       btn.disabled = false;
     }
@@ -1108,27 +1109,27 @@ function editExpenseForm(item, onSave, onCancel) {
     <form class="exp-editform">
       <div class="exp-grid">
         <label class="exp-field amt">
-          <span>Amount</span>
+          <span>Montant</span>
           <input name="amount" type="number" inputmode="decimal" step="0.01" min="0" required value="${esc(item.amount)}" />
         </label>
         <label class="exp-field cur">
-          <span>Currency</span>
+          <span>Devise</span>
           <select name="currency" required>${currencyOptionsHTML(item.currency || HOME_CURRENCY)}</select>
         </label>
         <label class="exp-field cat">
-          <span>Category</span>
+          <span>Catégorie</span>
           <select name="category">${categoryOptionsHTML(item.category)}</select>
         </label>
         <label class="exp-field country">
-          <span>Country</span>
+          <span>Pays</span>
           <select name="country">${countryOptionsHTML(item.country || "")}</select>
         </label>
         <label class="exp-field who">
-          <span>Paid by</span>
+          <span>Payé par</span>
           <select name="paidBy">${payerOptionsHTML(item.paidBy)}</select>
         </label>
         <label class="exp-field forwhom">
-          <span>For</span>
+          <span>Pour</span>
           <select name="split">${splitOptionsHTML(item.split)}</select>
         </label>
         <label class="exp-field date">
@@ -1137,12 +1138,12 @@ function editExpenseForm(item, onSave, onCancel) {
         </label>
         <label class="exp-field note">
           <span>Note</span>
-          <input name="note" type="text" maxlength="80" value="${esc(item.note || "")}" placeholder="e.g. dinner in Hanoi" />
+          <input name="note" type="text" maxlength="80" value="${esc(item.note || "")}" placeholder="ex. dîner à Hanoï" />
         </label>
       </div>
       <div class="exp-linkform-actions">
-        <button type="button" class="btn-ghost small exp-editform-cancel">Cancel</button>
-        <button type="submit" class="btn-add exp-editform-save">Save changes</button>
+        <button type="button" class="btn-ghost small exp-editform-cancel">Annuler</button>
+        <button type="submit" class="btn-add exp-editform-save">Enregistrer</button>
       </div>
     </form>`);
 
@@ -1154,7 +1155,7 @@ function editExpenseForm(item, onSave, onCancel) {
     if (!(amount > 0)) return;
     const currency = (f.currency.value || HOME_CURRENCY).toUpperCase().trim();
     if (!isSupported(currency)) {
-      alert(`Can't use "${currency}" — no ${HOME_CURRENCY} conversion is available for it. Pick another currency.`);
+      alert(`Impossible d’utiliser « ${currency} » — aucune conversion en ${HOME_CURRENCY} n’est disponible. Choisissez une autre devise.`);
       return;
     }
     const patch = {
@@ -1170,7 +1171,7 @@ function editExpenseForm(item, onSave, onCancel) {
     const btn = form.querySelector(".exp-editform-save");
     btn.disabled = true;
     try { await onSave(patch); }
-    catch (err) { alert("Couldn't save: " + (err?.message || err)); btn.disabled = false; }
+    catch (err) { alert("Enregistrement impossible : " + (err?.message || err)); btn.disabled = false; }
   });
   return form;
 }
@@ -1179,10 +1180,10 @@ function dashboard(user, items, actions) {
   const head = el(`
     <div class="exp-hero exp-hero-live">
       <div>
-        <h1>💰 Expenses</h1>
-        <p class="exp-sub">${esc(nameFor(user.email))} · live shared ledger</p>
+        <h1>💰 Dépenses</h1>
+        <p class="exp-sub">${esc(nameFor(user.email))} · registre partagé en direct</p>
       </div>
-      <button class="btn-ghost small exp-out" type="button">Sign out</button>
+      <button class="btn-ghost small exp-out" type="button">Se déconnecter</button>
     </div>`);
   head.querySelector(".exp-out").addEventListener("click", actions.signOut);
 
@@ -1197,22 +1198,22 @@ function dashboard(user, items, actions) {
 
 /* ── Entry point ──────────────────────────────────────────────────────────── */
 export async function renderExpenses() {
-  document.title = "Expenses · Trip Companion";
+  document.title = "Dépenses · Compagnon de voyage";
   expShown = PAGE; // collapse the list back to the first page on a fresh open
   expFilter.q = ""; expFilter.category = ALL; expFilter.country = ALL; expFilter.paidBy = ALL;
 
   if (!isConfigured()) return setupNeededScreen();
 
   // Loading placeholder while the SDK downloads.
-  screen(el(`<div class="panel exp-empty">Connecting…</div>`));
+  screen(el(`<div class="panel exp-empty">Connexion…</div>`));
 
   let f;
   try {
     f = await loadFirebase();
   } catch (err) {
     return screen(el(`<div class="panel exp-notice">
-      <p class="exp-warn">Couldn't reach Firebase. The expense dashboard needs an
-      internet connection.</p></div>`));
+      <p class="exp-warn">Impossible de joindre Firebase. Le tableau de bord des dépenses
+      a besoin d’une connexion internet.</p></div>`));
   }
 
   const provider = new f.GoogleAuthProvider();
@@ -1224,7 +1225,7 @@ export async function renderExpenses() {
       if (String(err?.code).includes("popup")) {
         await f.signInWithRedirect(f.auth, provider);
       } else {
-        alert("Sign-in failed: " + (err?.message || err));
+        alert("Échec de la connexion : " + (err?.message || err));
       }
     }
   };
@@ -1270,9 +1271,9 @@ export async function renderExpenses() {
       // Delete an expense; if it's linked to a booking, offer to remove that too.
       remove: async (item) => {
         if (item.linkedPlanId) {
-          if (!confirm("Delete this expense? Its linked booking will also be removed.")) return;
+          if (!confirm("Supprimer cette dépense ? La réservation liée sera aussi supprimée.")) return;
           await f.deleteDoc(f.doc(f.db, "plans", item.linkedPlanId)).catch(() => {});
-        } else if (!confirm("Delete this expense?")) return;
+        } else if (!confirm("Supprimer cette dépense ?")) return;
         return f.deleteDoc(f.doc(f.db, "expenses", item.id));
       },
       // Attach a fresh Planner booking to an existing expense (both directions
@@ -1313,9 +1314,9 @@ export async function renderExpenses() {
         dashboard(user, items, actions);
       },
       (err) => screen(el(`<div class="panel exp-notice">
-        <p class="exp-warn">Couldn't load expenses: ${esc(err.message)}</p>
-        <p class="exp-fine">If this says "permission denied", double-check that
-        your email is in <code>firestore.rules</code>.</p></div>`))
+        <p class="exp-warn">Impossible de charger les dépenses&nbsp;: ${esc(err.message)}</p>
+        <p class="exp-fine">Si le message indique «&nbsp;permission denied&nbsp;», vérifiez que
+        votre e-mail figure bien dans <code>firestore.rules</code>.</p></div>`))
     );
   });
 }

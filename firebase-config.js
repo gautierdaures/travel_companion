@@ -59,5 +59,5 @@ export const isConfigured = () =>
 // Display name for an email (config name → email prefix fallback). The shared
 // joint account gets its own label.
 export const nameFor = (email) =>
-  email === COMMON_ACCOUNT ? "Common"
+  email === COMMON_ACCOUNT ? "Commun"
     : NAMES[email] || (email ? email.split("@")[0] : "—");

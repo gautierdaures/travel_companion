@@ -1,6 +1,7 @@
 // ── Country catalogue ────────────────────────────────────────────────────────
-// Fetches the list of countries (ISO 3166-1 alpha-2 code → English name) from a
-// free, no-key, CORS-friendly API, cached in localStorage — mirrors fx.js. The
+// Fetches the list of countries (ISO 3166-1 alpha-2 code → name) from a free,
+// no-key, CORS-friendly API, cached in localStorage — mirrors fx.js. Names are
+// shown in French via Intl.DisplayNames, falling back to the API's English. The
 // expense form's country picker and the by-country breakdown both use it.
 //
 // Nothing here is a hardcoded country list: the only fallback is whatever the
@@ -15,7 +16,7 @@ const SOURCES = [
   "https://flagcdn.com/en/codes.json",                                           // { "jp": "Japan", … }
   "https://cdn.jsdelivr.net/npm/countries-list@3/minimal/countries.en.min.json", // { "JP": "Japan", … }
 ];
-const LS_KEY = "trip-countries";
+const LS_KEY = "trip-countries-fr"; // names are French since the app was translated
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // country names barely change — refresh monthly
 
 let list = null;      // [{ code, name }] lower-case codes, sorted by name
@@ -26,6 +27,14 @@ function setList(arr) {
   nameByCode = new Map(arr.map((x) => [x.code, x.name]));
 }
 
+// French country name from the browser's locale data, or null if it has none.
+const FR_NAMES = (() => {
+  try { return new Intl.DisplayNames(["fr"], { type: "region", fallback: "none" }); } catch { return null; }
+})();
+function frName(code) {
+  try { return (FR_NAMES && FR_NAMES.of(code.toUpperCase())) || null; } catch { return null; }
+}
+
 function readCache() { try { return JSON.parse(localStorage.getItem(LS_KEY)); } catch { return null; } }
 function writeCache(obj) { try { localStorage.setItem(LS_KEY, JSON.stringify(obj)); } catch { /* private mode */ } }
 
@@ -34,9 +43,9 @@ function normalize(map) {
   const out = [];
   for (const k in map) {
     const name = map[k];
-    if (name && /^[a-zA-Z]{2}$/.test(k)) out.push({ code: k.toLowerCase(), name: String(name) });
+    if (name && /^[a-zA-Z]{2}$/.test(k)) out.push({ code: k.toLowerCase(), name: frName(k) || String(name) });
   }
-  out.sort((a, b) => a.name.localeCompare(b.name));
+  out.sort((a, b) => a.name.localeCompare(b.name, "fr"));
   return out;
 }
 
@@ -67,12 +76,12 @@ export async function ensureCountries(fallback = []) {
   // Offline. Use the last-fetched list if we have one; otherwise the caller's
   // fallback (the trip countries) so the form still works — it fills in online.
   if (cached && cached.list) setList(cached.list);
-  else setList([...fallback].sort((a, b) => a.name.localeCompare(b.name)));
+  else setList([...fallback].sort((a, b) => a.name.localeCompare(b.name, "fr")));
   return list;
 }
 
-// English name for a single code from the loaded catalogue, or null if unknown
-// / not loaded yet.
+// Name for a single code from the loaded catalogue, or null if unknown / not
+// loaded yet.
 export function countryName(code) {
   if (!nameByCode || !code) return null;
   return nameByCode.get(code.toLowerCase()) || null;

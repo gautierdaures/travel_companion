@@ -10,16 +10,20 @@
 //  brittle upload.wikimedia.org filenames to keep in sync. The API sends
 //  `Access-Control-Allow-Origin: *`, so it works straight from the browser.
 //
+//  The "Read more" link points at the French article when one exists (found
+//  through Wikipedia's interlanguage links), else the English one.
+//
 //  Everything here fails soft: no network (offline) or a bad title just means
 //  no photo. The bundled text in each country file always shows regardless.
 // ─────────────────────────────────────────────────────────────────────────
 
 const REST = "https://en.wikipedia.org/api/rest_v1/page";
+const ACTION = "https://en.wikipedia.org/w/api.php";
 const memory = new Map(); // title → Promise<info> (per session)
 
 // A small, versioned localStorage cache so revisits are instant and work
 // even when you're briefly offline after a first online load.
-const LS_KEY = "tc_wiki_v2";
+const LS_KEY = "tc_wiki_v3"; // v3: `url` prefers the French article
 const TTL = 1000 * 60 * 60 * 24 * 30; // 30 days
 let store = null;
 
@@ -66,8 +70,20 @@ async function fetchJSON(url) {
   return res.json();
 }
 
+// The French article's URL for an English title, or "" when there is none.
+async function frenchUrl(title) {
+  const q = new URLSearchParams({
+    action: "query", format: "json", formatversion: "2", origin: "*", redirects: "1",
+    prop: "langlinks", lllang: "fr", llprop: "url", titles: title,
+  });
+  const data = await fetchJSON(`${ACTION}?${q}`);
+  const page = data && data.query && data.query.pages && data.query.pages[0];
+  const link = page && page.langlinks && page.langlinks[0];
+  return (link && link.url) || "";
+}
+
 // A place's lead image + summary text, plus up to `extra` further photos.
-//   → { images: [url, …], thumb: "…", extract: "…", url: "https://en.wikipedia.org/…" }
+//   → { images: [url, …], thumb: "…", extract: "…", url: "https://fr.wikipedia.org/…" }
 // Returns { images: [], thumb: "", extract: "", url: "" } on any failure.
 export function wikiInfo(title, { extra = 1 } = {}) {
   if (!title) return Promise.resolve({ images: [], thumb: "", extract: "", url: "" });
@@ -82,6 +98,8 @@ export function wikiInfo(title, { extra = 1 } = {}) {
 
   const p = (async () => {
     const out = { images: [], thumb: "", extract: "", url: "" };
+    // Look up the French article alongside the summary; a miss keeps the English link.
+    const fr = frenchUrl(title).catch(() => "");
     try {
       const sum = await fetchJSON(`${REST}/summary/${encodeURIComponent(title)}`);
       // A light, already-sized thumbnail (~320px) for the list rows.
@@ -117,6 +135,8 @@ export function wikiInfo(title, { extra = 1 } = {}) {
 
       // Fallback: if the media-list gave us nothing, use the summary thumbnail.
       if (!out.images.length && out.thumb) out.images.push(out.thumb);
+
+      out.url = (await fr) || out.url;
     } catch {
       /* offline or unknown title — leave the empty result */
     }

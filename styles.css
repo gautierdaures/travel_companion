@@ -199,7 +199,7 @@ section.block > h2 {
   border-bottom: 1px solid var(--border);
 }
 .phrase:last-child { border-bottom: none; }
-.phrase .en { color: var(--text-dim); font-size: 14px; flex: 1; }
+.phrase .fr { color: var(--text-dim); font-size: 14px; flex: 1; }
 .phrase .right { text-align: right; }
 .phrase .local { font-size: 17px; font-weight: 600; }
 .phrase .pron { color: var(--accent-2); font-size: 13px; }
