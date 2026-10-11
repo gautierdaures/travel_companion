@@ -5,9 +5,11 @@
 // on the last fetched rates if you lose signal.
 //
 // No hardcoded rates: if you're offline and nothing has ever been fetched, the
-// combined total is simply shown as pending — the per-currency totals are always
-// exact — and it fills in on its own the next time you're online (see the
-// "online" retry wired up in expenses.js).
+// combined total is simply shown as pending, and it fills in on its own the next
+// time you're online (see the "online" retry wired up in expenses.js).
+//
+// A rate is only true at a moment, so each expense keeps the rate of its own
+// date, frozen on it when it's saved (see rateAt below and expenses.js).
 //
 // Source: @fawazahmed0/currency-api via jsDelivr, with a Cloudflare mirror.
 // Rates read "1 HOME = N foreign".
@@ -84,6 +86,49 @@ export function toHome(amount, cur) {
 }
 
 export function ratesInfo() { return meta; }
+
+// Today's rate for a code ("1 HOME = r foreign"), or null if not loaded.
+export const marketRate = (cur) => (rates && rates[cur]) || null;
+
+/* ── Rate on a given day ──────────────────────────────────────────────────────
+   What an expense gets frozen with: today (or later) uses the latest rates; an
+   earlier date uses that day's rates — the API keeps a dated snapshot per day —
+   so a backdated or not-yet-frozen expense still gets the rate of its moment. */
+const dayRates = new Map(); // "2026-09-15" → Promise<{ rates, date } | null>
+
+function ratesOnDay(day) {
+  if (!dayRates.has(day)) {
+    dayRates.set(day, (async () => {
+      for (const url of [
+        `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${day}/v1/currencies/${home}.min.json`,
+        `https://${day}.currency-api.pages.dev/v1/currencies/${home}.min.json`,
+      ]) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data[home]) return { rates: normalize(data[home]), date: data.date || day };
+        } catch { /* try the next source */ }
+      }
+      dayRates.delete(day); // offline or not published yet — let a later call retry
+      return null;
+    })());
+  }
+  return dayRates.get(day);
+}
+
+// { rate, date } to convert `cur` spent on `day` (YYYY-MM-DD), where `date` is
+// the day the rate was published. null when no rate can be had right now.
+export async function rateAt(cur, day) {
+  const c = (cur || HOME_CURRENCY).toUpperCase();
+  if (c === HOME_CURRENCY) return { rate: 1, date: day };
+  if (day && day < new Date().toISOString().slice(0, 10)) {
+    const past = await ratesOnDay(day);
+    if (past && past.rates[c]) return { rate: past.rates[c], date: past.date };
+  }
+  await ensureRates();
+  return rates && rates[c] ? { rate: rates[c], date: meta.date } : null;
+}
 
 /* ── Currency catalogue (for the picker) ──────────────────────────────────────
    The same currency-api also publishes the full list of currency codes + names.
