@@ -463,6 +463,51 @@ function countrySpendCard(items) {
     </div>`;
 }
 
+/* ── Spend by category ─────────────────────────────────────────────────────── */
+// Everything summed into the home currency (each expense at its frozen rate),
+// one bar per category, biggest first.
+function categorySpendCard(items) {
+  if (!items.length) return "";
+
+  const live = needsLiveRates(items);
+  const info = ratesInfo();
+  if (live && info.source === "none")
+    return `<div class="panel exp-cats"><h2>Par catégorie</h2>
+      <p class="exp-rate-note pending">💱 conversion…</p></div>`;
+  if (live && info.source === "unavailable")
+    return `<div class="panel exp-cats"><h2>Par catégorie</h2>
+      <p class="exp-rate-note pending">💱 La répartition par catégorie a besoin des taux de change —
+      vous êtes hors ligne et ils n’ont pas encore été récupérés. Elle s’affichera dès votre retour en ligne.</p></div>`;
+
+  const byCat = new Map();
+  let unconvertible = 0;
+  for (const e of items) {
+    const v = homeValue(e);
+    if (v == null) { unconvertible += 1; continue; }
+    byCat.set(e.category, (byCat.get(e.category) || 0) + v);
+  }
+  const cats = [...byCat].filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  if (!cats.length) return "";
+  const max = cats[0][1];
+
+  return `
+    <div class="panel exp-cats">
+      <h2>Par catégorie</h2>
+      <div class="exp-bars">
+        ${cats.map(([id, amt]) => {
+          const c = catOf(id);
+          return `
+          <div class="exp-bar-row">
+            <span class="exp-bar-lbl">${c.icon} ${esc(c.label)}</span>
+            <span class="exp-bar-track"><span class="exp-bar-fill" style="width:${(amt / max * 100).toFixed(1)}%"></span></span>
+            <span class="exp-bar-amt">${esc(fmt(amt, HOME_CURRENCY))}</span>
+          </div>`;
+        }).join("")}
+      </div>
+      ${unconvertible ? `<div class="exp-rate-note warn">⚠ ${unconvertible} dépense${unconvertible > 1 ? "s" : ""} dans une devise sans taux — exclue${unconvertible > 1 ? "s" : ""}</div>` : ""}
+    </div>`;
+}
+
 /* ── Budget tracker ────────────────────────────────────────────────────────── */
 // "Are we on track?" — each of you has their own slice of the trip budget
 // (TRIP_BUDGET split evenly), and each bar counts the cost attributed to that
@@ -1259,7 +1304,7 @@ function dashboard(user, items, actions) {
     </div>`);
   head.querySelector(".exp-out").addEventListener("click", actions.signOut);
 
-  const summary = el(`<div>${budgetCard(items)}${countrySpendCard(items)}${summaryCards(items)}</div>`);
+  const summary = el(`<div>${budgetCard(items)}${countrySpendCard(items)}${categorySpendCard(items)}${summaryCards(items)}</div>`);
   const rows = expenseRows(items, actions);
   const form = addForm(user, actions.add);
 
