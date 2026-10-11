@@ -85,8 +85,13 @@ same live list.
   default `EUR`) is shown using live exchange rates — fetched from a free, no-key
   API and cached for the day. No setup needed. If you enter an expense while
   offline and rates were never fetched, the combined total shows as *pending* and
-  fills in automatically when you're back online; the per-currency totals are
-  always exact.
+  fills in automatically when you're back online.
+- **Rates are frozen per expense:** a foreign expense is saved with the rate of
+  its own date (`fxRate`, `fxDate`), so later rate moves never change past
+  spending. An expense saved offline gets its day's rate once you're back online;
+  a rate can be corrected by hand in the expense's ✎ form. *💱 Taux de change*
+  (under the total, or `#/expenses/taux`) shows today's rates and the average
+  rate applied to your expenses per currency.
 - **Adding a third person later:** add their email in *both* `firestore.rules`
   (and re-publish in the console) and `ALLOWED_EMAILS`.
 - **"Permission denied" on the dashboard:** the signed-in email isn't in

@@ -11,7 +11,7 @@ import {
   firebaseConfig, ALLOWED_EMAILS, COMMON_ACCOUNT, isConfigured, nameFor,
   HOME_CURRENCY, TRIP_BUDGET, TRIP_START, TRIP_END,
 } from "./firebase-config.js";
-import { toHome, ratesInfo, ensureCurrencies, isSupported } from "./fx.js";
+import { toHome, ratesInfo, ensureCurrencies, isSupported, marketRate, rateAt } from "./fx.js";
 import { ensureCountries, countryName } from "./countries.js";
 import { COUNTRIES, byCode } from "./data/index.js";
 
@@ -111,10 +111,16 @@ const fmt = (n, cur) =>
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
-// A back-to-home top bar, reused across every state below.
+// The rates page lives under the expenses route (same sign-in and listeners).
+const RATES_HASH = "#/expenses/taux";
+const onRatesPage = () => location.hash.startsWith(RATES_HASH);
+
+// A back top bar, reused across every state below: home, or the dashboard when
+// on the rates page.
 function topbar() {
-  const bar = el(`<div class="topbar"><span class="back">← Tous les pays</span></div>`);
-  bar.querySelector(".back").addEventListener("click", () => (location.hash = "#/"));
+  const [label, hash] = onRatesPage() ? ["← Dépenses", "#/expenses"] : ["← Tous les pays", "#/"];
+  const bar = el(`<div class="topbar"><span class="back">${label}</span></div>`);
+  bar.querySelector(".back").addEventListener("click", () => (location.hash = hash));
   return bar;
 }
 
@@ -127,6 +133,16 @@ let fxRetry = null;
 if (typeof window !== "undefined") {
   window.addEventListener("online", () => {
     if (fxRetry && location.hash.startsWith("#/expenses")) fxRetry();
+  });
+}
+
+// Live listeners (auth, Firestore, FX refresh) of the current visit to this
+// screen. Torn down when it's opened again (e.g. dashboard ⇄ rates page) or the
+// route leaves #/expenses, so a late snapshot can't repaint over another page.
+let stopLive = () => {};
+if (typeof window !== "undefined") {
+  window.addEventListener("hashchange", () => {
+    if (!location.hash.startsWith("#/expenses")) stopLive();
   });
 }
 
@@ -157,6 +173,7 @@ async function loadFirebase() {
     updateDoc: store.updateDoc,
     deleteDoc: store.deleteDoc,
     doc: store.doc,
+    writeBatch: store.writeBatch,
     serverTimestamp: store.serverTimestamp,
   };
   return fb;
@@ -217,20 +234,38 @@ function notAllowedScreen(email, onSignOut) {
     <div class="exp-hero"><div class="exp-emoji">🔒</div><h1>Dépenses</h1></div>`), panel);
 }
 
-/* ── Dashboard ────────────────────────────────────────────────────────────── */
-// Sums can't mix currencies, so everything is grouped by currency.
-function totalsByCurrency(items) {
-  const byCur = {};
-  for (const e of items) {
-    const cur = e.currency || "EUR";
-    const g = (byCur[cur] ||= { total: 0, byPerson: {}, byCat: {} });
-    g.total += e.amount;
-    g.byPerson[e.paidBy] = (g.byPerson[e.paidBy] || 0) + e.amount;
-    g.byCat[e.category] = (g.byCat[e.category] || 0) + e.amount;
-  }
-  return byCur;
+/* ── Frozen rates ─────────────────────────────────────────────────────────── */
+// A rate is only true at a moment, so a foreign expense carries the rate of its
+// own date, frozen on it when saved: fxRate ("1 € = fxRate foreign") and fxDate
+// (the day that rate was published; null when typed in by hand). Rates moving
+// later never rewrite past spending. An expense not frozen yet (saved offline,
+// or from before this) uses today's rate until it's backfilled.
+const isForeign = (e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY;
+
+function homeValue(e) {
+  if (!isForeign(e)) return e.amount;
+  return e.fxRate > 0 ? e.amount / e.fxRate : toHome(e.amount, e.currency);
 }
 
+// Do any of these still depend on today's rates (foreign and not frozen)?
+const needsLiveRates = (items) => items.some((e) => isForeign(e) && !(e.fxRate > 0));
+
+// "1 € = 27012,5 VND · taux du 2026-10-10" — for a row's tooltip.
+function frozenRateLabel(e) {
+  if (!(e.fxRate > 0)) return "taux d’aujourd’hui (pas encore figé)";
+  return `1 ${HOME_CURRENCY} = ${rateTxt(e.fxRate)} ${e.currency} · ${e.fxDate ? `taux du ${e.fxDate}` : "taux saisi à la main"}`;
+}
+
+// A rate for editing: 6 significant digits, decimal comma, no grouping so it
+// edits cleanly ("27012,5"); rateTxt groups digits for reading ("27 012,5").
+// parseRate takes "27 000" or "1.08".
+const rateNum = (n, digits = 6) =>
+  new Intl.NumberFormat("fr-FR", { maximumSignificantDigits: digits, useGrouping: false }).format(n);
+const rateTxt = (n, digits = 6) =>
+  new Intl.NumberFormat("fr-FR", { maximumSignificantDigits: digits }).format(n);
+const parseRate = (s) => Number(String(s).replace(/[\s\u00a0\u202f]/g, "").replace(",", "."));
+
+/* ── Dashboard ────────────────────────────────────────────────────────────── */
 // ── Settle-up ────────────────────────────────────────────────────────────────
 // Net balance per person in the home currency, under the "joint account is owned
 // 50/50" model. An expense has two independent sides:
@@ -246,7 +281,7 @@ function settleBalances(items) {
   const bal = Object.fromEntries(ALLOWED_EMAILS.map((e) => [e, 0]));
   const share = (v) => v / ALLOWED_EMAILS.length;
   for (const e of items) {
-    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    const v = homeValue(e);
     if (v == null) continue; // no rate yet — leave it out rather than guess
     // Who fronted the money.
     if (e.paidBy === COMMON_ACCOUNT) ALLOWED_EMAILS.forEach((p) => (bal[p] += share(v)));
@@ -271,22 +306,20 @@ function settleHTML(items) {
     <strong>${esc(fmt(owed, HOME_CURRENCY))}</strong> à ${esc(nameFor(creditor))} pour équilibrer</div>`;
 }
 
-// A single combined total in the home currency, using live FX rates. Shown
-// whenever any expense is in a foreign currency (otherwise it'd just repeat the
-// one home-currency card below).
+// The one total card: everything summed into the home currency (each foreign
+// expense at its frozen rate), split by who paid, plus the who-owes-whom line.
 function homeSummaryCard(items) {
-  const hasForeign = items.some((e) => (e.currency || "EUR") !== HOME_CURRENCY);
-  if (!hasForeign) return "";
-
+  const hasForeign = items.some(isForeign);
+  const live = needsLiveRates(items);
   const info = ratesInfo();
-  if (info.source === "none") {
+  if (live && info.source === "none") {
     return `<div class="panel exp-summary exp-home">
       <div class="exp-total"><span class="exp-total-num">${esc(HOME_CURRENCY)}</span>
       <span class="exp-total-lbl">conversion…</span></div></div>`;
   }
-  if (info.source === "unavailable") {
-    // Offline and rates were never fetched — don't invent a number. The
-    // per-currency totals below are exact; this fills in once back online.
+  if (live && info.source === "unavailable") {
+    // Offline and rates were never fetched — don't invent a number; this fills
+    // in once back online.
     return `<div class="panel exp-summary exp-home">
       <div class="exp-rate-note pending">💱 Le total combiné en ${esc(HOME_CURRENCY)} est en attente —
       vous êtes hors ligne et les taux n’ont pas encore été récupérés. Il s’affichera
@@ -297,7 +330,7 @@ function homeSummaryCard(items) {
   const byPerson = {};
   const unknown = new Set();
   for (const e of items) {
-    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    const v = homeValue(e);
     if (v == null) { unknown.add(e.currency); continue; }
     total += v;
     byPerson[e.paidBy] = (byPerson[e.paidBy] || 0) + v;
@@ -306,9 +339,10 @@ function homeSummaryCard(items) {
   const people = Object.entries(byPerson).sort((a, b) => b[1] - a[1]);
   const settle = settleHTML(items);
 
-  const note = info.stale
-    ? `≈ derniers taux récupérés${info.date ? " · " + esc(info.date) : ""} (hors ligne)`
-    : `taux en direct${info.date ? " · " + esc(info.date) : ""}`;
+  const note = !hasForeign ? ""
+    : !live ? "chaque dépense au taux de sa date"
+    : info.stale ? "certaines dépenses aux derniers taux récupérés, en attendant d’être figées"
+    : "certaines dépenses au taux d’aujourd’hui, en attendant d’être figées";
 
   return `
     <div class="panel exp-summary exp-home">
@@ -324,7 +358,7 @@ function homeSummaryCard(items) {
           </div>`).join("")}
       </div>
       ${settle}
-      <div class="exp-rate-note">${note}</div>
+      <div class="exp-rate-note">${note ? `${note} · ` : ""}<a class="exp-rate-link" href="${RATES_HASH}">💱 Taux de change</a></div>
       ${unknown.size ? `<div class="exp-rate-note warn">⚠ pas de taux pour ${esc([...unknown].join(", "))} — exclu de ce total</div>` : ""}
     </div>`;
 }
@@ -337,7 +371,7 @@ function spendByCountry(items) {
   const by = new Map();
   let unconvertible = 0;
   for (const e of items) {
-    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    const v = homeValue(e);
     if (v == null) { unconvertible += 1; continue; }
     const key = e.country || "";
     by.set(key, (by.get(key) || 0) + v);
@@ -395,12 +429,12 @@ function pieSVG(groups, total) {
 function countrySpendCard(items) {
   if (!items.length) return "";
 
-  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
+  const live = needsLiveRates(items);
   const info = ratesInfo();
-  if (hasForeign && info.source === "none")
+  if (live && info.source === "none")
     return `<div class="panel exp-country"><h2>Par pays</h2>
       <p class="exp-rate-note pending">💱 conversion…</p></div>`;
-  if (hasForeign && info.source === "unavailable")
+  if (live && info.source === "unavailable")
     return `<div class="panel exp-country"><h2>Par pays</h2>
       <p class="exp-rate-note pending">💱 La répartition par pays a besoin des taux de change —
       vous êtes hors ligne et ils n’ont pas encore été récupérés. Elle s’affichera dès votre retour en ligne.</p></div>`;
@@ -429,6 +463,51 @@ function countrySpendCard(items) {
     </div>`;
 }
 
+/* ── Spend by category ─────────────────────────────────────────────────────── */
+// Everything summed into the home currency (each expense at its frozen rate),
+// one bar per category, biggest first.
+function categorySpendCard(items) {
+  if (!items.length) return "";
+
+  const live = needsLiveRates(items);
+  const info = ratesInfo();
+  if (live && info.source === "none")
+    return `<div class="panel exp-cats"><h2>Par catégorie</h2>
+      <p class="exp-rate-note pending">💱 conversion…</p></div>`;
+  if (live && info.source === "unavailable")
+    return `<div class="panel exp-cats"><h2>Par catégorie</h2>
+      <p class="exp-rate-note pending">💱 La répartition par catégorie a besoin des taux de change —
+      vous êtes hors ligne et ils n’ont pas encore été récupérés. Elle s’affichera dès votre retour en ligne.</p></div>`;
+
+  const byCat = new Map();
+  let unconvertible = 0;
+  for (const e of items) {
+    const v = homeValue(e);
+    if (v == null) { unconvertible += 1; continue; }
+    byCat.set(e.category, (byCat.get(e.category) || 0) + v);
+  }
+  const cats = [...byCat].filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  if (!cats.length) return "";
+  const max = cats[0][1];
+
+  return `
+    <div class="panel exp-cats">
+      <h2>Par catégorie</h2>
+      <div class="exp-bars">
+        ${cats.map(([id, amt]) => {
+          const c = catOf(id);
+          return `
+          <div class="exp-bar-row">
+            <span class="exp-bar-lbl">${c.icon} ${esc(c.label)}</span>
+            <span class="exp-bar-track"><span class="exp-bar-fill" style="width:${(amt / max * 100).toFixed(1)}%"></span></span>
+            <span class="exp-bar-amt">${esc(fmt(amt, HOME_CURRENCY))}</span>
+          </div>`;
+        }).join("")}
+      </div>
+      ${unconvertible ? `<div class="exp-rate-note warn">⚠ ${unconvertible} dépense${unconvertible > 1 ? "s" : ""} dans une devise sans taux — exclue${unconvertible > 1 ? "s" : ""}</div>` : ""}
+    </div>`;
+}
+
 /* ── Budget tracker ────────────────────────────────────────────────────────── */
 // "Are we on track?" — each of you has their own slice of the trip budget
 // (TRIP_BUDGET split evenly), and each bar counts the cost attributed to that
@@ -445,7 +524,7 @@ function spentByPerson(items) {
   const share = (v) => v / ALLOWED_EMAILS.length;
   let pending = false;
   for (const e of items) {
-    const v = toHome(e.amount, e.currency || HOME_CURRENCY);
+    const v = homeValue(e);
     if (v == null) { pending = true; continue; }
     const split = e.split || "both";
     if (split in spent) spent[split] += v;
@@ -507,8 +586,7 @@ function budgetCard(items) {
   const perBudget = TRIP_BUDGET / ALLOWED_EMAILS.length; // each person's own slice
 
   const info = ratesInfo();
-  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
-  const pending = hasForeign && info.source !== "live";
+  const pending = needsLiveRates(items) && info.source !== "live";
 
   const { spent } = spentByPerson(items);
 
@@ -544,58 +622,16 @@ function budgetCard(items) {
 }
 
 function summaryCards(items) {
-  const groups = totalsByCurrency(items);
-  const curs = Object.keys(groups).sort();
-  if (!curs.length) return `<div class="panel exp-empty">Aucune dépense pour l’instant — ajoutez la première ci-dessus.</div>`;
-
-  const perCurrency = curs.map((cur) => {
-    const g = groups[cur];
-    const people = Object.entries(g.byPerson).sort((a, b) => b[1] - a[1]);
-    const cats = Object.entries(g.byCat).sort((a, b) => b[1] - a[1]);
-    const max = Math.max(...cats.map(([, v]) => v), 1);
-    return `
-      <div class="panel exp-summary">
-        <div class="exp-total">
-          <span class="exp-total-num">${esc(fmt(g.total, cur))}</span>
-          <span class="exp-total-lbl">total</span>
-        </div>
-        <div class="exp-people">
-          ${people.map(([who, amt]) => `
-            <div class="exp-person">
-              <span class="who">${esc(nameFor(who))}</span>
-              <span class="amt">${esc(fmt(amt, cur))}</span>
-            </div>`).join("")}
-        </div>
-        <div class="exp-bars">
-          ${cats.map(([id, amt]) => {
-            const c = catOf(id);
-            return `
-            <div class="exp-bar-row">
-              <span class="exp-bar-lbl">${c.icon} ${esc(c.label)}</span>
-              <span class="exp-bar-track"><span class="exp-bar-fill" style="width:${(amt / max * 100).toFixed(1)}%"></span></span>
-              <span class="exp-bar-amt">${esc(fmt(amt, cur))}</span>
-            </div>`;
-          }).join("")}
-        </div>
-      </div>`;
-  }).join("");
-
-  // homeSummaryCard carries the settle-up, but only renders when there's foreign
-  // spend. When everything is already in the home currency it's suppressed, so
-  // surface the who-owes-whom line on its own instead.
-  const hasForeign = items.some((e) => (e.currency || HOME_CURRENCY) !== HOME_CURRENCY);
-  const solo = hasForeign ? "" : settleHTML(items);
-  const settleCard = solo ? `<div class="panel exp-summary exp-settle-solo">${solo}</div>` : "";
-
-  return homeSummaryCard(items) + settleCard + perCurrency;
+  if (!items.length) return `<div class="panel exp-empty">Aucune dépense pour l’instant — ajoutez la première ci-dessus.</div>`;
+  return homeSummaryCard(items);
 }
 
 // The list can grow to hundreds of entries, so it isn't all rendered at once:
-// only the first PAGE rows go into the DOM, and "Show more" reveals the next
-// batch. `expShown` persists across the re-renders that a new Firestore
+// only the PAGE most recent rows go into the DOM, and "Show more" reveals the
+// next batch. `expShown` persists across the re-renders that a new Firestore
 // snapshot triggers (so adding an expense doesn't collapse an expanded list);
 // renderExpenses() resets it when the screen is opened fresh.
-const PAGE = 50;
+const PAGE = 20;
 let expShown = PAGE;
 
 // Live filter/search state, kept module-level for the same reason as expShown:
@@ -630,6 +666,30 @@ function dayHeading(iso) {
   const d = new Date(`${iso}T00:00:00`);
   if (!iso || Number.isNaN(d.getTime())) return "Sans date";
   return d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+}
+
+// Per-day totals for the list headers: the sum in each currency spent that day,
+// plus the whole day converted to the home currency (null if a rate is missing).
+function dayTotals(items) {
+  const days = new Map();
+  for (const e of items) {
+    let t = days.get(e.date);
+    if (!t) days.set(e.date, (t = { byCur: new Map(), home: 0 }));
+    const cur = e.currency || HOME_CURRENCY;
+    t.byCur.set(cur, (t.byCur.get(cur) || 0) + e.amount);
+    const v = homeValue(e);
+    t.home = v == null || t.home == null ? null : t.home + v;
+  }
+  return days;
+}
+
+// "450 000 ₫ + 12,00 € · ≈ 28,67 €" — the home-currency total only when the day
+// has foreign spend (otherwise it would just repeat the sum).
+function dayTotalHTML(t) {
+  const parts = [...t.byCur].map(([cur, amt]) => fmt(amt, cur));
+  const foreign = [...t.byCur.keys()].some((c) => c !== HOME_CURRENCY);
+  const home = foreign && t.home != null ? ` · ≈ ${fmt(t.home, HOME_CURRENCY)}` : "";
+  return esc(parts.join(" + ") + home);
 }
 
 // The filter bar: a search box plus category / country / payer dropdowns. The
@@ -767,18 +827,26 @@ function expenseRows(items, actions) {
 
     const shown = Math.min(expShown, filtered.length);
     // Group into day sections (items already arrive sorted by date, newest
-    // first), dropping a subheading each time the date changes.
+    // first), dropping a subheading each time the date changes. A day's total
+    // covers all of its (filtered) expenses, even when the page cut falls mid-day.
+    const days = dayTotals(filtered);
     let html = "", curDay = null;
     for (const e of filtered.slice(0, shown)) {
       if (e.date !== curDay) {
         curDay = e.date;
-        html += `<div class="exp-day">${esc(dayHeading(e.date))}</div>`;
+        html += `<div class="exp-day"><span>${esc(dayHeading(e.date))}</span>
+          <span class="exp-day-total">${dayTotalHTML(days.get(e.date))}</span></div>`;
       }
       const c = catOf(e.category);
       // Only call out the split when it isn't the default "both" — a "just for
       // X" expense is worth flagging in the row.
       const forTag = e.split && e.split !== "both" ? ` · pour ${esc(nameFor(e.split))}` : "";
       const bookedTag = e.linkedPlanId ? ` · 🗓️ réservé` : "";
+      // Foreign amounts also show their home-currency value, at the rate frozen
+      // on the expense (hover/long-press shows it).
+      const v = isForeign(e) ? homeValue(e) : null;
+      const homeAmt = v == null ? ""
+        : `<span class="exp-amt-home" title="${esc(frozenRateLabel(e))}">≈ ${esc(fmt(v, HOME_CURRENCY))}</span>`;
       html += `
         <div class="exp-row" data-id="${esc(e.id)}">
           <span class="exp-cat" title="${esc(c.label)}">${c.icon}</span>
@@ -786,7 +854,7 @@ function expenseRows(items, actions) {
             <span class="exp-note">${esc(e.note || c.label)}</span>
             <span class="exp-row-sub">${esc(nameFor(e.paidBy))}${forTag}${bookedTag}</span>
           </span>
-          <span class="exp-amt">${esc(fmt(e.amount, e.currency))}</span>
+          <span class="exp-amt">${esc(fmt(e.amount, e.currency))}${homeAmt}</span>
           <button class="exp-edit" title="Modifier" aria-label="Modifier">✎</button>
           ${e.linkedPlanId ? "" : `<button class="exp-addbook" title="Ajouter une réservation liée" aria-label="Ajouter une réservation">🗓️+</button>`}
           <button class="exp-del" title="Supprimer" aria-label="Supprimer">✕</button>
@@ -1136,6 +1204,10 @@ function editExpenseForm(item, onSave, onCancel) {
           <span>Date</span>
           <input name="date" type="date" value="${esc(item.date || todayISO())}" required />
         </label>
+        <label class="exp-field fxrate">
+          <span>Taux : 1 ${esc(HOME_CURRENCY)} = … <span class="exp-fx-cur"></span></span>
+          <input name="fxRate" type="text" inputmode="decimal" autocomplete="off" />
+        </label>
         <label class="exp-field note">
           <span>Note</span>
           <input name="note" type="text" maxlength="80" value="${esc(item.note || "")}" placeholder="ex. dîner à Hanoï" />
@@ -1146,6 +1218,35 @@ function editExpenseForm(item, onSave, onCancel) {
         <button type="submit" class="btn-add exp-editform-save">Enregistrer</button>
       </div>
     </form>`);
+
+  // The frozen rate, editable (e.g. the exchange office's real rate). It starts
+  // as the expense's own; changing the currency or date re-fetches the rate of
+  // that day. `auto` is what we last filled in — if the field still shows it,
+  // the exact rate (and its date) is saved, otherwise the typed value is.
+  const rateLbl = form.querySelector(".exp-field.fxrate");
+  const rateIn = form.elements.fxRate;
+  let auto = item.fxRate > 0 ? { rate: item.fxRate, date: item.fxDate ?? null } : null;
+  const showRate = () => {
+    rateIn.value = auto ? rateNum(auto.rate) : "";
+    rateIn.placeholder = auto ? "" : "hors ligne — figé au retour en ligne";
+  };
+  const syncCur = () => {
+    const cur = form.elements.currency.value;
+    rateLbl.hidden = cur === HOME_CURRENCY;
+    rateLbl.querySelector(".exp-fx-cur").textContent = cur;
+  };
+  let refreshing = Promise.resolve();
+  const refreshRate = () => {
+    syncCur();
+    const cur = form.elements.currency.value, day = form.elements.date.value || todayISO();
+    if (cur === HOME_CURRENCY) { auto = null; return; }
+    refreshing = rateAt(cur, day).catch(() => null).then((fx) => { auto = fx; showRate(); });
+  };
+  syncCur();
+  showRate();
+  if (!auto && isForeign(item)) refreshRate(); // not frozen yet — offer its day's rate
+  form.elements.currency.addEventListener("change", refreshRate);
+  form.elements.date.addEventListener("change", refreshRate);
 
   form.querySelector(".exp-editform-cancel").addEventListener("click", onCancel);
   form.addEventListener("submit", async (e) => {
@@ -1158,7 +1259,23 @@ function editExpenseForm(item, onSave, onCancel) {
       alert(`Impossible d’utiliser « ${currency} » — aucune conversion en ${HOME_CURRENCY} n’est disponible. Choisissez une autre devise.`);
       return;
     }
+    await refreshing; // a currency/date change may still be fetching its rate
+    let fx = { fxRate: null, fxDate: null };
+    if (currency !== HOME_CURRENCY) {
+      const typed = f.fxRate.value.trim();
+      if (auto && typed === rateNum(auto.rate)) fx = { fxRate: auto.rate, fxDate: auto.date };
+      else if (typed) {
+        const rate = parseRate(typed);
+        if (!(rate > 0 && Number.isFinite(rate))) { alert("Taux invalide — par ex. 27000 ou 1,08."); return; }
+        // A slipped zero is easy on a phone keyboard — double-check big jumps.
+        const ref = auto?.rate || marketRate(currency);
+        const gap = ref ? Math.abs(rate / ref - 1) : 0;
+        if (gap > 0.5 && !confirm(`Ce taux s’écarte de ${Math.round(gap * 100)} % du taux du marché (${rateTxt(ref)}). L’enregistrer quand même ?`)) return;
+        fx = { fxRate: rate, fxDate: null };
+      }
+    }
     const patch = {
+      ...fx,
       amount,
       currency,
       category: f.category.value,
@@ -1187,7 +1304,7 @@ function dashboard(user, items, actions) {
     </div>`);
   head.querySelector(".exp-out").addEventListener("click", actions.signOut);
 
-  const summary = el(`<div>${budgetCard(items)}${countrySpendCard(items)}${summaryCards(items)}</div>`);
+  const summary = el(`<div>${budgetCard(items)}${countrySpendCard(items)}${categorySpendCard(items)}${summaryCards(items)}</div>`);
   const rows = expenseRows(items, actions);
   const form = addForm(user, actions.add);
 
@@ -1196,8 +1313,76 @@ function dashboard(user, items, actions) {
   screen(...nodes);
 }
 
+/* ── Exchange rates page ──────────────────────────────────────────────────── */
+// The rates in use: today's rate for each currency (what a new expense gets
+// frozen with) and, for those you've spent in, the average rate actually applied
+// to your expenses. Fixing one expense's rate is done on the expense itself (✎).
+function ratesScreen(items) {
+  document.title = "Taux de change · Compagnon de voyage";
+
+  // Per currency: how many expenses, and their totals in that currency and in
+  // the home one — the ratio is the average rate applied.
+  const used = new Map();
+  for (const e of items) {
+    if (!isForeign(e)) continue;
+    const u = used.get(e.currency) || { n: 0, amount: 0, home: 0 };
+    const v = homeValue(e);
+    u.n += 1;
+    if (v != null) { u.amount += e.amount; u.home += v; }
+    used.set(e.currency, u);
+  }
+  // Currencies you've spent in (most used first), then the common trip ones.
+  const codes = new Set([...used.keys(), ...COMMON_CUR]);
+  codes.delete(HOME_CURRENCY);
+  const list = [...codes].sort((a, b) => (used.get(b)?.n || 0) - (used.get(a)?.n || 0) || a.localeCompare(b));
+  const nameOf = (code) => CURRENCIES?.find((x) => x.code === code)?.name || "";
+
+  const info = ratesInfo();
+  const sourceNote = info.source === "live"
+    ? `Taux du marché du ${esc(info.date || "jour")}${info.stale ? " (derniers récupérés, hors ligne)" : ""}`
+    : info.source === "none" ? "Chargement des taux du marché…" : "Taux du marché indisponibles hors ligne";
+
+  const row = (cur) => {
+    const today = marketRate(cur), u = used.get(cur);
+    const avg = u && u.home > 0 ? u.amount / u.home : null;
+    return `
+      <div class="exp-rate-row">
+        <div class="exp-rate-head">
+          <span class="exp-rate-code">${esc(cur)}</span>
+          <span class="exp-rate-name">${esc(nameOf(cur))}</span>
+          ${u ? `<span class="exp-rate-uses">${u.n} dépense${u.n > 1 ? "s" : ""}</span>` : ""}
+        </div>
+        <div class="exp-rate-val">${today
+          ? `1 ${esc(HOME_CURRENCY)} = <strong>${esc(rateTxt(today))}</strong> ${esc(cur)}
+             <span class="exp-rate-inv">· 1 ${esc(cur)} ≈ ${esc(rateTxt(1 / today, 3))} ${esc(HOME_CURRENCY)}</span>`
+          : `<span class="exp-rate-inv">${info.source === "none" ? "…" : "indisponible"}</span>`}</div>
+        ${avg ? `<div class="exp-rate-meta">appliqué à vos dépenses : 1 ${esc(HOME_CURRENCY)} = ${esc(rateTxt(avg))} ${esc(cur)} en moyenne</div>` : ""}
+      </div>`;
+  };
+
+  const hero = el(`
+    <div class="exp-hero">
+      <h1>💱 Taux de change</h1>
+      <p class="exp-sub">${sourceNote}</p>
+    </div>`);
+  const panel = el(`
+    <div class="panel exp-rates">
+      <p class="exp-fine exp-rates-intro">Chaque dépense garde le taux de sa date : quand le taux
+      bouge, les dépenses déjà saisies ne changent pas. Ci-dessous, le taux d’aujourd’hui (celui
+      que prendra une nouvelle dépense). Pour corriger le taux d’une dépense
+      (bureau de change, retrait…), touchez ✎ sur la dépense.</p>
+      ${list.map(row).join("")}
+    </div>`);
+  screen(hero, panel);
+}
+
 /* ── Entry point ──────────────────────────────────────────────────────────── */
 export async function renderExpenses() {
+  stopLive(); // a fresh open replaces the previous visit's listeners
+  let live = true;
+  const offs = [];
+  stopLive = () => { live = false; fxRetry = null; offs.splice(0).forEach((off) => off()); };
+
   document.title = "Dépenses · Compagnon de voyage";
   expShown = PAGE; // collapse the list back to the first page on a fresh open
   expFilter.q = ""; expFilter.category = ALL; expFilter.country = ALL; expFilter.paidBy = ALL;
@@ -1215,6 +1400,7 @@ export async function renderExpenses() {
       <p class="exp-warn">Impossible de joindre Firebase. Le tableau de bord des dépenses
       a besoin d’une connexion internet.</p></div>`));
   }
+  if (!live) return; // left (or reopened) while the SDK was loading
 
   const provider = new f.GoogleAuthProvider();
   const doSignIn = async () => {
@@ -1235,8 +1421,9 @@ export async function renderExpenses() {
   f.getRedirectResult(f.auth).catch(() => {});
 
   let unsub = null; // active Firestore listener, cleared on sign-out / route change
+  offs.push(() => { if (unsub) { unsub(); unsub = null; } });
 
-  f.onAuthStateChanged(f.auth, (user) => {
+  offs.push(f.onAuthStateChanged(f.auth, (user) => {
     if (unsub) { unsub(); unsub = null; }
 
     // Left the expenses route while signed in — stop listening, do nothing.
@@ -1248,7 +1435,15 @@ export async function renderExpenses() {
     const col = f.collection(f.db, "expenses");
     const plansCol = f.collection(f.db, "plans");
     const q = f.query(col, f.orderBy("date", "desc"));
-    const addExp = (data) => f.addDoc(col, { ...data, uid: user.uid, createdAt: f.serverTimestamp() });
+    // A new foreign expense is saved with the rate of its date (see homeValue).
+    // No rate to be had (offline) → saved without one and frozen later.
+    const withRate = async (data) => {
+      if (!isForeign(data) || data.fxRate > 0) return data;
+      const fx = await rateAt(data.currency, data.date).catch(() => null);
+      return fx ? { ...data, fxRate: fx.rate, fxDate: fx.date } : data;
+    };
+    const addExp = async (data) =>
+      f.addDoc(col, { ...(await withRate(data)), uid: user.uid, createdAt: f.serverTimestamp() });
     const actions = {
       // Add an expense, optionally cross-linked to a fresh Planner booking.
       add: async (data, planExtra) => {
@@ -1288,6 +1483,37 @@ export async function renderExpenses() {
     };
 
     let lastItems = null;
+
+    // Draw whichever page the route asks for. A repaint of the rates page keeps
+    // its scroll position.
+    let painted = null;
+    const paint = () => {
+      if (!live || !lastItems) return;
+      const view = onRatesPage() ? "rates" : "dashboard";
+      const y = window.scrollY;
+      if (view === "rates") ratesScreen(lastItems);
+      else dashboard(user, lastItems, actions);
+      if (view === "rates" && painted === "rates") window.scrollTo(0, y);
+      painted = view;
+    };
+
+    // Foreign expenses with no frozen rate yet (saved offline, or from before
+    // rates were frozen) get the rate of their own date, in one batch.
+    const freezing = new Set(); // ids in flight, so a snapshot doesn't redo them
+    const freezeMissing = async () => {
+      const todo = (lastItems || []).filter((e) => isForeign(e) && !(e.fxRate > 0) && !freezing.has(e.id));
+      if (!todo.length) return;
+      todo.forEach((e) => freezing.add(e.id));
+      const fxs = await Promise.all(todo.map((e) => rateAt(e.currency, e.date).catch(() => null)));
+      const batch = f.writeBatch(f.db);
+      let n = 0;
+      todo.forEach((e, i) => {
+        if (fxs[i] && live) { batch.update(f.doc(f.db, "expenses", e.id), { fxRate: fxs[i].rate, fxDate: fxs[i].date }); n += 1; }
+        else freezing.delete(e.id); // offline — retried on the next snapshot / reconnect
+      });
+      if (n) await batch.commit().catch(() => todo.forEach((e) => freezing.delete(e.id)));
+    };
+
     // Load the currency + country catalogues (and FX rates) in the background;
     // re-render once they land so the combined home-currency total and the full
     // currency/country pickers fill in. ensureCurrencies() awaits the rates
@@ -1301,7 +1527,8 @@ export async function renderExpenses() {
     ]).then(([curs, countries]) => {
       CURRENCIES = curs;
       COUNTRIES_ALL = countries;
-      if (lastItems) dashboard(user, lastItems, actions);
+      paint();
+      freezeMissing();
     });
     fxRetry = refreshFx;
     refreshFx();
@@ -1309,14 +1536,20 @@ export async function renderExpenses() {
     unsub = f.onSnapshot(
       q,
       (snap) => {
-        const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        // Firestore orders by date only; within a day, put the latest-added
+        // first so the first page really is the most recent spending. A local
+        // write has no server timestamp yet — it's the newest of all.
+        const added = (e) => e.createdAt?.toMillis?.() ?? Number.MAX_SAFE_INTEGER;
+        const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (b.date || "").localeCompare(a.date || "") || added(b) - added(a));
         lastItems = items;
-        dashboard(user, items, actions);
+        paint();
+        freezeMissing();
       },
       (err) => screen(el(`<div class="panel exp-notice">
         <p class="exp-warn">Impossible de charger les dépenses&nbsp;: ${esc(err.message)}</p>
         <p class="exp-fine">Si le message indique «&nbsp;permission denied&nbsp;», vérifiez que
         votre e-mail figure bien dans <code>firestore.rules</code>.</p></div>`))
     );
-  });
+  }));
 }
