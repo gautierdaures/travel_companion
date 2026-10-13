@@ -31,11 +31,13 @@ const fold = (s = "") => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, 
 
 /* ── tiny helpers ──────────────────────────────────────────────────────── */
 // Also keeps French punctuation attached to its word: a no-break space before
-// ? ! : ; » and after «, so a line never starts with a lone "?" or "»".
+// ? ! : ; » and after «, so a line never starts with a lone "?" or "»". Same
+// for numbers: "1 500 ₽" never splits into "1" / "500 ₽".
 const esc = (s = "") =>
   String(s)
     .replace(/\s+([?!:;»])/g, "\u00a0$1")
     .replace(/«\s+/g, "«\u00a0")
+    .replace(/(\d) (?=\d{3}(?!\d)|[₽€$%])/g, "$1\u00a0")
     .replace(/[&<>"']/g, (c) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
     );
