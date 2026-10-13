@@ -92,6 +92,13 @@ same live list.
   a rate can be corrected by hand in the expense's ✎ form. *💱 Taux de change*
   (under the total, or `#/expenses/taux`) shows today's rates and the average
   rate applied to your expenses per currency.
+- **Notes and places on country pages (*Mes notes* / *Mes lieux*):** they use
+  the same project, in the `notes` and `places` collections. If you set up
+  Firebase before this feature existed, **re-publish [`firestore.rules`](firestore.rules)**
+  (Firestore Database → Rules → paste → Publish) — otherwise the country page
+  says *« Firestore refuse l'accès »*. Until you sign in from a country page,
+  notes stay on the phone they were written on; after that they sync on their
+  own, and anything written offline is sent at the next connection.
 - **Adding a third person later:** add their email in *both* `firestore.rules`
   (and re-publish in the console) and `ALLOWED_EMAILS`.
 - **"Permission denied" on the dashboard:** the signed-in email isn't in
