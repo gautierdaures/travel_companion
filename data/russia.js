@@ -164,6 +164,33 @@ export default {
       tips: [
         "Pour la célèbre glace turquoise, venez fin février ou en mars, pas au plus fort du gel hivernal.",
         "Les routes vers Olkhon sont mauvaises et comprennent un ferry — comptez presque une journée dans chaque sens.",
+        "Tout le détail pratique d’Olkhon (minibus, ferry, excursions, saisons) est dans sa propre fiche, « Île d’Olkhon ».",
+      ],
+    },
+    {
+      name: "Île d’Olkhon", category: "nature", coords: [53.2036, 107.3396], region: "Lac Baïkal, à ~280 km d’Irkoutsk",
+      description: "La grande île sacrée du Baïkal : steppe, taïga, falaises de marbre et le rocher du Chaman — à explorer en UAZ, à vélo ou à pied depuis le village de Khoujir.",
+      wiki: "Olkhon",
+      long:
+        "Olkhon est la plus grande île du Baïkal — environ 72 km de long sur 15 de large — et le cœur spirituel du chamanisme bouriate. Ses paysages changent d’un cap à l’autre : steppe rase et dunes au sud et à l’ouest, forêts de mélèzes au nord et à l’est, falaises de marbre blanc qui plongent dans une eau d’une transparence irréelle. Entre l’île et la rive ouest s’étend la Petite Mer, peu profonde et plus tiède ; à l’est, le Baïkal ouvert, profond de plus de 1 500 mètres. Pas un mètre d’asphalte : seulement des pistes, des maisons en bois et, au-dessus du village de Khoujir, le rocher du Chaman (cap Bourkhan), l’un des neuf lieux saints du chamanisme d’Asie, entouré de poteaux sacrés enrubannés de tissus colorés.\n\nLa journée classique est l’excursion vers le nord en UAZ « boukhanka », ces minibus soviétiques tout-terrain : la baie de Peschanaïa et les vestiges d’un camp du Goulag où les détenus pêchaient l’omoul, les rochers des Trois Frères au cap Sagan-Khouchoun, puis le cap Khoboï, la « canine » qui marque la pointe nord, d’où l’on voit parfois des nerpas ; le chauffeur cuisine une oukha (soupe de poisson) au feu de bois à midi. Le sud se fait sur une autre journée : baie de Zagli, lagune émeraude de Chara-Chouloun, col de Khargoï. Le reste du temps, on marche le long des falaises de la côte ouest, on loue un vélo, on se baigne en août au long de la plage de Saraïski, et on finit la journée dans une banya avant de plonger dans le lac.\n\nL’été (juillet–août) amène la foule et des heures de file au ferry. Septembre est doré et calme. D’octobre à décembre, l’île se vide, le vent sarma souffle en rafales et beaucoup de guesthouses ferment — une Olkhon austère et magnifique pour qui choisit un logement ouvert et chauffé. De fin février à mars, le lac gelé dévoile sa glace turquoise et ses grottes de glace au pied des caps.",
+      practical: [
+        { label: "Y aller", value: "Minibus (marchroutka) d’Irkoutsk à Khoujir : ~280 km, 6–8 h ferry compris, ~1 500–2 000 ₽ (~15–20 €). Départ de la gare routière ou ramassage à l’hôtel — réservez la veille par votre hébergement." },
+        { label: "Le ferry", value: "Sakhiourta (MRS) → Olkhon par le détroit des Portes d’Olkhon : ~20 min, gratuit, de mi-mai à mi-décembre environ. En juillet–août, plusieurs heures d’attente possibles — partez tôt." },
+        { label: "En hiver", value: "À l’embâcle (déc.–févr.) et à la débâcle (avril–mai), seuls des aéroglisseurs (khivous) font la traversée, en supplément. La route de glace officielle n’ouvre que quand la glace dépasse ~50 cm (fin février en 2025 et 2026)." },
+        { label: "Par le lac (été)", value: "Bus jusqu’à Listvianka puis bateau jusqu’à la baie de Zagli : ~6 h, deux fois par semaine en juin–août, ~3 700 ₽ — la version lente et sans route, à vérifier auprès de la compagnie fluviale." },
+        { label: "Sur place", value: "Khoujir se fait à pied ; vélos à louer. Excursions nord (cap Khoboï) et sud en UAZ avec chauffeur, à la journée, oukha comprise : ~2 000–3 500 ₽ par personne, à réserver par votre guesthouse." },
+        { label: "Argent", value: "Les cartes étrangères ne marchent pas en Russie : emportez tous vos roubles depuis Irkoutsk. Les rares distributeurs de Khoujir ne prennent que les cartes russes et sont souvent vides." },
+        { label: "Temps à prévoir", value: "3–4 nuits minimum : une journée nord, une journée sud, une ou deux à pied ou à vélo. Ajoutez un jour de marge pour le ferry au retour." },
+        { label: "Quand y aller", value: "Juin–septembre pour marcher et se baigner (août : l’eau la plus tiède) ; fin février–mars pour la glace. Octobre–novembre : île vide, froide et ventée." },
+      ],
+      stay:
+        "Posez-vous à Khoujir, le seul vrai village, dans une guesthouse familiale en bois : chambre simple, repas maison à base d’omoul et de bouzy bouriates, banya au fond du jardin. Prenez-en une sur le haut du village pour voir le rocher du Chaman au coucher du soleil. Pour plus de calme, le hameau de Kharantsy, à quelques kilomètres au nord, est encore plus paisible.\n\nC’est une île où l’on reste plusieurs jours sans rien prévoir de précis : une excursion, puis une journée à suivre les falaises à pied, une autre à vélo dans la steppe. Hors saison, vérifiez avant de partir que votre logement est ouvert et chauffé — beaucoup ferment d’octobre à décembre.",
+      tips: [
+        "Le rocher du Chaman est sacré pour les Bouriates : ne l’escaladez pas, n’ajoutez ni ruban ni pièce aux poteaux, et faites le tour des lieux dans le sens des aiguilles d’une montre.",
+        "Sur la glace, uniquement par la route officielle et avec un chauffeur agréé : en février 2026, un UAZ de touristes a passé à travers la glace près du cap Khoboï, hors itinéraire autorisé, et presque tous ses passagers sont morts.",
+        "Le vent sarma peut souffler en tempête à l’automne et arrêter le ferry : ne collez pas le retour au départ de votre Transsibérien.",
+        "Le réseau mobile passe à Khoujir mais disparaît au nord de l’île : téléchargez vos cartes hors ligne (Organic Maps, Maps.me).",
+        "Goûtez l’omoul du Baïkal sous toutes ses formes — fumé, salé, ou « na rojnakh », grillé sur des brochettes de bois au bord du feu.",
       ],
     },
     {
