@@ -28,6 +28,8 @@ const APP_SHELL = [
   "./app.js",
   "./categories.js",
   "./wiki.js",
+  "./mine.js",
+  "./userdata.js",
   "./expenses.js",
   "./planner.js",
   "./fx.js",
