@@ -32,14 +32,6 @@ service cloud.firestore {
       allow read, write: if isApproved();
     }
 
-    // Your own notes and hand-added places on each country page (userdata.js).
-    match /notes/{noteId} {
-      allow read, write: if isApproved();
-    }
-    match /places/{placeId} {
-      allow read, write: if isApproved();
-    }
-
     // Everything else is denied by default.
   }
 }

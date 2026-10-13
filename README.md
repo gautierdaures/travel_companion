@@ -8,17 +8,6 @@ An offline, installable **country ID-card** app for a worldwide trip. For each c
 4. **Food** — typical meals (with the odd insider tip)
 5. **Places** — key spots, tailored to *architecture · history · food · nature · off-the-beaten-path* (no tourist traps)
 
-Each country page also has room for **your own additions**:
-
-- **Mes notes** — what people recommended, contacts met on the way, lodging,
-  restaurants… grouped by type, with tappable phone numbers, e-mails and links.
-- **Mes lieux** — places you add by hand (name, category, details, link,
-  coordinates or "📍 Ma position"); with coordinates they get a pin on the map.
-
-Both work offline (saved on the phone first) and, once you sign in with Google,
-sync privately between the two of you through the same Firebase project as the
-expenses — see [`EXPENSES_SETUP.md`](EXPENSES_SETUP.md).
-
 It's a plain HTML/CSS/JS **PWA** — no build step, no dependencies. Once loaded on your iPhone it works **fully offline**, which is the whole point when you're abroad with patchy signal.
 
 There's also a private **💰 Expenses** dashboard — a shared expense tracker for you
@@ -86,8 +75,6 @@ Categories are defined once in [`categories.js`](categories.js) — `history`, `
 index.html              app shell
 styles.css              styling (mobile-first, dark)
 app.js                  router + rendering
-mine.js                 "Mes notes" / "Mes lieux" on a country page
-userdata.js             their storage: offline queue + Firestore sync
 categories.js           the nine categories — label, colour, icon
 manifest.webmanifest    PWA manifest
 sw.js                   service worker (offline cache)

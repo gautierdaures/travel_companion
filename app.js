@@ -2,7 +2,6 @@ import { COUNTRIES, byCode } from "./data/index.js";
 import { GEO } from "./data/geo.js";
 import { wikiInfo, wikiThumb } from "./wiki.js";
 import { catOf } from "./categories.js";
-import { notesBlock, placesPanel, mountMine, myPlaces } from "./mine.js";
 
 const app = document.getElementById("app");
 
@@ -13,11 +12,10 @@ const EVENT_KINDS = {
   note:  { label: "Bon à savoir",     color: "var(--ev-note)",  icon: "⚠️" },
 };
 
-// Places, Map and your own notes lead; the reference material follows.
+// Places and Map lead; the reference material follows.
 const SECTIONS = [
   { id: "places", label: "Lieux" },
   { id: "map", label: "Carte" },
-  { id: "notes", label: "Mes notes" },
   { id: "languages", label: "Langue" },
   { id: "history", label: "Histoire" },
   { id: "climate", label: "Quand partir" },
@@ -224,7 +222,6 @@ function placesBlock(c) {
           })
           .join("")}
       </div>
-      ${placesPanel()}
     </section>`;
 }
 
@@ -449,9 +446,7 @@ function declutter(nodes, minDist) {
   }
 }
 
-// `places` = the guide's places followed by the ones you added (mine.js), so
-// pin numbers match the numbers in both lists.
-function mapBlock(c, places = c.places) {
+function mapBlock(c) {
   const geo = GEO[c.code];
   if (!geo) return "";
   const { toXY, W, H } = projector(geo);
@@ -472,7 +467,7 @@ function mapBlock(c, places = c.places) {
 
   // Project each place, then spread out any pins that would overlap.
   const nodes = [];
-  places.forEach((p, i) => {
+  c.places.forEach((p, i) => {
     if (!p.coords) return;
     const [lat, lng] = p.coords;
     const [x, y] = toXY(lng, lat);
@@ -552,14 +547,9 @@ function renderCountry(code) {
     });
   });
 
-  // The guide's places, then the ones you added — numbered as one list.
-  const allPlaces = () => [...c.places, ...myPlaces(c.code)];
-  const pinsKey = (places) => JSON.stringify(places.map((p) => [p.category, p.coords || null]));
-
   const body = el(`<div>
     ${placesBlock(c)}
-    ${mapBlock(c, allPlaces())}
-    ${notesBlock()}
+    ${mapBlock(c)}
     ${languagesBlock(c)}
     ${historyBlock(c)}
     ${climateBlock(c)}
@@ -570,38 +560,26 @@ function renderCountry(code) {
   </div>`);
 
   // Pin → scroll to place card. Card number → scroll to map, flash the pin.
-  // Delegated, because the map is redrawn when you add a place of your own.
-  body.addEventListener("click", (e) => {
-    const pin = e.target.closest(".pin");
-    if (pin) {
-      const card = body.querySelector(`#place-${c.code}-${pin.dataset.i}`);
-      card?.scrollIntoView({ behavior: "smooth", block: "center" });
-      flash(card, "flash");
-      return;
-    }
+  const svg = body.querySelector(".map-svg");
+  if (svg) {
+    svg.querySelectorAll(".pin").forEach((pin) => {
+      pin.addEventListener("click", () => {
+        const card = body.querySelector(`#place-${c.code}-${pin.dataset.i}`);
+        card?.scrollIntoView({ behavior: "smooth", block: "center" });
+        flash(card, "flash");
+      });
+    });
     // The number badge lives inside the place link; keep its click from
     // opening the detail page — it jumps to the map instead.
-    const num = e.target.closest(".place .num");
-    if (num) {
-      e.preventDefault();
-      document.getElementById("sec-map")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      flash(body.querySelector(`.map-svg .pin[data-i="${num.dataset.i}"]`), "pin-flash");
-    }
-  });
-
-  // Your notes and places: repaint on every change, and redraw the map when
-  // your places' pins change.
-  let shownPins = pinsKey(allPlaces());
-  stopMine = mountMine(body, c, {
-    onPlacesChange: () => {
-      const places = allPlaces();
-      const key = pinsKey(places);
-      if (key === shownPins) return;
-      shownPins = key;
-      const map = el(mapBlock(c, places));
-      if (map) body.querySelector("#sec-map")?.replaceWith(map);
-    },
-  });
+    body.querySelectorAll(".place .num").forEach((num) => {
+      num.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById("sec-map")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        flash(svg.querySelector(`.pin[data-i="${num.dataset.i}"]`), "pin-flash");
+      });
+    });
+  }
 
   app.append(topbar, hero, jump, body);
   loadThumbs(body);
@@ -610,7 +588,6 @@ function renderCountry(code) {
   // Arriving back from a place's detail page via "Show on map": jump to the
   // map and ping the pin so you can see where it sits.
   const focus = sessionStorage.getItem("tc_focusPin");
-  const svg = body.querySelector(".map-svg");
   if (focus !== null && svg) {
     sessionStorage.removeItem("tc_focusPin");
     requestAnimationFrame(() => {
@@ -749,11 +726,7 @@ function renderPlaceDetail(code, i) {
 }
 
 /* ── Router ────────────────────────────────────────────────────────────── */
-// Stops the country page's notes/places listener when you navigate away.
-let stopMine = null;
-
 function route() {
-  if (stopMine) { stopMine(); stopMine = null; }
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   if (parts.length === 0) return renderHome();
   if (parts[0] === "expenses") {
