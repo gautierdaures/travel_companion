@@ -1,6 +1,6 @@
 // Service worker — offline caching for Trip Companion.
 // Bump CACHE version whenever you change app files or add a country.
-const CACHE = "trip-companion-v20";
+const CACHE = "trip-companion-v21";
 
 // Every country data file must be listed here so it is available offline.
 const DATA_FILES = [

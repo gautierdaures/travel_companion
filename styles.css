@@ -788,6 +788,25 @@ code {
 .exp-legend-row .lg-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .exp-legend-row .lg-amt { font-variant-numeric: tabular-nums; font-weight: 600; }
 .exp-legend-row .lg-pct { color: var(--text-dim); width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+.exp-slice { cursor: pointer; transition: opacity 0.15s; }
+.exp-slice.dim { opacity: 0.25; }
+
+/* Drill-down: a country or category row unfolds into its breakdown */
+.exp-drill > summary { display: block; list-style: none; cursor: pointer; border-radius: 6px; }
+.exp-drill > summary::-webkit-details-marker { display: none; }
+.exp-drill > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.exp-chev { flex: 0 0 auto; width: 10px; text-align: center; color: var(--text-dim); line-height: 1; transition: transform 0.15s; }
+.exp-drill[open] > summary .exp-chev { transform: rotate(90deg); }
+.exp-drill > summary > .exp-bar-row { grid-template-columns: 110px 1fr auto 10px; }
+.exp-drill-body {
+  display: grid; gap: 6px;
+  margin: 8px 0 6px 5px; padding-left: 12px;
+  border-left: 2px solid var(--accent);
+}
+.exp-bar-row.sub { grid-template-columns: 96px 1fr auto 34px; gap: 6px; }
+.exp-bar-row.sub .exp-bar-lbl, .exp-bar-row.sub .exp-bar-amt { font-size: 12px; }
+.exp-bar-row.sub .exp-bar-track { height: 6px; }
+.exp-bar-pct { font-size: 12px; color: var(--text-dim); text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Budget tracker */
 .exp-budget-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
