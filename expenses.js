@@ -363,28 +363,79 @@ function homeSummaryCard(items) {
     </div>`;
 }
 
-/* ── Spend by country (pie) ────────────────────────────────────────────────── */
-// Everything summed into the home currency, grouped by country (any ISO code,
-// not just trip ones). Ordered trip-countries → others (alphabetical) →
-// unassigned; palette colours are assigned in that order, unassigned always grey.
-function spendByCountry(items) {
+// Each expense's home-currency value summed under key(e): the groups that have
+// spending, biggest first, plus how many expenses had no rate and were left out.
+function sumBy(items, key) {
   const by = new Map();
   let unconvertible = 0;
   for (const e of items) {
     const v = homeValue(e);
     if (v == null) { unconvertible += 1; continue; }
-    const key = e.country || "";
-    by.set(key, (by.get(key) || 0) + v);
+    const k = key(e);
+    by.set(k, (by.get(k) || 0) + v);
   }
-  const tier = (code) => (code === "" ? 3 : tripRank(code) < 99 ? 1 : 2);
-  const groups = [...by.entries()]
-    .filter(([, total]) => total > 0)
+  const rows = [...by].filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  return { rows, unconvertible };
+}
+const countryKey = (e) => e.country || "";
+const categoryKey = (e) => catOf(e.category).id;
+
+const pctTxt = (part, whole) => `${(part / whole * 100).toFixed(0)}\u00a0%`;
+
+// Which country / category is unfolded in the breakdown cards. Kept module-level
+// like expShown so a snapshot re-render doesn't fold it back; null = none ("" is
+// a real key: the unassigned country). renderExpenses() clears it.
+const expOpen = { country: null, category: null };
+
+// The detail under an unfolded country or category: one small bar per
+// { label (HTML), amt, color }, biggest first, with its share of `total`.
+function subBarsHTML(rows, total) {
+  const max = rows[0]?.amt || 1;
+  return rows.map((r) => `
+    <div class="exp-bar-row sub">
+      <span class="exp-bar-lbl">${r.label}</span>
+      <span class="exp-bar-track"><span class="exp-bar-fill" style="width:${(r.amt / max * 100).toFixed(1)}%;background:${r.color}"></span></span>
+      <span class="exp-bar-amt">${esc(fmt(r.amt, HOME_CURRENCY))}</span>
+      <span class="exp-bar-pct">${pctTxt(r.amt, total)}</span>
+    </div>`).join("");
+}
+
+// Country / category rows unfold one at a time, remembered in expOpen. In the
+// country card the pie dims the other countries, and tapping a slice unfolds
+// its country.
+function wireDrills(root) {
+  root.querySelectorAll(".exp-drills").forEach((list) => {
+    const kind = list.dataset.kind;
+    const drills = [...list.querySelectorAll(":scope > .exp-drill")];
+    const pie = list.closest(".panel").querySelector(".exp-pie");
+    const dimPie = () => pie?.querySelectorAll(".exp-slice").forEach((s) =>
+      s.classList.toggle("dim", expOpen[kind] != null && s.dataset.key !== expOpen[kind]));
+    drills.forEach((d) => d.addEventListener("toggle", () => {
+      if (d.open) {
+        expOpen[kind] = d.dataset.key;
+        drills.forEach((o) => { if (o !== d) o.open = false; });
+      } else if (expOpen[kind] === d.dataset.key) expOpen[kind] = null;
+      dimPie();
+    }));
+    pie?.addEventListener("click", (ev) => {
+      const key = ev.target.closest(".exp-slice")?.dataset.key;
+      const d = key != null && drills.find((o) => o.dataset.key === key);
+      if (d) d.open = !d.open;
+    });
+  });
+}
+
+/* ── Spend by country (pie) ────────────────────────────────────────────────── */
+// Everything summed into the home currency, grouped by country (any ISO code,
+// not just trip ones), biggest spend first. Palette colours are assigned in
+// that order, unassigned always grey.
+function spendByCountry(items) {
+  const { rows, unconvertible } = sumBy(items, countryKey);
+  let n = 0;
+  const groups = rows
     .map(([code, total]) => { const c = countryOf(code); return { code, total, name: c.name, flag: c.flag }; })
-    .sort((a, b) =>
-      tier(a.code) - tier(b.code) ||
-      tripRank(a.code) - tripRank(b.code) ||
-      a.name.localeCompare(b.name, "fr"))
-    .map((g, i) => ({ ...g, color: g.code === "" ? UNASSIGNED.color : COUNTRY_COLORS[i % COUNTRY_COLORS.length] }));
+    .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, "fr"))
+    .map((g) => ({ ...g, color: g.code === "" ? UNASSIGNED.color : COUNTRY_COLORS[n++ % COUNTRY_COLORS.length] }));
   const total = groups.reduce((s, g) => s + g.total, 0);
   return { groups, total, unconvertible };
 }
@@ -403,19 +454,21 @@ function donutArc(cx, cy, r, ri, startDeg, endDeg) {
   return `M${x1} ${y1} A${r} ${r} 0 ${large} 0 ${x2} ${y2} L${x3} ${y3} A${ri} ${ri} 0 ${large} 1 ${x4} ${y4} Z`;
 }
 
-function pieSVG(groups, total) {
+// `open` is the unfolded country (null = none): the other slices are dimmed.
+function pieSVG(groups, total, open) {
   const cx = 120, cy = 120, r = 100, ri = 62;
+  const attrs = (g) => `class="exp-slice${open != null && g.code !== open ? " dim" : ""}" data-key="${esc(g.code)}"`;
   let slices;
   if (groups.length === 1) {
     // A single 100% slice: a 360° arc is degenerate, so draw a full ring.
-    slices = `<circle cx="${cx}" cy="${cy}" r="${(r + ri) / 2}" fill="none"
+    slices = `<circle ${attrs(groups[0])} cx="${cx}" cy="${cy}" r="${(r + ri) / 2}" fill="none"
                 stroke="${groups[0].color}" stroke-width="${r - ri}" />`;
   } else {
     let a = 0;
     slices = groups.map((g) => {
       const start = a, end = a + (g.total / total) * 360;
       a = end;
-      return `<path d="${donutArc(cx, cy, r, ri, start, end)}" fill="${g.color}" />`;
+      return `<path ${attrs(g)} d="${donutArc(cx, cy, r, ri, start, end)}" fill="${g.color}" />`;
     }).join("");
   }
   return `
@@ -444,20 +497,30 @@ function countrySpendCard(items) {
     return `<div class="panel exp-country"><h2>Par pays</h2>
       <p class="exp-empty">Aucune dépense convertible pour l’instant.</p></div>`;
 
-  const legend = groups.map((g) => `
-    <div class="exp-legend-row">
-      <span class="sw" style="background:${g.color}"></span>
-      <span class="lg-name">${g.flag} ${esc(g.name)}</span>
-      <span class="lg-amt">${esc(fmt(g.total, HOME_CURRENCY))}</span>
-      <span class="lg-pct">${(g.total / total * 100).toFixed(0)}\u00a0%</span>
-    </div>`).join("");
+  // Each country unfolds into its spend by category.
+  const open = groups.some((g) => g.code === expOpen.country) ? expOpen.country : null;
+  const legend = groups.map((g) => {
+    const cats = sumBy(items.filter((e) => countryKey(e) === g.code), categoryKey).rows
+      .map(([id, amt]) => { const c = catOf(id); return { label: `${c.icon} ${esc(c.label)}`, amt, color: g.color }; });
+    return `
+    <details class="exp-drill" data-key="${esc(g.code)}"${g.code === open ? " open" : ""}>
+      <summary><div class="exp-legend-row">
+        <span class="sw" style="background:${g.color}"></span>
+        <span class="lg-name">${g.flag} ${esc(g.name)}</span>
+        <span class="lg-amt">${esc(fmt(g.total, HOME_CURRENCY))}</span>
+        <span class="lg-pct">${pctTxt(g.total, total)}</span>
+        <span class="exp-chev" aria-hidden="true">›</span>
+      </div></summary>
+      <div class="exp-drill-body" style="border-color:${g.color}">${subBarsHTML(cats, g.total)}</div>
+    </details>`;
+  }).join("");
 
   return `
     <div class="panel exp-country">
       <h2>Par pays</h2>
       <div class="exp-country-body">
-        ${pieSVG(groups, total)}
-        <div class="exp-legend">${legend}</div>
+        ${pieSVG(groups, total, open)}
+        <div class="exp-legend exp-drills" data-kind="country">${legend}</div>
       </div>
       ${unconvertible ? `<div class="exp-rate-note warn">⚠ ${unconvertible} dépense${unconvertible > 1 ? "s" : ""} dans une devise sans taux — exclue${unconvertible > 1 ? "s" : ""}</div>` : ""}
     </div>`;
@@ -465,7 +528,7 @@ function countrySpendCard(items) {
 
 /* ── Spend by category ─────────────────────────────────────────────────────── */
 // Everything summed into the home currency (each expense at its frozen rate),
-// one bar per category, biggest first.
+// one bar per category, biggest first; each unfolds into its spend by country.
 function categorySpendCard(items) {
   if (!items.length) return "";
 
@@ -479,29 +542,33 @@ function categorySpendCard(items) {
       <p class="exp-rate-note pending">💱 La répartition par catégorie a besoin des taux de change —
       vous êtes hors ligne et ils n’ont pas encore été récupérés. Elle s’affichera dès votre retour en ligne.</p></div>`;
 
-  const byCat = new Map();
-  let unconvertible = 0;
-  for (const e of items) {
-    const v = homeValue(e);
-    if (v == null) { unconvertible += 1; continue; }
-    byCat.set(e.category, (byCat.get(e.category) || 0) + v);
-  }
-  const cats = [...byCat].filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  const { rows: cats, unconvertible } = sumBy(items, categoryKey);
   if (!cats.length) return "";
   const max = cats[0][1];
+  // Countries keep their pie colour in the detail.
+  const colorOf = new Map(spendByCountry(items).groups.map((g) => [g.code, g.color]));
 
   return `
     <div class="panel exp-cats">
       <h2>Par catégorie</h2>
-      <div class="exp-bars">
+      <div class="exp-bars exp-drills" data-kind="category">
         ${cats.map(([id, amt]) => {
           const c = catOf(id);
+          const countries = sumBy(items.filter((e) => categoryKey(e) === id), countryKey).rows
+            .map(([code, v]) => {
+              const k = countryOf(code);
+              return { label: `${k.flag} ${esc(k.name)}`, amt: v, color: colorOf.get(code) || UNASSIGNED.color };
+            });
           return `
-          <div class="exp-bar-row">
-            <span class="exp-bar-lbl">${c.icon} ${esc(c.label)}</span>
-            <span class="exp-bar-track"><span class="exp-bar-fill" style="width:${(amt / max * 100).toFixed(1)}%"></span></span>
-            <span class="exp-bar-amt">${esc(fmt(amt, HOME_CURRENCY))}</span>
-          </div>`;
+          <details class="exp-drill" data-key="${esc(id)}"${id === expOpen.category ? " open" : ""}>
+            <summary><div class="exp-bar-row">
+              <span class="exp-bar-lbl">${c.icon} ${esc(c.label)}</span>
+              <span class="exp-bar-track"><span class="exp-bar-fill" style="width:${(amt / max * 100).toFixed(1)}%"></span></span>
+              <span class="exp-bar-amt">${esc(fmt(amt, HOME_CURRENCY))}</span>
+              <span class="exp-chev" aria-hidden="true">›</span>
+            </div></summary>
+            <div class="exp-drill-body">${subBarsHTML(countries, amt)}</div>
+          </details>`;
         }).join("")}
       </div>
       ${unconvertible ? `<div class="exp-rate-note warn">⚠ ${unconvertible} dépense${unconvertible > 1 ? "s" : ""} dans une devise sans taux — exclue${unconvertible > 1 ? "s" : ""}</div>` : ""}
@@ -1305,6 +1372,7 @@ function dashboard(user, items, actions) {
   head.querySelector(".exp-out").addEventListener("click", actions.signOut);
 
   const summary = el(`<div>${budgetCard(items)}${countrySpendCard(items)}${categorySpendCard(items)}${summaryCards(items)}</div>`);
+  wireDrills(summary);
   const rows = expenseRows(items, actions);
   const form = addForm(user, actions.add);
 
@@ -1386,6 +1454,7 @@ export async function renderExpenses() {
   document.title = "Dépenses · Compagnon de voyage";
   expShown = PAGE; // collapse the list back to the first page on a fresh open
   expFilter.q = ""; expFilter.category = ALL; expFilter.country = ALL; expFilter.paidBy = ALL;
+  expOpen.country = null; expOpen.category = null;
 
   if (!isConfigured()) return setupNeededScreen();
 
