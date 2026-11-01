@@ -37,6 +37,58 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "La Mongolie est l’un des derniers grands espaces sauvages tempérés : la taïga sibérienne au nord, la steppe au centre et à l’est, le Gobi au sud, les glaciers de l’Altaï à l’ouest — sans clôtures, ou presque. Les gazelles y migrent encore par centaines de milliers, le cheval de Przewalski y galope de nouveau après avoir disparu de la nature, et le Gobi abrite deux raretés absolues : le chameau de Bactriane sauvage et l’ours du Gobi (mazaalai), dont il reste quelques dizaines. Les grands carnivores — panthère des neiges, loup — restent discrets, mais les rapaces sont partout : on voit plus d’aigles en une semaine de steppe que dans une vie en Europe.",
+    species: [
+      {
+        name: "Cheval de Przewalski (takhi)", latin: "Equus ferus przewalskii", kind: "fauna", wiki: "Przewalski's horse",
+        description: "Le dernier cheval véritablement sauvage, trapu, à crinière dressée. Disparu de la nature à la fin des années 1960, il n’a survécu que dans des zoos ; réintroduit en Mongolie à partir de 1992, il compte de nouveau plusieurs centaines d’individus libres.",
+        where: "Le parc national de Hustaï, à ~100 km à l’ouest d’Oulan-Bator, en fin de journée, quand les harems descendent boire dans les vallées ; aussi à Khomiin Tal (ouest) et Takhin Tal (Gobi).",
+      },
+      {
+        name: "Chameau de Bactriane", latin: "Camelus bactrianus · Camelus ferus", kind: "fauna", wiki: "Bactrian camel",
+        description: "Deux bosses, une toison qui tombe en lambeaux au printemps, et une résistance hors norme au froid comme à la soif. Le domestique est partout dans le Gobi ; son cousin sauvage, une espèce distincte, est l’un des grands mammifères les plus menacés au monde.",
+        where: "Les campements d’éleveurs autour de Khongoryn Els, où l’on part en balade au pied des dunes chantantes. Début mars, le festival des Mille Chameaux près de Dalanzadgad. Le chameau sauvage ne vit que dans la réserve strictement protégée du Grand Gobi A, accessible seulement sur permis.",
+      },
+      {
+        name: "Gypaète barbu et vautour moine", latin: "Gypaetus barbatus · Aegypius monachus", kind: "fauna", wiki: "Bearded vulture",
+        description: "Le gypaète, qui brise les os en les lâchant sur les rochers pour en manger la moelle, et le vautour moine, l’un des plus grands rapaces du monde (près de 3 m d’envergure).",
+        where: "Yolyn Am, dans les monts Gurvan Saikhan (Gobi du Sud) : son nom signifie en fait « la vallée du gypaète » (yol), souvent traduit à tort par « vallée de l’Aigle ». Levez les yeux sur les crêtes — et partout dans la steppe, près des troupeaux.",
+      },
+      {
+        name: "Gazelle de Mongolie (dzeren)", latin: "Procapra gutturosa", kind: "fauna", wiki: "Mongolian gazelle",
+        description: "Plus d’un million de gazelles parcourent les steppes de l’Est en grands troupeaux nomades — l’une des dernières grandes migrations d’ongulés d’Asie.",
+        where: "La steppe orientale (provinces de Dornod et Sükhbaatar), avec un chauffeur qui connaît les zones de passage ; parfois aussi au bord des pistes du centre et de l’est, filant à 60 km/h devant le 4×4.",
+      },
+      {
+        name: "Argali", latin: "Ovis ammon", kind: "fauna", wiki: "Argali",
+        description: "Le plus grand mouton sauvage du monde, aux cornes enroulées massives. En Mongolie, il vit sur les massifs rocheux qui émergent de la steppe et du Gobi.",
+        where: "La réserve d’Ikh Nart (Dornogovi), à quelques heures au sud-est d’Oulan-Bator, près de la ligne du Transmongol : une population habituée et étudiée par des chercheurs, l’un des meilleurs endroits au monde pour l’observer, avec aussi des bouquetins.",
+      },
+      {
+        name: "Ombre du Khövsgöl", latin: "Thymallus nigrescens", kind: "fauna", endemic: "du lac Khövsgöl", wiki: "Hovsgol grayling",
+        description: "Un poisson à grande nageoire dorsale qui n’existe que dans le lac Khövsgöl et ses affluents — le « petit frère » du Baïkal, aux eaux d’une transparence absolue.",
+        where: "Le lac Khövsgöl, en pêche à la mouche (no-kill) au départ de Khatgal, ou simplement depuis la rive en été, dans l’eau cristalline ; les rennes des Tsaatans vivent dans la taïga à l’ouest du lac.",
+      },
+      {
+        name: "Edelweiss", latin: "Leontopodium", kind: "flora", wiki: "Leontopodium",
+        description: "La fleur alpine des Européens est ici une fleur de steppe banale : en été, des prairies entières en sont étoilées, jusqu’aux abords des yourtes.",
+        where: "Gorkhi-Terelj et toutes les prairies du centre et du nord, en juillet–août ; marchez quelques minutes hors du camp de yourtes.",
+      },
+      {
+        name: "Saxaoul", latin: "Haloxylon ammodendron", kind: "flora", wiki: "Haloxylon ammodendron",
+        description: "L’« arbre » du désert : un arbuste noueux au bois si dense qu’il coule, qui fixe les dunes et fournit aux nomades leur bois de chauffe. Ses racines plongent à des mètres vers la nappe.",
+        where: "La forêt de saxaouls de Bayanzag, juste à côté des falaises flamboyantes, et autour de Khongoryn Els — une forêt fantôme au coucher du soleil.",
+      },
+      {
+        name: "Armoise de la steppe", latin: "Artemisia frigida", kind: "flora", wiki: "Artemisia frigida",
+        description: "La petite plante argentée qui donne à la steppe son parfum — une odeur de sauge qui monte dès qu’on marche ou qu’un troupeau passe.",
+        where: "Partout dans la steppe, du centre au Gobi : écrasez une feuille entre vos doigts. L’odeur est la plus forte après une averse d’été.",
+      },
+    ],
+  },
+
   books: [
     { title: "Genghis Khan and the Making of the Modern World", author: "Jack Weatherford", year: "2004", note: "La réévaluation à succès de Gengis Khan — un arrière-plan essentiel et vraiment captivant." },
     { title: "L’Histoire secrète des Mongols", author: "anonyme, XIIIe s.", year: "v. 1240", note: "La plus ancienne œuvre littéraire mongole conservée — la chronique de cour épique, mêlée de mythes, de l’ascension de Gengis Khan." },

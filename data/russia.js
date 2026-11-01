@@ -37,6 +37,73 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Le plus grand pays du monde enfile les biomes comme les perles du Transsibérien : toundra arctique, taïga — la plus vaste forêt de la planète —, steppe, Caucase et forêts mixtes de l’Extrême-Orient. Le joyau naturaliste est le Baïkal : vieux d’environ 25 millions d’années, isolé, il abrite des centaines d’espèces qui n’existent nulle part ailleurs, du phoque d’eau douce aux poissons translucides des abysses. Plus à l’est, le Primorié est le dernier refuge du tigre et du léopard de l’Amour, et le Kamtchatka l’un des grands royaumes de l’ours brun. Ici, la faune se mérite : les distances sont immenses et les animaux discrets — mais la taïga qui défile des jours entiers derrière la vitre est déjà, en soi, le spectacle.",
+    species: [
+      {
+        name: "Phoque du Baïkal (nerpa)", latin: "Pusa sibirica", kind: "fauna", endemic: "du Baïkal", wiki: "Baikal seal",
+        description: "L’un des très rares phoques d’eau douce au monde, à plus de 1 500 km de l’océan le plus proche — comment il est arrivé là reste un mystère (sans doute en remontant les fleuves depuis l’Arctique à l’ère glaciaire). Petit, rond, aux grands yeux noirs, il plonge à des centaines de mètres.",
+        where: "Les îles Ouchkani, au cœur du lac (parc national du Zabaïkalski), en bateau depuis Oust-Barguzine ou Khoujir (Olkhon) : fin mai–juin, des centaines de nerpas s’y prélassent sur les rochers. Parfois depuis le cap Khoboï, au nord d’Olkhon. Le musée du Baïkal à Listvianka en présente aussi en aquarium.",
+      },
+      {
+        name: "Omoul et golomianka", latin: "Coregonus migratorius · Comephorus", kind: "fauna", endemic: "du Baïkal", wiki: "Baikal omul",
+        description: "Deux poissons propres au lac. L’omoul, cousin du saumon, est le plat emblématique du Baïkal — fumé à chaud et vendu sur tous les étals. La golomianka, translucide et sans écailles, vit jusqu’aux abysses et met ses petits au monde vivants. Face à l’effondrement des stocks, la pêche commerciale de l’omoul est interdite depuis 2017.",
+        where: "Les aquariums du musée du Baïkal à Listvianka montrent les deux. Pour l’omoul fumé des marchés (Listvianka, Olkhon), demandez d’où il vient : une bonne partie provient désormais d’élevage — ou de braconnage.",
+      },
+      {
+        name: "Ours brun du Kamtchatka", latin: "Ursus arctos beringianus", kind: "fauna", wiki: "Kamchatka brown bear",
+        description: "Parmi les plus grands ours bruns d’Eurasie, gavés de saumon chaque été. La péninsule en compte plusieurs milliers, l’une des plus fortes densités au monde.",
+        where: "Le lac Kourile, dans la réserve du Kamtchatka-Sud, de juillet à septembre, pendant la remontée des saumons rouges (accès en hélicoptère depuis Petropavlovsk, observation depuis des postes encadrés). La vallée des Geysers et les rivières de la côte en offrent aussi. Le Kamtchatka n’est relié par aucune route au reste du pays : avion ou, rarement, bateau depuis Vladivostok.",
+      },
+      {
+        name: "Tigre et léopard de l’Amour", latin: "Panthera tigris altaica · Panthera pardus orientalis", kind: "fauna", wiki: "Siberian tiger",
+        description: "Le plus grand félin du monde (environ 750 en Russie) et le léopard le plus rare de la planète (un peu plus d’une centaine), tous deux sauvés de justesse dans les forêts mixtes de cèdres et de chênes du Primorié.",
+        where: "Le parc national Terre du Léopard, à 2–3 h de Vladivostok — le terminus du Transsibérien — a des sentiers et un centre de visiteurs ; on y voit surtout des traces dans la neige en hiver, l’animal presque jamais. La réserve de Sikhote-Aline (UNESCO) plus au nord. Fin septembre, Vladivostok célèbre la Fête du Tigre dans les rues.",
+      },
+      {
+        name: "Zibeline", latin: "Martes zibellina", kind: "fauna", wiki: "Sable",
+        description: "La petite martre à la fourrure soyeuse qui a fait l’histoire : c’est pour ses peaux, l’« or doux » prélevé en tribut (iassak), que les Cosaques ont conquis la Sibérie jusqu’au Pacifique. Surchassée jusqu’au bord de l’extinction au début du XXe siècle.",
+        where: "La réserve de Barguzine, sur la rive nord-est du Baïkal — la plus ancienne réserve naturelle de Russie, créée en 1916 justement pour sauver la zibeline. Discrète : on la croise au petit matin dans la taïga, ou l’on suit ses traces en hiver.",
+      },
+      {
+        name: "Béluga", latin: "Delphinapterus leucas", kind: "fauna", wiki: "Beluga whale",
+        description: "La baleine blanche de l’Arctique, au front bombé et aux « chants » qui lui valent le surnom de canari des mers. Des groupes viennent chaque été se nourrir et se reproduire près des côtes de la mer Blanche.",
+        where: "Le cap Béloujy, sur la grande île des Solovki : de juin à août, on les observe depuis la rive et une petite tour, surtout à marée montante. À combiner avec la visite du monastère.",
+      },
+      {
+        name: "Renne", latin: "Rangifer tarandus", kind: "fauna", wiki: "Reindeer",
+        description: "Sauvage ou domestiqué, le renne fait vivre les peuples de la toundra — Nénètses, Sâmes, Évenks — qui le suivent dans ses migrations depuis des millénaires.",
+        where: "La péninsule de Kola (Lovozero, centre de la culture sâme, au départ de Mourmansk) et la toundra du Iamal chez les éleveurs nénètses, avec une agence spécialisée. Plus facile : les fermes de rennes autour de Mourmansk en hiver.",
+      },
+      {
+        name: "Grandes migrations de l’isthme de Courlande", kind: "fauna", wiki: "Curonian Spit",
+        description: "Ce cordon de dunes entre lagune et Baltique est l’une des grandes autoroutes migratoires d’Europe : des millions de passereaux et de rapaces le longent chaque printemps et chaque automne. La première station ornithologique du monde y a été fondée en 1901.",
+        where: "La station biologique de Rybatchi (ex-Rossitten), avec ses immenses filets-pièges que l’on peut visiter ; les pics de passage se situent en septembre–octobre, au lever du jour.",
+      },
+      {
+        name: "Mélèze de Sibérie", latin: "Larix sibirica", kind: "flora", wiki: "Larix sibirica",
+        description: "L’arbre roi de la taïga — le plus répandu de Russie — un conifère qui perd ses aiguilles l’hiver, ce qui lui permet d’encaisser des froids de -60 °C. Son bois dense, qui résiste à la pourriture, est le bois de construction traditionnel de la Sibérie.",
+        where: "Derrière la vitre du Transsibérien des jours durant, sur les rives du Baïkal et dans l’Altaï. Fin septembre, les forêts virent à l’or : le plus beau moment pour le voir.",
+      },
+      {
+        name: "Bouleau", latin: "Betula pendula", kind: "flora", wiki: "Betula pendula",
+        description: "L’arbre-symbole de la Russie, chanté par les poètes et peint par les Ambulants. Au printemps on boit sa sève (beriozovy sok) ; ses rameaux servent de venik pour se fouetter au bania.",
+        where: "Partout de Moscou à l’Oural — les bois de l’Anneau d’or et le long du Transsibérien sont des forêts de troncs blancs. Fin septembre pour l’or de l’automne, mai pour le vert tendre.",
+      },
+      {
+        name: "Pin cembro de Sibérie (« kedr »)", latin: "Pinus sibirica", kind: "flora", wiki: "Pinus sibirica",
+        description: "Le « cèdre » des Sibériens — en fait un pin qui peut vivre plus de 500 ans. Ses graines, les pignons de kedr, sont l’en-cas national de la Sibérie, et nourrissent zibelines, ours et cassenoix.",
+        where: "Les forêts de l’Altaï et des monts autour du Baïkal. En fin d’été et à l’automne, les babouchkas vendent des cônes et des sachets de pignons sur les quais des gares du Transsibérien.",
+      },
+      {
+        name: "Rhododendron de Daourie (« bagoulnik »)", latin: "Rhododendron dauricum", kind: "flora", wiki: "Rhododendron dauricum",
+        description: "Le premier arbuste à fleurir après l’hiver sibérien : avant même les feuilles, des collines entières se teintent de rose-violet.",
+        where: "Les collines autour d’Irkoutsk et sur les rives du Baïkal, de fin avril à fin mai — le long du Circumbaïkalien et autour de Listvianka.",
+      },
+    ],
+  },
+
   books: [
     { title: "Guerre et Paix", author: "Léon Tolstoï", year: "1869", note: "L’invasion napoléonienne vue à travers cinq familles aristocratiques — la grande épopée russe." },
     { title: "Crime et Châtiment", author: "Fiodor Dostoïevski", year: "1866", note: "Un Saint-Pétersbourg fiévreux de misère, de culpabilité et de rédemption." },

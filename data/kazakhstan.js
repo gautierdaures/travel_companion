@@ -37,6 +37,53 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Le neuvième pays du monde par la taille est surtout un océan de steppe et de désert — l’une des plus grandes steppes intactes de la planète — bordé au sud-est par les géants du Tian Shan et de l’Altaï. Cette immensité abrite des troupeaux qu’on ne voit presque plus ailleurs : saïgas, koulans, gazelles. Et les contreforts au-dessus d’Almaty sont le berceau de deux trésors offerts au monde entier : la pomme et la tulipe, dont les ancêtres sauvages y poussent encore. Les montagnes, enfin, sont le domaine de la panthère des neiges, de l’ibex et de l’aigle royal — quasi invisibles, mais bien là.",
+    species: [
+      {
+        name: "Saïga", latin: "Saiga tatarica", kind: "fauna", wiki: "Saiga antelope",
+        description: "L’antilope au nez en trompe, rescapée de l’ère glaciaire. Tombée à quelque 20 000 têtes au début des années 2000 à cause du braconnage, puis frappée par une épidémie qui en tua 200 000 en 2015, elle a fait un retour spectaculaire : plus de deux millions aujourd’hui.",
+        where: "Les steppes de Betpak-Dala et de l’Altyn Dala (centre) ou de l’Oural (ouest), avec un guide spécialisé — les troupeaux sont mobiles et farouches. Mai est le mois des naissances, où les femelles se regroupent par milliers.",
+      },
+      {
+        name: "Koulan (âne sauvage d’Asie)", latin: "Equus hemionus kulan", kind: "fauna", wiki: "Turkmenian kulan",
+        description: "Un équidé sauvage couleur sable, rapide et nerveux, disparu du Kazakhstan au XXe siècle puis réintroduit depuis l’île de Barsa-Kelmes, en mer d’Aral : quelques milliers vivent aujourd’hui dans le Sud-Est.",
+        where: "Le parc national d’Altyn-Emel, au pied de la dune chantante et des montagnes d’Aktau : en 4×4 avec les gardes du parc, au petit matin, sur les plaines autour des sources.",
+      },
+      {
+        name: "Gazelle à goitre (djeïran)", latin: "Gazella subgutturosa", kind: "fauna", wiki: "Goitered gazelle",
+        description: "La gazelle des déserts d’Asie centrale, dont le mâle gonfle la gorge à la saison des amours. Gracieuse et très farouche.",
+        where: "Altyn-Emel encore, sur les plaines désertiques entre le cordon de la dune chantante et les montagnes colorées — souvent dans les mêmes sorties que les koulans.",
+      },
+      {
+        name: "Flamant rose", latin: "Phoenicopterus roseus", kind: "fauna", wiki: "Greater flamingo",
+        description: "Surprise au cœur de la steppe : le lac Tengiz, salé, accueille la colonie de flamants la plus septentrionale du monde — sur le grand couloir migratoire entre l’Asie centrale et la Sibérie.",
+        where: "La réserve de Korgalzhyn (UNESCO, « Saryarka »), à ~130 km au sud-ouest d’Astana, de mai à septembre : centre de visiteurs au village, sorties vers les lacs avec un garde. Pélicans, grues demoiselles et outardes en prime.",
+      },
+      {
+        name: "Tulipes sauvages", latin: "Tulipa greigii · Tulipa kolpakowskiana", kind: "flora", wiki: "Tulipa greigii",
+        description: "Bien avant les Ottomans et les Hollandais, la tulipe est une fleur sauvage des steppes et des contreforts du Tian Shan : une trentaine d’espèces y poussent. La tulipe de Greig, rouge vif aux feuilles tachetées, est l’ancêtre de nombreuses variétés de jardin.",
+        where: "La réserve d’Aksu-Jabagly (sud, près de Chymkent — la plus ancienne d’Asie centrale, 1926) en avril–mai ; plus près d’Almaty, les steppes d’Altyn-Emel et les collines vers le canyon de Charyn en avril.",
+      },
+      {
+        name: "Pommier sauvage d’Asie centrale", latin: "Malus sieversii", kind: "flora", wiki: "Malus sieversii",
+        description: "L’ancêtre de presque toutes les pommes du monde, emporté vers l’ouest par les caravanes de la route de la Soie. Ses forêts sauvages couvrent encore les contreforts du Tian Shan — Almaty doit d’ailleurs son nom à la pomme (alma).",
+        where: "Les vallées au-dessus d’Almaty (parc national d’Ile-Alataou, vers le Grand lac d’Almaty) : floraison blanche fin avril–mai, fruits en septembre, où chaque arbre donne une pomme différente.",
+      },
+      {
+        name: "Frêne de Sogdiane", latin: "Fraxinus sogdiana", kind: "flora", wiki: "Fraxinus sogdiana",
+        description: "Un arbre relique de l’ère tertiaire, survivant d’une époque où l’Asie centrale était bien plus humide : une forêt entière en subsiste au fond des canyons du désert.",
+        where: "La frênaie de Charyn, le long de la rivière au fond du canyon — une oasis verte et fraîche à la sortie de la « vallée des châteaux ».",
+      },
+      {
+        name: "Épicéa de Schrenk", latin: "Picea schrenkiana", kind: "flora", wiki: "Picea schrenkiana",
+        description: "Le grand sapin sombre et effilé qui couvre les versants nord du Tian Shan entre 1 500 et 3 000 m — une silhouette qui résiste à la neige comme à la sécheresse.",
+        where: "Les lacs de Kolsaï et le Grand lac d’Almaty ; au lac de Kaïndy, formé par un séisme en 1911, ce sont ses troncs morts qui émergent encore de l’eau turquoise.",
+      },
+    ],
+  },
+
   books: [
     { title: "The Silent Steppe", author: "Mukhamet Shayakhmetov", year: "2006", note: "Rare témoignage de première main : une enfance nomade brisée par la collectivisation et la famine soviétiques." },
     { title: "Apples Are from Kazakhstan", author: "Christopher Robbins", year: "2008", note: "Un portrait chaleureux et curieux du pays par un voyageur (dont les forêts de pommiers sauvages ont donné la pomme au monde)." },

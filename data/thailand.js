@@ -37,6 +37,58 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "À la charnière entre l’Indochine et la péninsule malaise, la Thaïlande mêle forêts de mousson du Nord, forêts tropicales humides du Sud, mangroves et récifs de deux mers — la mer d’Andaman et le golfe de Thaïlande. Le pays a perdu une grande partie de ses forêts au XXe siècle, mais protège aujourd’hui plus d’une centaine de parcs nationaux, dont deux grands complexes forestiers classés à l’UNESCO (Dong Phayayen–Khao Yai et Kaeng Krachan). On y voit encore des éléphants sauvages, des calaos et des gibbons sans expédition — à condition de fuir les « spectacles » d’animaux et les balades à dos d’éléphant, et de préférer les parcs et les projets de protection.",
+    species: [
+      {
+        name: "Éléphant d’Asie", latin: "Elephas maximus", kind: "fauna", wiki: "Asian elephant",
+        description: "L’animal national, présent dans les blasons, les temples et l’histoire militaire du Siam. Il reste environ 3 000 à 4 000 éléphants sauvages, autant qu’en captivité.",
+        where: "Le parc national de Kui Buri (Prachuap Khiri Khan, entre Hua Hin et le Sud) : en fin d’après-midi, en pick-up avec un garde, vers des prairies où les troupeaux sortent presque chaque soir, avec des gaurs. Aussi la nuit sur la route de Khao Yai — gardez vos distances.",
+      },
+      {
+        name: "Grand calao", latin: "Buceros bicornis", kind: "fauna", wiki: "Great hornbill",
+        description: "Un oiseau énorme au casque jaune, dont le battement d’ailes s’entend comme un souffle de locomotive. Le couple est fidèle à vie ; la femelle s’emmure dans un tronc creux pour couver, nourrie par le mâle.",
+        where: "Le parc national de Khao Yai (à 3 h de Bangkok), surtout autour des figuiers en fruit et au départ des sentiers près du centre de visiteurs, tôt le matin ; aussi à Kaeng Krachan.",
+      },
+      {
+        name: "Gibbon à mains blanches", latin: "Hylobates lar", kind: "fauna", wiki: "Lar gibbon",
+        description: "Pelage noir ou crème, visage cerclé de blanc : le gibbon des forêts thaïes, dont les chants en duo résonnent à l’aube sur des kilomètres.",
+        where: "Khao Yai, en suivant les chants avec un guide entre 6 h et 9 h ; le Gibbon Rehabilitation Project de Phuket (cascade de Bang Pae), à combiner avec la côte d’Andaman, réhabilite des gibbons arrachés au tourisme photo.",
+      },
+      {
+        name: "Requin-baleine", latin: "Rhincodon typus", kind: "fauna", wiki: "Whale shark",
+        description: "Le plus grand poisson du monde, jusqu’à 12 m, totalement inoffensif : il filtre le plancton bouche ouverte.",
+        where: "Sail Rock et Chumphon Pinnacle au départ de Ko Tao (rencontres surtout de février à mai, et parfois en septembre–octobre) ; Richelieu Rock, aux îles Surin, de février à avril. Jamais garanti — c’est ce qui rend la rencontre magique.",
+      },
+      {
+        name: "Dugong", latin: "Dugong dugon", kind: "fauna", wiki: "Dugong",
+        description: "La « vache marine », mammifère qui broute les herbiers sous-marins — à l’origine, dit-on, des légendes de sirènes. Très menacé dans tout le pays.",
+        where: "Ko Libong, dans la province de Trang, qui abrite la plus grande population de Thaïlande : sortie en bateau avec des pêcheurs locaux ou observation depuis la côte à marée haute, jumelles en main. À 2–3 h de route de Krabi.",
+      },
+      {
+        name: "Lucioles synchrones", latin: "Pteroptyx malaccae", kind: "fauna", wiki: "Pteroptyx",
+        description: "Des milliers de lucioles mâles se rassemblent sur les palétuviers et clignotent toutes en même temps, transformant les arbres en guirlandes vivantes.",
+        where: "Les canaux d’Amphawa (Samut Songkhram), à 1 h 30 de Bangkok, en barque à la nuit tombée — de préférence une nuit sans lune et loin des bateaux à moteur bruyants.",
+      },
+      {
+        name: "Cassia fistula (ratchaphruek)", latin: "Cassia fistula", kind: "flora", wiki: "Cassia fistula",
+        description: "La fleur nationale : des grappes pendantes jaune d’or, la couleur du bouddhisme et de la royauté. Ses fleurs en cascade lui valent le surnom de « pluie d’or ».",
+        where: "Partout en ville et à la campagne, de mars à mai, en pleine saison chaude — les avenues de Bangkok, de Chiang Mai et des villes d’Isan virent au jaune.",
+      },
+      {
+        name: "Nénuphars de la « mer de lotus rouges »", latin: "Nymphaea pubescens", kind: "flora", wiki: "Nymphaea pubescens",
+        description: "Un lac entier couvert de fleurs rose vif à perte de vue. Malgré le nom, ce ne sont pas des lotus mais des nénuphars, qui s’ouvrent à l’aube et se referment vers midi.",
+        where: "Le lac Nong Han Kumphawapi (Talay Bua Daeng), près d’Udon Thani en Isan, de décembre à février : en barque au lever du soleil, avant 10 h.",
+      },
+      {
+        name: "Rhododendrons du Doi Inthanon", latin: "Rhododendron arboreum subsp. delavayi", kind: "flora", wiki: "Rhododendron arboreum",
+        description: "Sur le toit de la Thaïlande (2 565 m), une forêt de nuages couverte de mousses et d’orchidées, où des rhododendrons arborescents fleurissent en rouge au cœur de la saison fraîche.",
+        where: "Le sentier de Kew Mae Pan, près du sommet du Doi Inthanon (à 2 h de Chiang Mai), de décembre à février — sentier fermé de juin à octobre ; guide local obligatoire.",
+      },
+    ],
+  },
+
   books: [
     { title: "La Plage", author: "Alex Garland", year: "1996", note: "Le roman de l’utopie routarde qui a à la fois mythifié et égratigné le rêve des îles thaïlandaises." },
     { title: "Four Reigns", author: "Kukrit Pramoj", year: "1953", note: "Un roman adoré qui suit une femme à la cour de Bangkok sous quatre rois — une fenêtre sur la vie thaïe." },

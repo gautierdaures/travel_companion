@@ -37,6 +37,53 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Plus de 90 % du Kirghizistan est fait de montagnes : Tian Shan au nord et à l’est, Pamir-Alaï au sud. Entre les glaciers et les steppes d’altitude s’étagent alpages fleuris, forêts d’épicéas et, dans le Sud-Ouest, les plus grandes forêts naturelles de noyers du monde. C’est un royaume de grands ongulés de montagne — bouquetins, argalis — et de leur prédateur, la panthère des neiges, emblème national. Les éleveurs semi-nomades partagent les estives avec les marmottes et les aigles, et la tradition de la chasse à l’aigle royal y est toujours vivante. Ici, la nature n’est pas un parc : c’est le paysage quotidien des bergers.",
+    species: [
+      {
+        name: "Panthère des neiges", latin: "Panthera uncia", kind: "fauna", wiki: "Snow leopard",
+        description: "Le « fantôme des montagnes », symbole du pays (elle figure sur les armoiries de Bichkek). Quelques centaines vivent dans le Tian Shan et le Pamir, au-dessus de 3 000 m — l’un des félins les plus difficiles à voir au monde.",
+        where: "La réserve de Sarychat-Ertash (sud-est de l’Issyk-Koul), en hiver, avec des guides formés au pistage : les chances restent minces, mais les traces et les marquages se lisent partout. Le centre de réhabilitation de NABU à Ananyevo, sur la rive nord de l’Issyk-Koul, présente des panthères sauvées du braconnage.",
+      },
+      {
+        name: "Argali de Marco Polo", latin: "Ovis ammon polii", kind: "fauna", wiki: "Marco Polo sheep",
+        description: "Le plus grand mouton sauvage du monde, aux cornes spiralées pouvant dépasser 1,8 m de longueur. Marco Polo l’a décrit lors de sa traversée du Pamir au XIIIe siècle.",
+        where: "Les hautes vallées frontalières du Sary-Jaz, de l’Ak-Saï et de l’Alaï, près de la Chine — zones à permis, avec une agence locale. Plus accessible, l’argali du Tian Shan se voit parfois autour du col de Torugart et de la vallée de l’At-Bachi.",
+      },
+      {
+        name: "Bouquetin de Sibérie", latin: "Capra sibirica", kind: "fauna", wiki: "Siberian ibex",
+        description: "Des cornes en sabre recourbé, une agilité folle sur les éboulis : l’ongulé de montagne le plus répandu du pays, et la proie favorite de la panthère des neiges.",
+        where: "Le parc national d’Ala-Archa, à 40 km de Bichkek, et les vallées autour de Karakol (Altyn-Arachan, Ala-Köl), à l’aube sur les pentes rocheuses — jumelles indispensables.",
+      },
+      {
+        name: "Marmottes", latin: "Marmota baibacina · Marmota caudata", kind: "fauna", wiki: "Long-tailed marmot",
+        description: "Grises au nord, rousses à longue queue au sud : les sentinelles des alpages, qui sifflent à votre approche avant de plonger dans leur terrier. Elles hibernent plus de six mois par an.",
+        where: "Les estives de Song-Köl, les cols du Tian Shan et les vallées autour de Karakol, de juin à septembre — on les entend avant de les voir.",
+      },
+      {
+        name: "Aigle royal (berkout)", latin: "Aquila chrysaetos", kind: "fauna", wiki: "Golden eagle",
+        description: "Les berkoutchi capturent un aigle jeune, le dressent pendant des années pour chasser renards et lièvres, puis le rendent à la nature au bout de quelques années. Une tradition nomade toujours bien vivante.",
+        where: "Autour de Bokonbaïevo, sur la rive sud de l’Issyk-Koul, où des fauconniers font des démonstrations chez eux, et où des festivals de chasse traditionnelle (Salbuurun) sont organisés certaines années. Dans la nature, on le voit planer au-dessus des cols partout dans le pays.",
+      },
+      {
+        name: "Noyer", latin: "Juglans regia", kind: "flora", wiki: "Juglans regia",
+        description: "La plus grande forêt naturelle de noyers du monde, peut-être berceau de l’espèce. Selon la légende, le prophète aurait confié des graines à un jardinier nommé Arslanbob, chargé de trouver la plus belle vallée de la terre.",
+        where: "Arslanbob (province de Djalal-Abad), avec ses maisons d’hôtes communautaires : randonnées sous les noyers centenaires, cascades, et récolte des noix en septembre–octobre, quand tout le village monte en forêt.",
+      },
+      {
+        name: "Genévrier (artcha)", latin: "Juniperus semiglobosa", kind: "flora", wiki: "Juniperus semiglobosa",
+        description: "L’arbre sacré des Kirghizes : on fait brûler ses rameaux pour purifier la yourte, chasser le mauvais œil et bénir les nouveaux-nés. Il pousse tordu et lent sur les pentes sèches, parfois depuis plus de mille ans.",
+        where: "Ala-Archa — le « genévrier bariolé » — lui doit son nom ; on le croise aussi au-dessus de Jeti-Ögüz, autour de Karakol et sur les versants secs de Song-Köl.",
+      },
+      {
+        name: "Argousier (oblepikha)", latin: "Hippophae rhamnoides", kind: "flora", wiki: "Hippophae rhamnoides",
+        description: "Un arbuste épineux couvert, à l’automne, de baies orange vif très acides et riches en vitamine C, qu’on transforme en confiture, en jus et en huile — un remède de grand-mère dans tout le pays.",
+        where: "Les berges des rivières autour de l’Issyk-Koul (Karakol, Jeti-Ögüz, Tchong-Kemin) : récolte en septembre–octobre, et pots de confiture vendus au bord des routes et au bazar de Karakol.",
+      },
+    ],
+  },
+
   books: [
     { title: "Djamilia", author: "Tchinguiz Aïtmatov", year: "1958", note: "La tendre histoire d’amour en temps de guerre qu’Aragon, son traducteur, qualifia de « plus belle histoire d’amour du monde » — par l’écrivain chéri du Kirghizistan." },
     { title: "Une journée plus longue qu’un siècle", author: "Tchinguiz Aïtmatov", year: "1980", note: "Un roman magnifique qui tresse légendes de la steppe, cosmodrome et réalité soviétique — le point de départ idéal pour l’Asie centrale." },

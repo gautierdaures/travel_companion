@@ -37,6 +37,58 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Le cœur naturel du Cambodge bat au rythme du Tonlé Sap : à la mousson, le Mékong gonfle au point d’inverser le cours de la rivière, et la surface du lac est multipliée par quatre ou cinq, noyant des forêts entières. Ce pouls de crue nourrit l’une des pêches d’eau douce les plus riches du monde et les plus grandes colonies d’oiseaux d’eau d’Asie du Sud-Est. Autour, les plaines boisées du Nord, les monts des Cardamomes et les forêts du Mondolkiri abritent encore des espèces devenues rarissimes ailleurs, comme l’ibis géant, l’oiseau national. Le pays sort à peine de décennies de guerre et de braconnage, mais ses projets d’écotourisme villageois sont parmi les plus réussis de la région — et les temples d’Angkor eux-mêmes se visitent sous une forêt peuplée de gibbons.",
+    species: [
+      {
+        name: "Dauphin de l’Irrawaddy", latin: "Orcaella brevirostris", kind: "fauna", wiki: "Irrawaddy dolphin",
+        description: "Un dauphin d’eau douce au front rond et sans bec, sacré pour les Khmers et les Laos. Il en reste à peine une centaine dans le Mékong, entre Kratié et la frontière laotienne.",
+        where: "La fosse de Kampi, à 15 km au nord de Kratié : sortie en barque à rames ou à moteur coupé, tôt le matin ou en fin d’après-midi, quand l’eau est calme — observation presque garantie en saison sèche.",
+      },
+      {
+        name: "Ibis géant", latin: "Thaumatibis gigantea", kind: "fauna", wiki: "Giant ibis",
+        description: "Le plus grand ibis du monde et l’oiseau national du Cambodge, longtemps tenu pour quasi éteint et qui survit surtout dans les forêts claires du Nord : quelques centaines tout au plus.",
+        where: "Le village de Tmatboey (sanctuaire de Kulen Promtep, province de Preah Vihear), avec le Sam Veasna Center : nuit au village et affût à l’aube, de décembre à avril — l’argent des visiteurs va à la protection des nids. À combiner avec Koh Ker et Preah Vihear.",
+      },
+      {
+        name: "Pélicans et marabouts de Prek Toal", latin: "Pelecanus philippensis · Leptoptilos dubius", kind: "fauna", wiki: "Spot-billed pelican",
+        description: "La plus grande colonie de grands oiseaux d’eau d’Asie du Sud-Est : pélicans à bec tacheté, grands marabouts, tantales indiens, cigognes, anhingas et cormorans nichent par milliers dans la forêt inondée.",
+        where: "La réserve de Prek Toal, à la pointe nord-ouest du Tonlé Sap, en bateau depuis Siem Reap (via Chong Kneas) ; en saison sèche (janvier–avril), départ à l’aube, avec plateformes d’observation dans les arbres.",
+      },
+      {
+        name: "Gibbon à bonnet", latin: "Hylobates pileatus", kind: "fauna", wiki: "Pileated gibbon",
+        description: "Disparu de la région d’Angkor à cause de la chasse, il y a été réintroduit à partir de 2013 ; des petits y sont nés depuis. Les femelles sont claires, les mâles noirs.",
+        where: "La forêt du parc d’Angkor, à l’aube : on entend leurs chants autour des temples les plus boisés (Ta Nei, Ta Prohm). Le centre ACCB, près de Kbal Spean, soigne et élève aussi des espèces menacées et se visite.",
+      },
+      {
+        name: "Éléphant d’Asie", latin: "Elephas maximus", kind: "fauna", wiki: "Asian elephant",
+        description: "Les Bunong du Mondolkiri vivent avec les éléphants depuis des siècles. Beaucoup ont été usés par le travail forestier ou le tourisme à dos d’éléphant.",
+        where: "L’Elephant Valley Project, près de Sen Monorom (Mondolkiri) : on marche derrière les éléphants en forêt, sans les monter ni les baigner, avec des cornacs bunong. À combiner avec Kratié en remontant le Mékong.",
+      },
+      {
+        name: "Tetrameles et figuiers étrangleurs de Ta Prohm", latin: "Tetrameles nudiflora · Ficus gibbosa", kind: "flora", wiki: "Tetrameles",
+        description: "Les racines géantes qui enserrent les temples ne sont pas des « fromagers », comme on le lit partout, mais surtout des tetrameles (spung en khmer), aux troncs blancs et lisses, et des figuiers étrangleurs qui germent au sommet des murs.",
+        where: "Ta Prohm, bien sûr — mais aussi Ta Som, Preah Khan, Beng Mealea et Banteay Kdei, où les arbres dévorent les galeries dans un calme bien plus grand. Venez à l’ouverture.",
+      },
+      {
+        name: "Palmier à sucre (thnot)", latin: "Borassus flabellifer", kind: "flora", wiki: "Borassus flabellifer",
+        description: "L’arbre national : sa silhouette ébouriffée signe chaque rizière. On grimpe le saigner chaque jour pour son jus, transformé en sucre de palme, en vin de palme ou bu frais.",
+        where: "Partout dans les campagnes, et surtout entre Siem Reap, Kampong Speu et Takeo. En saison sèche, arrêtez-vous chez une famille qui fait bouillir le jus en bord de route.",
+      },
+      {
+        name: "Poivrier de Kampot", latin: "Piper nigrum", kind: "flora", wiki: "Kampot pepper",
+        description: "Une liane cultivée sur tuteurs dans les terres rouges entre Kampot et Kep depuis au moins le XIIIe siècle, relancée par les Français puis protégée par une indication géographique. Noir, rouge, blanc ou vert en grappes fraîches.",
+        where: "Les plantations autour de Kampot et de Kep (La Plantation, ferme de Sothy et d’autres) : visite libre ou guidée, récolte de février à mai.",
+      },
+      {
+        name: "Forêt inondée du Tonlé Sap", latin: "Barringtonia acutangula", kind: "flora", wiki: "Tonlé Sap",
+        description: "Des forêts qui passent la moitié de l’année sous plusieurs mètres d’eau : seules leurs cimes émergent à la crue. Elles servent de frayère à la plupart des poissons du lac.",
+        where: "Kampong Phluk et Kampong Khleang, villages sur pilotis au bord du lac, en pirogue entre les arbres — d’août à décembre, quand l’eau est haute.",
+      },
+    ],
+  },
+
   books: [
     { title: "D’abord, ils ont tué mon père", author: "Loung Ung", year: "2000", note: "Une enfant qui survit aux années khmères rouges — bouleversant et essentiel." },
     { title: "Le Portail", author: "François Bizot", year: "2000", note: "Un chercheur français capturé par les Khmers rouges ; un témoignage direct rare et profondément humain." },
