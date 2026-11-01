@@ -37,6 +37,58 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Avec ses 17 000 îles à cheval sur deux continents, l’Indonésie est l’un des pays les plus riches du monde en espèces. Au XIXe siècle, le naturaliste Alfred Russel Wallace y remarqua une frontière invisible : à l’ouest, entre Bali et Lombok ou Bornéo et Sulawesi, une faune asiatique (tigres, orangs-outans, rhinocéros) ; à l’est, une faune australienne (marsupiaux, cacatoès, paradisiers). Cette « ligne Wallace » suit des fosses marines jamais émergées, même aux temps glaciaires. Entre les deux, Sulawesi et les petites îles de la Sonde ont vu naître des espèces uniques au monde, du dragon de Komodo au tarsier. Et sous l’eau, Raja Ampat est au cœur du Triangle de corail, la région marine la plus riche de la planète. La déforestation a fait des ravages, mais parcs nationaux et villages écotouristiques gardent des rencontres extraordinaires à portée de voyageur patient.",
+    species: [
+      {
+        name: "Dragon de Komodo", latin: "Varanus komodoensis", kind: "fauna", endemic: true, wiki: "Komodo dragon",
+        description: "Le plus grand lézard du monde, jusqu’à 3 m et 70 kg : un prédateur à la morsure venimeuse qui peut abattre un buffle. Il ne vit que sur Komodo, Rinca, quelques îlots et les côtes ouest et nord de Florès — environ 3 000 individus.",
+        where: "Les îles de Rinca et de Komodo (parc national de Komodo), au départ de Labuan Bajo, en marche encadrée par des rangers armés d’un bâton fourchu — de préférence tôt le matin, quand ils se réchauffent au soleil, avant la chaleur de midi.",
+      },
+      {
+        name: "Orang-outan de Sumatra", latin: "Pongo abelii", kind: "fauna", endemic: "de Sumatra", wiki: "Sumatran orangutan",
+        description: "Plus élancé et plus roux que son cousin de Bornéo, il vit presque toujours dans les arbres. Juste au sud du lac Toba, dans la forêt de Batang Toru, une troisième espèce a été décrite en 2017 : l’orang-outan de Tapanuli, le grand singe le plus rare du monde.",
+        where: "Bukit Lawang, à l’entrée du parc national de Gunung Leuser (à 3–4 h de Medan, à combiner avec le lac Toba) : trek d’une journée ou plus avec un guide agréé — refusez ceux qui nourrissent les singes pour garantir la photo.",
+      },
+      {
+        name: "Raie manta", latin: "Mobula alfredi", kind: "fauna", wiki: "Reef manta ray",
+        description: "Jusqu’à 5 m d’envergure, la raie manta « vole » sous l’eau et vient se faire nettoyer par de petits poissons sur des « stations de nettoyage » des récifs.",
+        where: "Manta Point (Karang Makassar) dans le parc de Komodo, en snorkeling comme en plongée ; à Raja Ampat, Manta Sandy et Blue Magic dans le détroit de Dampier. Restez au-dessus d’elles, sans les toucher ni les poursuivre.",
+      },
+      {
+        name: "Paradisier rouge et paradisier républicain", latin: "Paradisaea rubra · Diphyllodes respublica", kind: "fauna", endemic: "de Raja Ampat", wiki: "Red bird-of-paradise",
+        description: "Les oiseaux les plus extravagants du monde : le mâle du paradisier rouge déploie ses plumes de feu en dansant, celui du paradisier républicain arbore une calotte de peau bleu électrique. Wallace vint lui-même à Waigeo en 1860 pour les collecter.",
+        where: "Les villages de Sawinggrai et de Sapokren, sur l’île de Waigeo : départ avant l’aube avec un guide local jusqu’aux arbres de parade, où les mâles dansent aux premières lueurs.",
+      },
+      {
+        name: "Tarsier", latin: "Tarsius", kind: "fauna", endemic: "de Sulawesi", wiki: "Tarsier",
+        description: "Un primate de la taille d’un poing, aux yeux plus gros que son cerveau, capable de tourner la tête presque à 180°. Il dort le jour dans les figuiers et chasse les insectes de nuit.",
+        where: "La réserve de Tangkoko, au nord de Sulawesi (à 2 h de Manado) : rendez-vous au crépuscule au pied d’un figuier-dortoir avec un guide, quand les tarsiers se réveillent. Le jour, on y voit aussi les macaques noirs à crête, autre endémique de l’île.",
+      },
+      {
+        name: "Étourneau de Bali (jalak bali)", latin: "Leucopsar rothschildi", kind: "fauna", endemic: "de Bali", wiki: "Bali myna",
+        description: "Blanc immaculé, masque bleu vif : l’oiseau-emblème de Bali, tombé à une poignée d’individus sauvages au début des années 2000 à cause du trafic d’oiseaux de cage, puis sauvé par des lâchers.",
+        where: "Le parc national de Bali Ouest (près de Gilimanuk), en randonnée guidée tôt le matin ; et l’île de Nusa Penida, où une fondation l’a réintroduit avec l’aide des villages.",
+      },
+      {
+        name: "Rafflesia arnoldii", latin: "Rafflesia arnoldii", kind: "flora", wiki: "Rafflesia arnoldii",
+        description: "La plus grande fleur du monde — jusqu’à un mètre de diamètre et 10 kg —, parasite sans feuilles et à l’odeur de charogne. Décrite en 1818 par Joseph Arnold et Stamford Raffles à Sumatra.",
+        where: "La réserve de Batang Palupuh, au nord de Bukittinggi (Sumatra de l’Ouest) — sur la route terrestre depuis le lac Toba ; ou la région de Bengkulu. Les floraisons sont imprévisibles : les guides locaux savent où une fleur va s’ouvrir.",
+      },
+      {
+        name: "Arum titan (bunga bangkai)", latin: "Amorphophallus titanum", kind: "flora", endemic: "de Sumatra", wiki: "Amorphophallus titanum",
+        description: "La plus grande inflorescence du monde, jusqu’à 3 m de haut, qui sent le cadavre pour attirer les insectes — d’où son nom de « fleur cadavre ». Elle ne fleurit que tous les quelques années, pour deux jours seulement.",
+        where: "Les forêts autour de Bukittinggi, notamment à Batang Palupuh, à l’affût des floraisons signalées par les villageois ; les jardins botaniques de Bogor (Java) en cultivent aussi.",
+      },
+      {
+        name: "Edelweiss de Java", latin: "Anaphalis javanica", kind: "flora", wiki: "Anaphalis javanica",
+        description: "La « fleur éternelle » (bunga abadi) des volcans indonésiens, aux fleurs laineuses qui ne fanent presque pas. Protégée : la cueillir est interdit.",
+        where: "Les pentes du massif Bromo-Tengger-Semeru et du Gede-Pangrango (Java ouest), en altitude, autour des cratères et des prairies sommitales. À Wonokitri, village tengger sur la route du Bromo, on la cultive pour les cérémonies.",
+      },
+    ],
+  },
+
   books: [
     { title: "Le Monde des hommes", author: "Pramoedya Ananta Toer", year: "1980", note: "Le premier volume du « Quatuor de Buru », écrit dans un camp de prisonniers — le grand roman de la Java coloniale et de l’éveil nationaliste." },
     { title: "L’Année de tous les dangers", author: "Christopher Koch", year: "1978", note: "Un roman saisissant sur les correspondants étrangers dans la Jakarta fiévreuse de 1965." },

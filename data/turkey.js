@@ -37,6 +37,53 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Pont entre l’Europe et l’Asie, l’Anatolie est un carrefour du vivant autant que de l’histoire. Sa flore est l’une des plus riches des régions tempérées : plus de 11 000 plantes à fleurs, presque autant que dans toute l’Europe, dont environ un tiers ne pousse nulle part ailleurs. Les montagnes du Taurus, les steppes du plateau central et les rivages lyciens en sont les grands réservoirs. Côté faune, le pays est un couloir : deux fois par an, des centaines de milliers de cigognes et de rapaces franchissent le Bosphore, les tortues marines pondent sur les plages méditerranéennes, et quelques espèces au bord de l’extinction — ibis chauve, phoque moine — y ont trouvé leur dernier refuge.",
+    species: [
+      {
+        name: "Tortue caouanne", latin: "Caretta caretta", kind: "fauna", wiki: "Loggerhead sea turtle",
+        description: "La grande tortue marine de Méditerranée revient pondre de nuit sur les plages où elle est née ; les petits émergent deux mois plus tard et filent vers la mer à la lueur de l’horizon.",
+        where: "Les plages de Patara, Çıralı (près d’Olympos) et İztuzu à Dalyan, sur la côte lycienne : ponte de mai à août, éclosions de juillet à septembre. Les plages ferment la nuit pour les protéger ; le centre de soins DEKAMER, à İztuzu, accueille les tortues blessées et se visite.",
+      },
+      {
+        name: "Cigogne blanche et migrations du Bosphore", latin: "Ciconia ciconia", kind: "fauna", wiki: "White stork",
+        description: "Le Bosphore est l’un des grands goulets migratoires du monde : les oiseaux planeurs évitent la mer et tournoient au-dessus d’Istanbul par colonnes entières — cigognes, bondrées, buses, aigles, milans.",
+        where: "La colline de Büyük Çamlıca (rive asiatique d’Istanbul) de fin août à début octobre, pic fin août–mi-septembre, par beau temps entre 10 h et 15 h. Au printemps, le village d’Eskikaraağaç, au bord du lac d’Uluabat près de Bursa, a une cigogne sur presque chaque toit.",
+      },
+      {
+        name: "Ibis chauve", latin: "Geronticus eremita", kind: "fauna", wiki: "Northern bald ibis",
+        description: "Crâne nu rouge, plumes noires à reflets métalliques — l’un des oiseaux les plus menacés au monde. On disait jadis qu’il guidait les pèlerins vers La Mecque. La colonie de Birecik, sur l’Euphrate, est l’ultime vestige de la population orientale, maintenue en semi-liberté.",
+        where: "La station de reproduction de Birecik (Şanlıurfa), au bord de l’Euphrate, entre Gaziantep et Şanlıurfa : les oiseaux sont relâchés à la belle saison (février–juillet) et nichent dans les falaises au-dessus de la ville.",
+      },
+      {
+        name: "Phoque moine de Méditerranée", latin: "Monachus monachus", kind: "fauna", wiki: "Mediterranean monk seal",
+        description: "L’un des mammifères marins les plus rares du monde : quelques centaines au total, dont une bonne part sur les côtes turques. Foça, près d’İzmir, l’antique Phocée qui fonda Marseille, tirerait son nom de ce phoque (phôkê en grec).",
+        where: "Les grottes marines de Foça (aire protégée) et de la péninsule de Karaburun, ou autour de Kaş et Kekova sur la côte lycienne — une observation rarissime, à espérer depuis un kayak ou un bateau, sans jamais entrer dans les grottes.",
+      },
+      {
+        name: "Tulipes sauvages", latin: "Tulipa", kind: "flora", wiki: "Tulip",
+        description: "Venue des montagnes d’Asie centrale avec les peuples turcs, la tulipe est devenue l’emblème de l’Empire ottoman — au point de donner son nom à une époque, l’ère des Tulipes (1718–1730) — avant de rendre l’Europe folle. Une quinzaine d’espèces sauvages poussent en Anatolie.",
+        where: "En avril, le festival des tulipes d’Istanbul (parc d’Emirgan, jardins de Topkapı) pour les variétés horticoles ; pour les sauvages, les steppes et montagnes de l’Anatolie orientale au printemps (avril–mai).",
+      },
+      {
+        name: "Liquidambar d’Orient", latin: "Liquidambar orientalis", kind: "flora", wiki: "Liquidambar orientalis",
+        description: "Un arbre relique de l’ère tertiaire qui ne pousse que dans le sud-ouest de la Turquie (et sur l’île de Rhodes). Sa résine, le styrax, est récoltée depuis l’Antiquité pour les parfums, l’encens et les remèdes.",
+        where: "La forêt marécageuse de Köyceğiz (Sığla Ormanı), au bord du lac, à côté de Dalyan — à combiner avec les tortues d’İztuzu et les tombeaux lyciens. Superbe à l’automne, quand les feuilles rougissent.",
+      },
+      {
+        name: "Cèdre du Liban", latin: "Cedrus libani", kind: "flora", wiki: "Cedrus libani",
+        description: "L’arbre biblique, coupé pour les temples et les navires de l’Antiquité, a presque disparu du Liban — mais les plus grandes cédraies du monde survivent dans le Taurus turc.",
+        where: "Les tronçons de montagne de la Voie lycienne et l’arrière-pays d’Antalya (autour d’Elmalı) ; plus à l’est, le Taurus au-dessus de la côte méditerranéenne entre Alanya et Mersin.",
+      },
+      {
+        name: "Crocus du safran", latin: "Crocus sativus", kind: "flora", wiki: "Crocus sativus",
+        description: "Une fleur mauve d’automne dont on cueille à la main les trois stigmates rouges : il en faut quelque 150 000 pour un kilo d’épice. Safranbolu lui doit son nom.",
+        where: "Les champs autour de Safranbolu, notamment au village de Davutobası, à la récolte (fin octobre–début novembre) ; le reste de l’année, le safran se goûte en lokum et en zerde dans la vieille ville.",
+      },
+    ],
+  },
+
   books: [
     { title: "Istanbul : souvenirs d’une ville", author: "Orhan Pamuk", year: "2003", note: "Les mémoires mélancoliques et lumineuses du prix Nobel sur sa ville natale — à lire avant de partir." },
     { title: "Des oiseaux sans ailes", author: "Louis de Bernières", year: "2004", note: "Une grande fresque romanesque sur un village anatolien mixte, déchiré par la chute de l’empire." },

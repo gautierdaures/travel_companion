@@ -37,6 +37,63 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Étiré sur 1 600 km entre tropiques et montagnes, le Viêt Nam abrite une faune parmi les plus singulières d’Asie — et parmi les plus menacées. Ses karsts calcaires, véritables îles de roche, ont fait naître des primates qui ne vivent que sur quelques collines ; la cordillère Annamitique, à la frontière laotienne, a livré dans les années 1990 des grands mammifères inconnus de la science, dont le saola, ce « bœuf » aux longues cornes qu’aucun scientifique n’a jamais observé dans la nature. La chasse et le commerce d’animaux sauvages ont vidé bien des forêts : les parcs nationaux (Cúc Phương, le premier, en 1962 ; Cát Tiên ; Phong Nha) et les centres de sauvegarde sont les meilleures portes d’entrée — et les observations, quand elles arrivent, sont d’autant plus précieuses.",
+    species: [
+      {
+        name: "Langur de Cát Bà", latin: "Trachypithecus poliocephalus", kind: "fauna", endemic: "de Cát Bà", wiki: "Cat Ba langur",
+        description: "Le primate à tête dorée de l’île de Cát Bà, l’un des plus rares au monde : moins d’une centaine d’individus, accrochés aux falaises calcaires de l’île. Il remonte doucement grâce à un programme de protection lancé en 2000.",
+        where: "La réserve stricte du parc national de Cát Bà et les falaises au-dessus de la baie de Lan Hạ — au petit matin, en kayak ou en bateau avec un guide du parc. Les chances sont minces, mais réelles.",
+      },
+      {
+        name: "Langur de Delacour", latin: "Trachypithecus delacouri", kind: "fauna", endemic: true, wiki: "Delacour's langur",
+        description: "Noir, avec un « short » blanc sur les cuisses : un singe des karsts du nord, nommé d’après l’ornithologue français Jean Delacour. Quelques centaines tout au plus.",
+        where: "La réserve de Vân Long, près de Ninh Bình, en barque de bambou au lever du soleil — la meilleure population du pays, visible sur les pitons calcaires. Le centre de sauvetage des primates menacés du parc de Cúc Phương (à une heure de Ninh Bình) en soigne aussi.",
+      },
+      {
+        name: "Rhinopithèque du Tonkin", latin: "Rhinopithecus avunculus", kind: "fauna", endemic: true, wiki: "Tonkin snub-nosed monkey",
+        description: "Nez retroussé, lèvres roses, dos noir et ventre crème — l’un des 25 primates les plus menacés du monde, avec à peine quelques centaines d’individus dans les forêts de l’extrême nord.",
+        where: "L’aire de conservation de Khau Ca, dans la province de Hà Giang, sur la boucle : trek accompagné de gardes locaux, nuit sur place et départ avant l’aube.",
+      },
+      {
+        name: "Douc à pattes rouges", latin: "Pygathrix nemaeus", kind: "fauna", wiki: "Red-shanked douc",
+        description: "Surnommé la « reine des primates » : visage ambré, « chaussettes » rouges, gants noirs et une queue blanche. L’un des plus beaux singes du monde.",
+        where: "La péninsule de Sơn Trà (« montagne des singes »), aux portes de Đà Nẵng, tôt le matin : l’un des endroits les plus faciles d’Asie pour le voir sans expédition — à combiner avec les Montagnes de Marbre et Hội An.",
+      },
+      {
+        name: "Gibbon à joues jaunes", latin: "Nomascus gabriellae", kind: "fauna", wiki: "Yellow-cheeked gibbon",
+        description: "Les mâles sont noirs, les femelles dorées. Chaque matin, les couples chantent en duo pour marquer leur territoire — un des grands sons de la forêt tropicale.",
+        where: "Le parc national de Cát Tiên, à 150 km de Hô Chi Minh-Ville : sortie avant l’aube avec un guide pour suivre les chants. Le centre de réhabilitation de Đảo Tiên, dans le parc, accueille des gibbons saisis aux trafiquants.",
+      },
+      {
+        name: "Tortue verte", latin: "Chelonia mydas", kind: "fauna", wiki: "Green sea turtle",
+        description: "Les îles Côn Đảo sont le principal site de ponte des tortues marines du pays : des femelles reviennent chaque année sur les plages où elles sont nées.",
+        where: "L’île de Bảy Cạnh (parc national de Côn Đảo), de mai à octobre : nuit sur place avec les gardes pour assister à la ponte et au relâcher des bébés tortues. À réserver auprès du parc.",
+      },
+      {
+        name: "Grue antigone", latin: "Antigone antigone", kind: "fauna", wiki: "Sarus crane",
+        description: "Le plus grand oiseau volant du monde (jusqu’à 1,8 m debout), tête rouge et cri de trompette. Le delta du Mékong en accueillait plus d’un millier dans les années 1980 ; elles ne sont plus que quelques-unes certaines années.",
+        where: "Le parc national de Tràm Chim (Đồng Tháp), en saison sèche (janvier–avril) — et même sans grues, ses marais à cigognes, ibis et hérons valent la balade en barque.",
+      },
+      {
+        name: "Lotus", latin: "Nelumbo nucifera", kind: "flora", wiki: "Nelumbo nucifera",
+        description: "La fleur nationale de cœur, symbole de pureté qui naît de la vase. On en mange les graines, les racines et les tiges, et l’on parfume le thé dans ses fleurs (trà sen).",
+        where: "Le lac de l’Ouest à Hanoï (étangs de Quảng Bá, juin–juillet, à l’aube, quand les cueilleuses récoltent les fleurs pour le thé) ; les étangs de la province de Đồng Tháp dans le delta ; les douves de la Cité impériale de Huế.",
+      },
+      {
+        name: "Mangrove", latin: "Rhizophora apiculata", kind: "flora", wiki: "Mangrove",
+        description: "Les forêts de palétuviers sur pilotis, entre terre et mer, nurserie des poissons et rempart contre les tempêtes. Rasées pendant la guerre par les défoliants, elles ont été replantées.",
+        where: "La réserve de biosphère de Cần Giờ (UNESCO), à 2 h au sud de Hô Chi Minh-Ville, avec ses macaques et ses canaux ; plus loin, la pointe de Cà Mau, à l’extrême sud du pays.",
+      },
+      {
+        name: "Hoa ban (arbre à orchidées)", latin: "Bauhinia variegata", kind: "flora", wiki: "Bauhinia variegata",
+        description: "La fleur des montagnes du Nord-Ouest, blanche veinée de mauve, chantée par les Thaïs noirs dans leurs chansons d’amour. On en mange aussi les boutons en salade.",
+        where: "Les vallées de Mai Châu, Sơn La et Điện Biên en mars, quand les collines blanchissent — Điện Biên lui consacre même une fête.",
+      },
+    ],
+  },
+
   books: [
     { title: "Le Sympathisant", author: "Viet Thanh Nguyen", year: "2015", note: "Le règlement de comptes, d’un humour noir, d’un agent double avec la guerre et l’exil — prix Pulitzer." },
     { title: "Un Américain bien tranquille", author: "Graham Greene", year: "1955", note: "Amour et politique dans le Saïgon des années 1950, alors que le colonialisme français se délite." },

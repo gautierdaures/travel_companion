@@ -37,6 +37,68 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "Séparée du Gondwana il y a plus de 80 millions d’années, la Nouvelle-Zélande a évolué en vase clos : à part quelques chauves-souris, aucun mammifère terrestre n’y vivait avant l’arrivée des humains. Les oiseaux ont pris toute la place — beaucoup sont devenus incapables de voler, comme le kiwi, le kākāpō ou les moas géants aujourd’hui disparus — et environ 80 % des plantes indigènes sont endémiques. Les rats, hermines, opossums et chats introduits ont été une catastrophe ; le pays s’est fixé l’objectif d’éradiquer ces prédateurs d’ici 2050 et a créé des îles et des sanctuaires clôturés où la faune d’origine revit. Attention aux faux-amis : les lupins colorés du lac Tekapo, si photographiés, sont une plante invasive.",
+    species: [
+      {
+        name: "Kiwi", latin: "Apteryx", kind: "fauna", endemic: true, wiki: "Kiwi (bird)",
+        description: "L’emblème national — au point que les Néo-Zélandais se surnomment eux-mêmes « Kiwis ». Un oiseau nocturne, sans ailes visibles, aux narines au bout du bec, qui pond un œuf énorme (près de 20 % du poids de la femelle).",
+        where: "À l’état sauvage : l’île Stewart (Rakiura), où le tokoeka sort même parfois de jour sur les plages ; Okarito, à 30 min de Franz Josef, avec une sortie nocturne guidée pour le rowi, le plus rare. En sanctuaire : les visites de nuit de Zealandia, à Wellington. Lampe rouge uniquement.",
+      },
+      {
+        name: "Kéa", latin: "Nestor notabilis", kind: "fauna", endemic: true, wiki: "Kea",
+        description: "Le seul perroquet alpin du monde, vert olive aux dessous d’ailes orange flamboyant — d’une intelligence et d’une curiosité redoutables, il démonte joints de pare-brise et sacs à dos. Menacé : ne le nourrissez jamais.",
+        where: "Le tunnel Homer, sur la route de Milford Sound ; Arthur’s Pass ; les refuges et parkings autour d’Aoraki/mont Cook. Il vient souvent à vous.",
+      },
+      {
+        name: "Tuatara", latin: "Sphenodon punctatus", kind: "fauna", endemic: true, wiki: "Tuatara",
+        description: "Pas un lézard, mais le dernier survivant d’un ordre de reptiles contemporain des premiers dinosaures, il y a plus de 200 millions d’années. Il peut vivre plus de 100 ans et garde un « troisième œil » sur le crâne.",
+        where: "Le sanctuaire de Zealandia à Wellington, où il vit en liberté — cherchez-le près des terriers au soleil, en journée ; aussi le sanctuaire d’Orokonui, près de Dunedin.",
+      },
+      {
+        name: "Manchot antipode (hoiho)", latin: "Megadyptes antipodes", kind: "fauna", endemic: true, wiki: "Yellow-eyed penguin",
+        description: "L’un des manchots les plus rares du monde, à l’œil jaune pâle et au bandeau doré : il niche seul, caché dans la végétation côtière, et non en colonie. Ses effectifs s’effondrent sur l’île du Sud.",
+        where: "La péninsule d’Otago, près de Dunedin (Penguin Place, projet de conservation avec affûts) — en prime, une rare colonie d’albatros royaux installée sur la terre ferme, à Taiaroa Head ; Katiki Point près de Moeraki et Curio Bay, dans les Catlins, en fin de journée, quand les manchots rentrent de la mer.",
+      },
+      {
+        name: "Dauphin d’Hector", latin: "Cephalorhynchus hectori", kind: "fauna", endemic: true, wiki: "Hector's dolphin",
+        description: "Le plus petit dauphin marin du monde (1,5 m), à la nageoire dorsale ronde comme une oreille de Mickey. Il vit près des côtes, en petits groupes.",
+        where: "La baie d’Akaroa (péninsule de Banks, à 1 h 30 de Christchurch), en bateau ou en kayak, de novembre à avril ; Porpoise Bay, à Curio Bay, où ils jouent parfois dans les vagues près des baigneurs.",
+      },
+      {
+        name: "Cachalot de Kaikōura", latin: "Physeter macrocephalus", kind: "fauna", wiki: "Sperm whale",
+        description: "Un canyon sous-marin plonge à plus de 1 000 m à quelques kilomètres du rivage : les cachalots mâles y chassent le calmar toute l’année, à portée de bateau.",
+        where: "Kaikōura, sur la côte nord-est de l’île du Sud, avec Whale Watch Kaikōura, entreprise tenue par les Māori Ngāti Kurī — en prime, dauphins sombres, albatros et otaries à fourrure sur les rochers d’Ohau Point.",
+      },
+      {
+        name: "Vers luisants", latin: "Arachnocampa luminosa", kind: "fauna", endemic: true, wiki: "Arachnocampa luminosa",
+        description: "Ni vers ni lucioles : des larves de moucheron qui tapissent les plafonds des grottes et des ravins humides de milliers de points bleus, comme un ciel étoilé, pour attirer leurs proies dans des fils collants.",
+        where: "Le « glow-worm dell » de Hokitika, sur la côte ouest (gratuit, à la nuit tombée, à 2 h de Franz Josef) ; les grottes de Te Anau, en Fiordland ; Waitomo est le plus célèbre mais aussi le plus fréquenté. Pas de lampe ni de flash.",
+      },
+      {
+        name: "Kauri", latin: "Agathis australis", kind: "flora", endemic: true, wiki: "Agathis australis",
+        description: "Le géant de la forêt néo-zélandaise, aux troncs droits sans branches basses, vénéré par les Māori. Presque tous ont été abattus au XIXe siècle pour les mâts et les maisons. Une maladie, le dépérissement du kauri, menace aujourd’hui les survivants.",
+        where: "La forêt de Waipoua (Northland), avec Tāne Mahuta, le « seigneur de la forêt », environ 51 m et peut-être 2 000 ans — à 3–4 h au nord d’Auckland. Nettoyez vos chaussures aux stations prévues avant chaque sentier.",
+      },
+      {
+        name: "Fougère argentée (ponga)", latin: "Cyathea dealbata", kind: "flora", endemic: true, wiki: "Cyathea dealbata",
+        description: "Une fougère arborescente au revers des frondes argenté : les Māori les retournaient pour baliser les sentiers la nuit, à la lueur de la lune. Elle orne aujourd’hui les maillots des All Blacks.",
+        where: "Dans presque toutes les forêts de l’île du Nord et du nord de l’île du Sud — Abel Tasman, Zealandia à Wellington, les forêts autour de Rotorua. Retournez une fronde tombée pour voir l’argent.",
+      },
+      {
+        name: "Pōhutukawa", latin: "Metrosideros excelsa", kind: "flora", endemic: true, wiki: "Metrosideros excelsa",
+        description: "Surnommé « l’arbre de Noël » des Néo-Zélandais, il se couvre de fleurs rouge vif en décembre–janvier, accroché aux falaises côtières. Au cap Reinga, un pōhutukawa de plus de 800 ans marque, pour les Māori, le lieu où les âmes quittent ce monde.",
+        where: "Les côtes du Northland et de la péninsule de Coromandel, la baie de Plenty et les lacs de Rotorua, de mi-décembre à mi-janvier.",
+      },
+      {
+        name: "Lys du mont Cook", latin: "Ranunculus lyallii", kind: "flora", endemic: true, wiki: "Ranunculus lyallii",
+        description: "Malgré son nom, la plus grande renoncule du monde : de grandes fleurs blanches au cœur doré, sur des feuilles en coupe larges comme une assiette.",
+        where: "La Hooker Valley Track à Aoraki/mont Cook et les prairies d’Arthur’s Pass, de novembre à janvier.",
+      },
+    ],
+  },
+
   books: [
     { title: "The Bone People", author: "Keri Hulme", year: "1984", note: "Le roman lauréat du Booker, totalement original, où les mondes māori et pākehā se rencontrent sur la sauvage côte ouest." },
     { title: "Les Luminaires", author: "Eleanor Catton", year: "2013", note: "Un lauréat du Booker éblouissant et foisonnant, situé dans la ville champignon de la ruée vers l’or, à Hokitika dans les années 1860." },

@@ -4,9 +4,10 @@ An offline, installable **country ID-card** app for a worldwide trip. For each c
 
 1. **Language** — essential phrases (hello, thank you, please…) with pronunciation
 2. **History** — a short summary plus a timeline
-3. **Books** — reads to discover the country
-4. **Food** — typical meals (with the odd insider tip)
-5. **Places** — key spots, tailored to *architecture · history · food · nature · off-the-beaten-path* (no tourist traps)
+3. **Fauna & flora** — typical and endemic animals and plants, and where (and when) to see them
+4. **Books** — reads to discover the country
+5. **Food** — typical meals (with the odd insider tip)
+6. **Places** — key spots, tailored to *architecture · history · food · nature · off-the-beaten-path* (no tourist traps)
 
 It's a plain HTML/CSS/JS **PWA** — no build step, no dependencies. Once loaded on your iPhone it works **fully offline**, which is the whole point when you're abroad with patchy signal.
 

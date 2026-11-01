@@ -37,6 +37,22 @@
 //      timeline: [ { era, text }, ... ]         // 4–6 milestones
 //    },
 //
+//    wildlife: {                          // "Faune et flore", shown after History
+//      summary: "1 paragraph: the biomes, what's special or endemic here",
+//      species: [ { name, latin?, kind, endemic?, description, where, wiki? }, … ]
+//    },                                   // ~7–12 species, typical or endemic
+//      kind        = "fauna" | "flora" — rendered in two groups, animals first
+//      endemic     = true → "Endémique" badge (lives nowhere else), or a scope
+//                    string completing the badge: "de Bornéo" → "Endémique de
+//                    Bornéo". Omit when the species also lives elsewhere.
+//      description = what it is, in 1–3 sentences (the story, the oddity)
+//      where       = where and when to see it — named parks, villages, season,
+//                    time of day, how to get there. Tie it to the country's
+//                    places and an overland route when you can, be honest when
+//                    sightings are rare, and favour ethical, no-riding /
+//                    no-feeding operators (see ../PREFERENCES.md).
+//      wiki        = English Wikipedia title → the row's thumbnail (fails soft)
+//
 //    books: [ { title, author, year, note }, ... ],
 //
 //    meals: [ { name, description, tip? }, ... ],

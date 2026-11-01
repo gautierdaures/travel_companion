@@ -37,6 +37,63 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "La Chine est l’un des pays les plus riches du monde en espèces : près d’un dixième des plantes de la planète y poussent, et une part étonnante n’existe nulle part ailleurs. Les montagnes du Sichuan, du Shaanxi et du Hubei — épargnées par les glaciations — ont servi de refuge à de véritables « fossiles vivants », du ginkgo au métaséquoia, et aux animaux les plus emblématiques du pays : panda géant, rhinopithèque doré, salamandre géante. Beaucoup ont été décrits pour la science occidentale par un Français, le père Armand David, missionnaire lazariste et naturaliste, dans les années 1860–1870. La faune sauvage reste difficile à voir — chassée, repoussée par une densité humaine énorme — mais les grandes réserves de montagne, souvent classées à l’UNESCO, protègent des forêts d’une richesse inouïe.",
+    species: [
+      {
+        name: "Panda géant", latin: "Ailuropoda melanoleuca", kind: "fauna", endemic: true, wiki: "Giant panda",
+        description: "Moins de 2 000 dans la nature, dans les forêts de bambous d’altitude du Sichuan, du Shaanxi et du Gansu. C’est le père David qui le fit connaître en Europe en 1869, depuis le Sichuan.",
+        where: "La base de recherche de Chengdu, à l’ouverture (vers 7 h 30) quand ils mangent et bougent encore ; moins bondés : Dujiangyan ou Bifengxia. Dans la nature, la seule vraie chance est la réserve de Foping (monts Qinling, Shaanxi), qui a la plus forte densité de pandas sauvages, en hiver avec un guide.",
+      },
+      {
+        name: "Rhinopithèque de Roxellane (singe doré)", latin: "Rhinopithecus roxellana", kind: "fauna", endemic: true, wiki: "Golden snub-nosed monkey",
+        description: "Pelage d’or flamboyant, visage bleu ciel et nez retroussé : un singe des forêts froides de montagne, qui vit en grandes troupes et supporte la neige.",
+        where: "Shennongjia (Hubei, UNESCO), où une troupe habituée se laisse voir depuis la station de Dalongtan ; aussi dans les monts Qinling (Shaanxi) et les réserves du Sichuan autour de Jiuzhaigou et Wolong.",
+      },
+      {
+        name: "Cerf du père David (milou)", latin: "Elaphurus davidianus", kind: "fauna", endemic: true, wiki: "Père David's deer",
+        description: "Disparu de la nature depuis des siècles, il ne survivait que dans le parc de chasse impérial au sud de Pékin, où le père David l’aperçut par-dessus le mur en 1865. Le troupeau fut ensuite décimé ; l’espèce n’a été sauvée que par quelques bêtes envoyées en Europe, élevées à Woburn Abbey en Angleterre, puis réintroduites en Chine en 1985.",
+        where: "Le parc du Milou à Nanhaizi, sur le site même de l’ancien parc impérial au sud de Pékin ; ou la réserve de Dafeng (Jiangsu), où des troupeaux vivent de nouveau en liberté dans les marais côtiers.",
+      },
+      {
+        name: "Grue à cou noir", latin: "Grus nigricollis", kind: "fauna", wiki: "Black-necked crane",
+        description: "La seule grue alpine du monde, qui niche sur les lacs du plateau tibétain au-delà de 4 000 m et descend hiverner dans les vallées. Sacrée pour les Tibétains.",
+        where: "En hiver (novembre–mars) : les vallées autour de Lhassa (Lhünzhub, Nyang Chu), le lac Caohai à Weining (Guizhou), Napahai près de Shangri-La et Dashanbao (Yunnan). L’été, sur les lacs du plateau tibétain.",
+      },
+      {
+        name: "Alligator de Chine", latin: "Alligator sinensis", kind: "fauna", endemic: true, wiki: "Chinese alligator",
+        description: "Le petit cousin de l’alligator d’Amérique, l’un des reptiles les plus menacés au monde : il ne reste que quelques centaines d’individus sauvages dans les zones humides du bas Yangzi. On y voit parfois l’une des sources du mythe du dragon chinois.",
+        where: "Le centre de reproduction de Xuancheng (Anhui), qui en élève des milliers et réintroduit les jeunes — à combiner avec Huangshan et les villages anciens du sud de l’Anhui.",
+      },
+      {
+        name: "Salamandre géante de Chine", latin: "Andrias davidianus", kind: "fauna", endemic: true, wiki: "Chinese giant salamander",
+        description: "Le plus grand amphibien du monde, jusqu’à 1,8 m — une lignée vieille de 170 millions d’années. Élevée par millions pour la table, elle a presque disparu des rivières sauvages. Son nom scientifique rend hommage, là encore, au père David.",
+        where: "Les torrents de montagne de Zhangjiajie (Hunan) en abritent encore et des centres locaux en présentent ; dans la nature elle est nocturne et quasi invisible.",
+      },
+      {
+        name: "Ginkgo", latin: "Ginkgo biloba", kind: "flora", endemic: true, wiki: "Ginkgo biloba",
+        description: "Un « fossile vivant » inchangé depuis 200 millions d’années, sauvé de l’extinction par les moines qui l’ont planté dans les temples. À l’état sauvage, il ne subsiste qu’en Chine. En novembre, ses feuilles en éventail virent au jaune d’or.",
+        where: "Le ginkgo vieux de 1 400 ans du temple Gu Guanyin, dans les monts Zhongnan près de Xi’an (tapis d’or début novembre) ; à Pékin, l’« arbre empereur » du temple Tanzhe et l’allée de Diaoyutai à l’automne.",
+      },
+      {
+        name: "Métaséquoia", latin: "Metasequoia glyptostroboides", kind: "flora", endemic: true, wiki: "Metasequoia glyptostroboides",
+        description: "Connu seulement par des fossiles et réputé éteint depuis des millions d’années — jusqu’à sa découverte vivante dans un village du Hubei dans les années 1940, l’une des grandes surprises botaniques du XXe siècle. Un conifère caduc qui rougeoie à l’automne.",
+        where: "L’« arbre-mère », vieux de plusieurs siècles, au village de Moudao (Lichuan, ouest du Hubei) ; planté partout dans l’est du pays depuis, il borde notamment la grande allée de Pizhou (Jiangsu), superbe en novembre.",
+      },
+      {
+        name: "Arbre aux mouchoirs (davidia)", latin: "Davidia involucrata", kind: "flora", endemic: true, wiki: "Davidia involucrata",
+        description: "Au printemps, ses fleurs sont entourées de grandes bractées blanches qui pendent comme des mouchoirs — ou des colombes posées sur les branches. Encore une découverte du père David, dont il porte le nom.",
+        where: "Les forêts du mont Emei (Sichuan), de Wolong et du Fanjingshan (Guizhou), en floraison d’avril à début mai.",
+      },
+      {
+        name: "Pin de Huangshan", latin: "Pinus hwangshanensis", kind: "flora", endemic: true, wiki: "Pinus hwangshanensis",
+        description: "Le pin tortueux des peintures à l’encre : il pousse à même les fissures du granit, sculpté par le vent au-dessus des mers de nuages. Certains spécimens ont un nom et un âge vénérable.",
+        where: "Huangshan (Anhui), sur les crêtes et les sentiers du sommet — le « pin qui accueille les hôtes » (Yingke Song), vieux de plus de 800 ans, près du pavillon Yuping.",
+      },
+    ],
+  },
+
   books: [
     { title: "Les Cygnes sauvages", author: "Jung Chang", year: "1991", note: "Trois générations de femmes à travers un siècle de bouleversements en Chine — le classique moderne." },
     { title: "River Town", author: "Peter Hessler", year: "2001", note: "Un enseignant du Peace Corps sur le Yangzi saisit la Chine au seuil du changement." },

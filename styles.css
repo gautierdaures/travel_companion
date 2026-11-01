@@ -219,6 +219,64 @@ section.block > h2 {
 .item .d { font-size: 14px; margin-top: 5px; }
 .item .tip { font-size: 13px; color: var(--accent-2); margin-top: 5px; }
 
+/* Wildlife — fauna & flora, each species with where to see it */
+.wl-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--cat-nature);
+  padding: 14px 0 2px;
+  border-top: 1px solid var(--border);
+}
+.prose + .wl-group { margin-top: 4px; }
+.wl-group .cat-ico { width: 15px; height: 15px; }
+.species {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.species:last-child { border-bottom: none; }
+.species:has(+ .wl-group) { border-bottom: none; }
+.sp-top { display: flex; gap: 12px; }
+.sp-body { flex: 1 1 auto; min-width: 0; }
+.species .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.species .t { font-weight: 620; font-size: 16px; }
+.species .latin { color: var(--text-dim); font-size: 13px; font-style: italic; margin-top: 1px; }
+.species .d { font-size: 14px; margin-top: 5px; }
+.species .where {
+  font-size: 13.5px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--bg-elev-2);
+  border-radius: 10px;
+}
+.species .where-k {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--accent-2);
+  margin-bottom: 2px;
+}
+.wl-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #0f1720;
+  background: var(--accent-2);
+  white-space: nowrap;
+}
+.species .sp-thumb { width: 72px; height: 72px; }
+.species .sp-thumb .place-thumb-ph { color: var(--cat-nature); }
+.species .sp-thumb .place-thumb-ph .cat-ico { width: 26px; height: 26px; }
+
 /* Places — each is a link to its full guide */
 .place {
   display: flex;

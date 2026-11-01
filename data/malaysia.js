@@ -37,6 +37,58 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "La Malaisie fait partie des 17 pays « mégadivers » de la planète. Ses forêts tropicales, notamment à Bornéo, sont parmi les plus anciennes du monde — épargnées par les glaciations, elles évoluent depuis des dizaines de millions d’années — et le mont Kinabalu, à lui seul, abrite des milliers d’espèces de plantes, dont des centaines d’orchidées. Bornéo est une île à part : orang-outan, nasique, éléphant pygmée y vivent et nulle part ailleurs. Le revers est connu : les plantations de palmiers à huile ont englouti une grande partie des basses terres. Les réserves de Sabah et du Sarawak, et les corridors le long des rivières, sont d’autant plus précieux — et les voir, c’est aussi soutenir leur protection.",
+    species: [
+      {
+        name: "Orang-outan de Bornéo", latin: "Pongo pygmaeus", kind: "fauna", endemic: "de Bornéo", wiki: "Bornean orangutan",
+        description: "« L’homme de la forêt » en malais. Un grand singe solitaire et doux, qui construit chaque soir un nid de branches dans la canopée et met huit ans à élever son petit.",
+        where: "À l’état sauvage : la vallée de Danum et le long de la rivière Kinabatangan (Sabah), au petit matin ou au crépuscule. En semi-liberté : la réserve de Semenggoh, à 30 min de Kuching (repas vers 9 h et 15 h) et le centre de Sepilok, près de Sandakan. De décembre à mars, la forêt fructifie et ils viennent moins aux plateformes.",
+      },
+      {
+        name: "Nasique", latin: "Nasalis larvatus", kind: "fauna", endemic: "de Bornéo", wiki: "Proboscis monkey",
+        description: "Le singe au long nez pendant et au ventre rond, qui vit en troupes au bord des rivières et des mangroves — et plonge sans hésiter pour traverser.",
+        where: "Le parc national de Bako (à 1 h de Kuching), sur les plages et dans la mangrove, tôt le matin ; les croisières en barque au crépuscule sur la Kinabatangan, où les troupes se rassemblent pour la nuit dans les arbres de la rive.",
+      },
+      {
+        name: "Éléphant pygmée de Bornéo", latin: "Elephas maximus borneensis", kind: "fauna", endemic: "de Bornéo", wiki: "Borneo elephant",
+        description: "Le plus petit des éléphants d’Asie, aux grandes oreilles et à la longue queue, au caractère réputé paisible. Moins de 2 000 individus, quasi tous à Sabah.",
+        where: "La rivière Kinabatangan, où les troupeaux viennent boire et traverser — leur passage est imprévisible ; renseignez-vous auprès des lodges sur leur position du moment. Parfois aussi à Danum et Tabin.",
+      },
+      {
+        name: "Calao rhinocéros", latin: "Buceros rhinoceros", kind: "fauna", wiki: "Rhinoceros hornbill",
+        description: "Casque orange relevé comme une corne, cri rauque et battement d’ailes sonore : l’emblème du Sarawak, « la terre des calaos », messager des esprits chez les Iban.",
+        where: "Les forêts de Danum, de la Kinabatangan et du Gunung Mulu, en lisière de forêt autour des figuiers en fruit ; on retrouve aussi ses plumes et ses sculptures dans les maisons longues iban du Sarawak.",
+      },
+      {
+        name: "Tortues vertes et imbriquées", latin: "Chelonia mydas · Eretmochelys imbricata", kind: "fauna", wiki: "Green sea turtle",
+        description: "Les deux tortues des récifs malais : la verte, qui broute les herbiers, et l’imbriquée au bec d’oiseau, qui croque les éponges.",
+        where: "En snorkeling aux îles Perhentian (Turtle Point, Shark Point), surtout de mars à octobre. Pour la ponte : le parc des îles aux Tortues (île de Selingan, au large de Sandakan), où des femelles viennent pondre presque chaque nuit.",
+      },
+      {
+        name: "Rafflesia", latin: "Rafflesia keithii · Rafflesia tuan-mudae", kind: "flora", wiki: "Rafflesia",
+        description: "La plus grande fleur du monde, jusqu’à près d’un mètre, plante parasite sans feuilles ni tige qui sent la viande avariée pour attirer les mouches. Chaque bouton met des mois à mûrir et ne fleurit que quelques jours.",
+        where: "Le parc national de Gunung Gading (Lundu, à 2 h de Kuching) et les environs de Poring et Ranau, au pied du Kinabalu, où des propriétaires signalent les floraisons au bord des routes. Appelez le parc avant d’y aller pour savoir si une fleur est ouverte.",
+      },
+      {
+        name: "Népenthès de Rajah", latin: "Nepenthes rajah", kind: "flora", endemic: "de Sabah", wiki: "Nepenthes rajah",
+        description: "La plus grande plante carnivore du monde, dont les urnes contiennent jusqu’à plusieurs litres de liquide. Des toupayes, petits mammifères arboricoles, viennent lécher son nectar… et lui laissent leurs déjections, dont elle se nourrit. Elle ne pousse que sur le Kinabalu et le mont voisin Tambuyukon.",
+        where: "Le parc du Kinabalu : le jardin botanique du quartier général en présente, les sujets sauvages — protégés — poussant loin des sentiers ; le long du sentier du sommet, on croise d’autres népenthès d’altitude. Le parc de Bako en a d’autres espèces, plus petites, au bord des sentiers.",
+      },
+      {
+        name: "Méranti jaune et diptérocarpes géants", latin: "Shorea faguetiana", kind: "flora", wiki: "Shorea faguetiana",
+        description: "Les diptérocarpes, aux troncs droits comme des colonnes, forment la canopée de Bornéo. En 2019, on a mesuré dans la vallée de Danum un méranti jaune de 100,8 m, baptisé Menara : le plus haut arbre tropical connu au monde.",
+        where: "La vallée de Danum (Sabah), depuis la passerelle dans la canopée et les sentiers du centre de terrain . Dans la péninsule, la passerelle de Taman Negara permet aussi de marcher au milieu des géants.",
+      },
+      {
+        name: "Forêt moussue des Cameron Highlands", kind: "flora", wiki: "Cloud forest",
+        description: "Une forêt de nuages naine et tordue, couverte de mousses, de lichens, d’orchidées et de petits népenthès, perpétuellement baignée de brume.",
+        where: "La passerelle de la forêt moussue du Gunung Brinchang (Cameron Highlands), tôt le matin avant la foule et les nuages de l’après-midi ; elle ferme parfois pour entretien.",
+      },
+    ],
+  },
+
   books: [
     { title: "Le Jardin des brumes du soir", author: "Tan Twan Eng", year: "2012", note: "Un roman lumineux et primé sur la mémoire et un jardin japonais dans les Cameron Highlands après la guerre." },
     { title: "Le Don de la pluie", author: "Tan Twan Eng", year: "2007", note: "Penang à la veille de la Seconde Guerre mondiale, vue par un garçon à moitié chinois, à moitié anglais — évoque l’âme de l’île." },

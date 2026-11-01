@@ -18,6 +18,7 @@ const SECTIONS = [
   { id: "map", label: "Carte" },
   { id: "languages", label: "Langue" },
   { id: "history", label: "Histoire" },
+  { id: "wildlife", label: "Faune et flore" },
   { id: "climate", label: "Quand partir" },
   { id: "events", label: "Événements" },
   { id: "books", label: "Livres" },
@@ -32,12 +33,13 @@ const fold = (s = "") => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, 
 /* ── tiny helpers ──────────────────────────────────────────────────────── */
 // Also keeps French punctuation attached to its word: a no-break space before
 // ? ! : ; » and after «, so a line never starts with a lone "?" or "»". Same
-// for numbers: "1 500 ₽" never splits into "1" / "500 ₽".
+// for numbers: "1 500 ₽" never splits into "1" / "500 ₽", nor "15 h" / "30 km".
 const esc = (s = "") =>
   String(s)
     .replace(/\s+([?!:;»])/g, "\u00a0$1")
     .replace(/«\s+/g, "«\u00a0")
     .replace(/(\d) (?=\d{3}(?!\d)|[₽€$%])/g, "$1\u00a0")
+    .replace(/(\d) (?=(?:h|min|km|m|cm|kg)\b)/g, "$1\u00a0")
     .replace(/[&<>"']/g, (c) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
     );
@@ -157,6 +159,66 @@ function historyBlock(c) {
     </section>`;
 }
 
+/* ── Wildlife (fauna & flora) ──────────────────────────────────────────── */
+// Same line-icon style as the categories: a paw for animals, a leaf for plants.
+const WL_ICON = (paths) =>
+  `<svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" ` +
+  `stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+const WILDLIFE_KINDS = {
+  fauna: {
+    label: "Faune",
+    icon: WL_ICON(`<ellipse cx="5.6" cy="10.6" rx="1.7" ry="2.2"/><ellipse cx="9.4" cy="6.4" rx="1.7" ry="2.3"/>
+                   <ellipse cx="14.6" cy="6.4" rx="1.7" ry="2.3"/><ellipse cx="18.4" cy="10.6" rx="1.7" ry="2.2"/>
+                   <path d="M12 12c-2.8 0-5 3.2-5 5.6 0 1.6 1.2 2.4 2.6 2.4 1 0 1.6-.5 2.4-.5s1.4.5 2.4.5c1.4 0 2.6-.8 2.6-2.4 0-2.4-2.2-5.6-5-5.6Z"/>`),
+  },
+  flora: { label: "Flore", icon: catOf("nature").icon },
+};
+
+// One species: name, Latin name, an "endemic" badge when it lives nowhere
+// else (`endemic: true`, or a scope such as "de Bornéo"), what it is, and —
+// the useful part on the road — where and when to see it.
+function speciesRow(s) {
+  const kind = WILDLIFE_KINDS[s.kind] || WILDLIFE_KINDS.fauna;
+  const endemic = s.endemic
+    ? `<span class="wl-badge">${esc(s.endemic === true ? "Endémique" : `Endémique ${s.endemic}`)}</span>`
+    : "";
+  return `
+    <div class="species">
+      <div class="sp-top">
+        <div class="place-thumb sp-thumb" ${s.wiki ? `data-wiki="${esc(s.wiki)}"` : ""}>
+          <span class="place-thumb-ph">${kind.icon}</span>
+        </div>
+        <div class="sp-body">
+          <div class="head"><span class="t">${esc(s.name)}</span>${endemic}</div>
+          ${s.latin ? `<div class="latin">${esc(s.latin)}</div>` : ""}
+          <div class="d">${esc(s.description)}</div>
+        </div>
+      </div>
+      ${s.where ? `<div class="where"><span class="where-k">📍 Où l’observer</span>${esc(s.where)}</div>` : ""}
+    </div>`;
+}
+
+function wildlifeBlock(c) {
+  const W = c.wildlife;
+  if (!W || !(W.species || []).length) return "";
+  const groups = ["fauna", "flora"]
+    .map((k) => {
+      const list = W.species.filter((s) => (s.kind === "flora" ? "flora" : "fauna") === k);
+      if (!list.length) return "";
+      const kind = WILDLIFE_KINDS[k];
+      return `<h3 class="wl-group">${kind.icon}${kind.label}</h3>${list.map(speciesRow).join("")}`;
+    })
+    .join("");
+  return `
+    <section class="block" id="sec-wildlife">
+      <h2>Faune et flore</h2>
+      <div class="panel">
+        ${W.summary ? `<p class="prose">${esc(W.summary)}</p>` : ""}
+        ${groups}
+      </div>
+    </section>`;
+}
+
 function booksBlock(c) {
   return `
     <section class="block" id="sec-books">
@@ -225,7 +287,7 @@ function placesBlock(c) {
     </section>`;
 }
 
-// Fill in each place's list thumbnail from Wikipedia. Works through the rows
+// Fill in the list thumbnails (places, then fauna & flora) from Wikipedia. Works through the rows
 // top-to-bottom with a small concurrency limit — gentle on the API and, unlike
 // an IntersectionObserver, it runs even when the tab isn't in the foreground.
 // Fails soft: a missing image just leaves the category-icon placeholder.
@@ -552,6 +614,7 @@ function renderCountry(code) {
     ${mapBlock(c)}
     ${languagesBlock(c)}
     ${historyBlock(c)}
+    ${wildlifeBlock(c)}
     ${climateBlock(c)}
     ${eventsBlock(c)}
     ${booksBlock(c)}

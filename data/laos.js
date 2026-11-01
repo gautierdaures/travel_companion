@@ -37,6 +37,48 @@ export default {
     ],
   },
 
+  wildlife: {
+    summary:
+      "L’un des pays les plus boisés d’Asie du Sud-Est, le Laos garde de vastes forêts — de la cordillère Annamitique, à l’est, aux karsts du Khammouane et aux montagnes du Nord. C’est là qu’ont été découverts, dans les années 1990–2000, le saola (un bovidé partagé avec le Viêt Nam, jamais observé par un scientifique dans la nature) et un rongeur que l’on croyait éteint depuis 11 millions d’années. Mais la chasse a vidé bien des forêts : le tigre y a sans doute disparu, et les derniers dauphins de l’Irrawaddy de la frontière cambodgienne, à Si Phan Don, se sont éteints en 2022 (on les voit encore côté cambodgien, à Kratié). Les meilleures rencontres passent par quelques projets d’écotourisme communautaire, menés avec les villages, qui font vivre la forêt debout.",
+    species: [
+      {
+        name: "Gibbon à crête noire", latin: "Nomascus concolor", kind: "fauna", wiki: "Black crested gibbon",
+        description: "Un gibbon très menacé dont une population a été découverte dans la province de Bokeo il y a seulement une vingtaine d’années. On l’entend bien plus souvent qu’on ne le voit : son chant à l’aube porte à des kilomètres.",
+        where: "Le parc national de Nam Kan (Bokeo), au départ de Houay Xai, avec la Gibbon Experience : nuits dans des cabanes perchées dans la canopée, reliées par tyroliennes, et réveil au chant des gibbons.",
+      },
+      {
+        name: "Éléphant d’Asie", latin: "Elephas maximus", kind: "fauna", wiki: "Asian elephant",
+        description: "Le royaume fondé en 1353 s’appelait Lan Xang, « le million d’éléphants ». Il en reste moins d’un millier, sauvages et domestiques confondus, ces derniers longtemps employés à débarder le bois.",
+        where: "L’Elephant Conservation Center de Sayaboury, au bord du lac de Nam Tien : on observe les éléphants (sans les monter) se baigner et vivre en forêt, et l’on suit le travail des vétérinaires et des cornacs. Séjour de 2–3 jours, à réserver.",
+      },
+      {
+        name: "Sambar et faune nocturne", latin: "Rusa unicolor", kind: "fauna", wiki: "Sambar deer",
+        description: "Le grand cerf des forêts d’Asie, aux yeux qui brillent dans le faisceau des lampes — avec civettes, loutres, chats-léopards et loris lents qui sortent la nuit.",
+        where: "Le « night safari » de Nam Nern, dans l’aire protégée de Nam Et–Phou Louey (Houaphanh) : remontée de la rivière en pirogue de nuit, à la lampe, avec des guides des villages ; une partie du prix finance la protection de la forêt.",
+      },
+      {
+        name: "Ours à collier et ours malais", latin: "Ursus thibetanus · Helarctos malayanus", kind: "fauna", wiki: "Asian black bear",
+        description: "Les deux ours d’Asie du Sud-Est, victimes du braconnage pour la bile et de la vente d’oursons comme animaux de compagnie.",
+        where: "Le centre de sauvetage de Free the Bears, à l’entrée des chutes de Kuang Si près de Luang Prabang (visite comprise dans l’entrée des chutes) : des dizaines d’ours saisis aux trafiquants y vivent dans des enclos boisés.",
+      },
+      {
+        name: "Rat des rochers laotien (kha-nyou)", latin: "Laonastes aenigmamus", kind: "fauna", wiki: "Laotian rock rat",
+        description: "Un « fossile vivant » : ce rongeur aux airs d’écureuil appartient à une famille qu’on croyait éteinte depuis 11 millions d’années. Les scientifiques l’ont découvert en 1996… sur l’étal d’un marché de viande de brousse à Thakhek.",
+        where: "Les karsts du Khammouane, autour de Thakhek et de la grotte de Kong Lor — nocturne et quasi invisible, on se contente le plus souvent de savoir qu’il est là, quelque part dans les falaises.",
+      },
+      {
+        name: "Frangipanier (dok champa)", latin: "Plumeria", kind: "flora", wiki: "Plumeria",
+        description: "La fleur nationale du Laos, blanche au cœur jaune, au parfum sucré — offerte dans les temples, glissée dans les cheveux, chantée dans les chansons populaires. Ironie : l’arbre est originaire d’Amérique tropicale.",
+        where: "Les cours des monastères de Luang Prabang (Vat Xieng Thong en tête) et de Vientiane, surtout en saison chaude (mars–mai), quand les arbres sans feuilles se couvrent de fleurs.",
+      },
+      {
+        name: "Benjoin du Laos", latin: "Styrax tonkinensis", kind: "flora", wiki: "Styrax tonkinensis",
+        description: "Un petit arbre dont on incise l’écorce pour recueillir une résine au parfum de vanille — le « benjoin de Siam », exporté depuis des siècles et toujours prisé des parfumeurs et dans l’encens. Le Laos en est le premier producteur mondial.",
+        where: "Les collines du Nord (provinces de Luang Prabang, Phongsaly, Houaphanh), où les villageois le plantent sur les anciens essarts ; on le croise en trek dans la région de Nam Ha et de Nong Khiaw, et la résine se vend sur les marchés.",
+      },
+    ],
+  },
+
   books: [
     { title: "Le Déjeuner du coroner", author: "Colin Cotterill", year: "2004", note: "Un polar plein d’humour dans le Vientiane des années 1970 — toute la série du docteur Siri est un régal." },
     { title: "Ant Egg Soup", author: "Natacha Du Pont de Bie", year: "2004", note: "Une balade gastronomique à travers le Laos à la recherche de sa cuisine méconnue." },
